@@ -49,6 +49,19 @@ export default class Transaction {
             });
         });
     }
+    invoke(methodName, methodParams, args) {
+        this.invokes = this.invokes || [];
+        this.invokes.push(methodName);
+        const currentProcess = this._db.invoke(methodName, methodParams, args);
+        // console.log("Push >> Invokes now",JSON.stringify(this.invokes))
+        if (currentProcess && currentProcess.then) {
+            return currentProcess.then(resp => {
+                this.invokes.pop();
+                // console.log("Pop >> Invokes now",JSON.stringify(this.invokes))
+                return resp;
+            });
+        }
+    }
 
     async commit() {
         if (!this.txid) {
