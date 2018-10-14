@@ -1,18 +1,14 @@
 import Transaction from "./TransactionConnect";
 import * as Formidable from "formidable";
 import bodyParser from "body-parser";
-import { invoke } from "./DBConnect";
-import { runCron } from "./cron";
-import { isJSONObject, deepClone } from "Utility";
-import { getDecryptedParams } from "./decryption/Decryption";
-import {Pipeline} from "../../../../manaze-store/src/rhs-common";
+import { isJSONObject, deepClone } from "./Utility.js";
 var urlParser = require("url");
 var ObjectID = require("mongodb").ObjectID;
-const { isJSONObject, deepClone } = PureFunctions;
 var configure = async (
     app,
     config
 ) => {
+    console.log("config callll")
     let { mailConfig, dbConnect, mongoConnect, fileConnect, resourceConnect, crons, rhsCrons, context, port } = config;
     process.on("uncaughtException", function (err) {
         console.log(">>>>uncaughtException>>>>>>>>>>>>", err.stack);
@@ -84,7 +80,8 @@ const uploadFiles = async (req, resp, nativeConnect) => {
 
     app.all("/invoke", async (req, resp) => {
         try {
-            var reqParams = getRequestParams(req, true);
+            var reqParams = getRequestParams(req, false);
+            console.log("reqParams>>>>>>>",JSON.stringify(reqParams))
             let reqInfo = getRequestInfo(req);
             let result = await _invoke(reqParams, reqInfo, config);
             var { data, options } = parseResponseHeader(result);
@@ -117,7 +114,7 @@ const isServiceLogEnabled = (context) => {
 
 const _invoke = async (params, reqInfo, config) => {
     console.log(">>>>/invoke called >>>>>>", JSON.stringify(params));
-    let logs, logger, user, endHttpRequestLogging;
+    let logs, user, endHttpRequestLogging;
     let { mongoConnect, port, globalCache, context, systemProfiler,logger, mailConfig } = config || {};
     try {
         await modifyInvokeParams(params, config);
@@ -488,9 +485,9 @@ const getRequestParams = (req, decryptRequired) => {
             allParams[key] = query[key];
         }
     }
-    if (decryptRequired) {
+    /*if (decryptRequired) {
         allParams = getDecryptedParams(allParams);
-    }
+    }*/
     return allParams;
 };
 

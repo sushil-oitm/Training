@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "assert": "^1.4.1",
+    "formidable": "^1.2.1",
     "mongodb": "^2.2.5",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

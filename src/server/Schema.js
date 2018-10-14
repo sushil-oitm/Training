@@ -23,7 +23,7 @@ let Department = {
     name:"string"
 }
 
-export default const schema={
+export default schema={
     Employee,
     Attendance,
     Salary,
