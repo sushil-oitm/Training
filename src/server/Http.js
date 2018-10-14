@@ -559,7 +559,7 @@ const authenticateUser = async (token, args, service) => {
     if (!token) {
         return;
     }
-    let authenticatedUserInfo = await args._dbConnect(invoke("_getAuthenticatedUser", { token, service }, args));
+    let authenticatedUserInfo = await args._dbConnect(args._dbConnect.invoke("_getAuthenticatedUser", { token, service }, args));
     const user = authenticatedUserInfo && authenticatedUserInfo.result;
     if (!user) {
         throw new Error("Invalid token >>>>>>>>>>>>", token);

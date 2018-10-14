@@ -1,11 +1,11 @@
 import http from "http";
 import express from "express";
-import * as Utility from "./Utility";
+// import * as Utility from "./Utility";
 import {configure} from "./Http"
 import MongoConnect from "./MogoConnect"
 import TransactionConnect from "./TransactionConnect"
 import {testTransaction} from "./Transaction";
-import {getCLAs} from "../../../../manaze-store/src/manaze/RhsUtility";
+import {getCLAs} from "./Utility";
 var ObjectId = require("mongodb").ObjectID;
 var app = express();
 
