@@ -20,17 +20,16 @@ let connection={
 }
 
 let mongoConnect=new MongoConnect({config:connection});
-let TransactionDB=new TransactionConnect(mongoConnect);
 var context = {};
 context = getCLAs(context);
 const PORT = context.PORT;
 configure(app, {
     mongoConnect,
+    context
     // // fileConnect,
     // // resourceConnect,
     // // logConnectNative,
     // // dbConnect,
-     context,
     // crons,
     // rhsCrons,
     // port: PORT,

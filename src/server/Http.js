@@ -24,25 +24,6 @@ var configure = async (
         });
         res.end();
     });
-
-const uploadFiles = async (req, resp, nativeConnect) => {
-        try {
-            var { files, token } = await readFiles(req);
-            if (!token) {
-                throw new Error("Token is mandatory to upload");
-            }
-            let ip = getIp(req);
-            const transactionConnect = new Transaction(mongoConnect, void 0, { port, mailConfig, context });
-            const dbConnect = DbConnect(transactionConnect);
-            await authenticateUser(token, { _dbConnect: dbConnect, req: getRequestInfo(req) });
-
-            var mongoResult = await nativeConnect.upload(files);
-            await writeJSONResponse(mongoResult, req, resp);
-        } catch (err) {
-            await writeJSONResponse(err, req, resp);
-        }
-    };
-
     app.all("/upload", async (req, resp) => {
         // to upload files in database defined in fileConnect
         return await uploadFiles(req, resp, fileConnect);
@@ -90,6 +71,24 @@ const uploadFiles = async (req, resp, nativeConnect) => {
             await writeJSONResponse(err, req, resp);
         }
     });
+};
+
+const uploadFiles = async (req, resp, nativeConnect) => {
+    try {
+        var { files, token } = await readFiles(req);
+        if (!token) {
+            throw new Error("Token is mandatory to upload");
+        }
+        let ip = getIp(req);
+        const transactionConnect = new Transaction(mongoConnect, void 0, { port, mailConfig, context });
+        const dbConnect = DbConnect(transactionConnect);
+        await authenticateUser(token, { _dbConnect: dbConnect, req: getRequestInfo(req) });
+
+        var mongoResult = await nativeConnect.upload(files);
+        await writeJSONResponse(mongoResult, req, resp);
+    } catch (err) {
+        await writeJSONResponse(err, req, resp);
+    }
 };
 
 const getRequestInfo = (req) => {
