@@ -5,6 +5,7 @@ import {configure} from "./Http"
 import MongoConnect from "./MogoConnect"
 import TransactionConnect from "./TransactionConnect"
 import {testTransaction} from "./Transaction";
+import {getCLAs} from "../../../../manaze-store/src/manaze/RhsUtility";
 var ObjectId = require("mongodb").ObjectID;
 var app = express();
 
@@ -20,14 +21,16 @@ let connection={
 
 let mongoConnect=new MongoConnect({config:connection});
 let TransactionDB=new TransactionConnect(mongoConnect);
-let PORT=5000
+var context = {};
+context = getCLAs(context);
+const PORT = context.PORT;
 configure(app, {
     mongoConnect,
     // // fileConnect,
     // // resourceConnect,
     // // logConnectNative,
     // // dbConnect,
-    // context,
+     context,
     // crons,
     // rhsCrons,
     // port: PORT,
