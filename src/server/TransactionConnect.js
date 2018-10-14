@@ -68,8 +68,7 @@ export default class Transaction {
         console.log("rollback successfully")
         // delete this.txid;
     }
-
-  getTxId = () => {
+     getTxId = () => {
         return this.txid;
     };
 
