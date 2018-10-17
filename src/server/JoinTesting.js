@@ -1,15 +1,10 @@
 import MongoConnect from "./MongoConnect"
 let mongo = require("mongodb");
 export const config={
-    host: "139.162.25.190",
-    port: 28853,
-    dbName: "autoload_new",
-    fileDBName: "files_db",
-    logDBName: "app_v3_logs",
-    authEnabled: true,
-    user: "autoload@admin",
-    pwd:  "daffodil-autoload@admin",
-    authDB: "admin"
+    host: "192.168.100.119",
+    port: 27017,
+    dbName: "productivity_testing",
+    authEnabled: false
 }
 
 let tripSchema = {
