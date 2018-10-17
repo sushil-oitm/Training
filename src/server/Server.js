@@ -29,8 +29,6 @@ configure(app, {
     // // resourceConnect,
     // // logConnectNative,
     // // dbConnect,
-    // crons,
-    // rhsCrons,
     // port: PORT,
     // publicServices,
     // mailConfig,

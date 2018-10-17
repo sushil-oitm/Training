@@ -11,12 +11,12 @@ export default class Transaction {
         // console.log("context>>>>"+JSON.stringify(context))
     }
     aggregate(table, query) {
-        return this._db.aggregate(table, query, { logger: this.logger }).then(res => {
+        return this._db.aggregate(table, query, {}).then(res => {
             return res;
         });
     }
     find(table, query,option) {
-        return this._db.find(table, query, { ...option,logger: this.logger }).then(res => {
+        return this._db.find(table, query, { ...option}).then(res => {
             return res;
         });
     }
@@ -26,7 +26,7 @@ export default class Transaction {
             { table, insert, subModelChanges, txid: this.txid, port: this.port, skipTx },
             this._db
         ).then(_ => {
-            return this._db.insert(table, insert, subModelChanges, options, { logger: this.logger }).then(result => {
+            return this._db.insert(table, insert, subModelChanges, options, {}).then(result => {
                 return result;
             });
         });
