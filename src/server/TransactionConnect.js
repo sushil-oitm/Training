@@ -2,11 +2,9 @@ var ObjectId = require("mongodb").ObjectID;
 import {deepEqual,resolveValue,isJSONObject} from "./Utility";
 import allMethod from "./SystemMethod"
 export default class Transaction {
-    constructor(db, txid, { logger, port, mailConfig, context } = {}) {
+    constructor(db, txid, {port, mailConfig, context } = {}) {
         this._db = db;
         this.txid = txid || new ObjectId();
-        this.txEnabled = true;
-        this.logger = logger;
         this.port = port;
         this.mailConfig = mailConfig;
         this.context = context;
@@ -721,9 +719,9 @@ var sendMailforErrorInRollBack = (err, tx, dbConnect, mailConfig, recepients, su
     var os = require("os");
     var date = new Date();
     var options = {};
-    const { applicationDeveloper, frameworkDeveloper } = mailConfig;
-    options.to = recepients || applicationDeveloper || frameworkDeveloper || ["rohit.bansal@daffodilsw.com"];
-    options.from = "developer@daffodilsw.com";
+    const { to } = mailConfig;
+    options.to = to;
+    options.from = "sushil.oitm@daffodilsw.com";
     options.subject = subject || "Error in Rollback Transaction";
     options.html = `
        <p> Error: ${err.message} </p></br>

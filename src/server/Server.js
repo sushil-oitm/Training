@@ -4,7 +4,6 @@ import express from "express";
 import {configure} from "./Http"
 import MongoConnect from "./MogoConnect"
 import TransactionConnect from "./TransactionConnect"
-import {testTransaction} from "./Transaction";
 import {getCLAs} from "./Utility";
 var ObjectId = require("mongodb").ObjectID;
 var app = express();
