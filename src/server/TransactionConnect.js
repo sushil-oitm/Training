@@ -1,5 +1,6 @@
 var ObjectId = require("mongodb").ObjectID;
 import {deepEqual,resolveValue,isJSONObject} from "./Utility";
+import allMethod from "./SystemMethod"
 export default class Transaction {
     constructor(db, txid, { logger, port, mailConfig, context } = {}) {
         this._db = db;
@@ -13,6 +14,12 @@ export default class Transaction {
     }
     aggregate(table, query) {
         return this._db.aggregate(table, query, { logger: this.logger }).then(res => {
+            return res;
+        });
+    }
+    find(table, query,option) {
+        console.log("tranaction find called")
+        return this._db.find(table, query, { ...option,logger: this.logger }).then(res => {
             return res;
         });
     }
@@ -49,18 +56,9 @@ export default class Transaction {
             });
         });
     }
+
     invoke(methodName, methodParams, args) {
-        this.invokes = this.invokes || [];
-        this.invokes.push(methodName);
-        const currentProcess = this._db.invoke(methodName, methodParams, args);
-        // console.log("Push >> Invokes now",JSON.stringify(this.invokes))
-        if (currentProcess && currentProcess.then) {
-            return currentProcess.then(resp => {
-                this.invokes.pop();
-                // console.log("Pop >> Invokes now",JSON.stringify(this.invokes))
-                return resp;
-            });
-        }
+    return allMethod[methodName](methodParams,args)
     }
 
     async commit() {
@@ -122,7 +120,7 @@ const beforeInsert = async ({ table, insert, txid, port, skipTx }, db) => {
         port,
         createdDate: new Date()
     };
-    console.log("TxInsert>>>>>>"+JSON.stringify(TxInsert))
+    // console.log("TxInsert>>>>>>"+JSON.stringify(TxInsert))
     return await insertTransactionDetails(db, TxInsert);
 };
 
@@ -133,7 +131,7 @@ const beforeDelete = async ({ table, old, filter, txid, port, skipTx }, db) => {
     if (skipTx) {
         return new Promise(res => res());
     }
-    console.log("old>>>>>>"+JSON.stringify(old));
+    // console.log("old>>>>>>"+JSON.stringify(old));
     var txInsert = {
         tx: { collection: table, insert: old },
         status: "Pending",
@@ -145,7 +143,7 @@ const beforeDelete = async ({ table, old, filter, txid, port, skipTx }, db) => {
 };
 
 const beforeUpdate = async ({ update, old, filter, subModelChanges, table, txid, port, skipTx }, db) => {
-    console.log("beforeUpdate called>>>>>")
+    // console.log("beforeUpdate called>>>>>")
     if (!txid) {
         throw new Error("Transaction id is mandatory");
     }
@@ -173,7 +171,7 @@ const beforeUpdate = async ({ update, old, filter, subModelChanges, table, txid,
         }
     }
     if (isUpdateRequired && !alreadyInProgress) {
-        console.log("isUpdateRequired called>>>>>")
+        // console.log("isUpdateRequired called>>>>>")
         var txInsert = {
             tx: { collection: table, update: { _id: recordId } },
             status: "Pending",
@@ -181,18 +179,18 @@ const beforeUpdate = async ({ update, old, filter, subModelChanges, table, txid,
             port,
             createdDate: new Date()
         };
-        console.log("isUpdateRequired called>>>>>"+JSON.stringify(txInsert))
+        // console.log("isUpdateRequired called>>>>>"+JSON.stringify(txInsert))
         await insertTransactionDetails(db, txInsert);
     }
 
     if (isUpdateRequired) {
         updateDocument({ txid, update, old, subModelChanges, recordId });
     }
-    console.log("out from update transaction>>>>>>>>>>>>>>>>>>>")
+    // console.log("out from update transaction>>>>>>>>>>>>>>>>>>>")
 };
 
 function updateDocument({ txid, update, old, subModelChanges, recordId }) {
-    console.log("updateDocument called>>>>>")
+    // console.log("updateDocument called>>>>>")
     old = old || {};
     var previousTransaction = old["__txs__"] || {};
 
@@ -209,7 +207,7 @@ function updateDocument({ txid, update, old, subModelChanges, recordId }) {
 }
 
 function updateTransaction(tx, updates, subModelChanges, old) {
-    console.log("updateTransaction called>>>>>")
+    // console.log("updateTransaction called>>>>>")
     let { $set, $unset, $inc } = updates;
 
     for (let updatedField in $set) {
@@ -389,14 +387,14 @@ function isChildModifiedInSameTx(txValue, newKey) {
 const commitTransaction = async transactionInstance => {
     var txid = transactionInstance.getTxId();
     var db = transactionInstance.getDB();
-    console.log("txid>>>>>",txid)
+    // console.log("txid>>>>>",txid)
     let transactionsss = await getTransactions({ filter: {txid } }, db);
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    console.log("transactionsss pre>>>>>>"+JSON.stringify(transactionsss))
+    // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    // console.log("transactionsss pre>>>>>>"+JSON.stringify(transactionsss))
     await db.update("TXS", { txid: txid }, { $set: { status: "Commiting" } },{ multi: true });
     await db.remove("TXS", { txid: txid, status: "Commiting", "tx.insert": { $exists: true } });
     let transactions = await getTransactions({ filter: { status: "Commiting", txid } }, db);
-    console.log("transactions>>>>>>"+JSON.stringify(transactions))
+    // console.log("transactions>>>>>>"+JSON.stringify(transactions))
     transactions = transactions && transactions.result;
     for (let i = 0; i < transactions.length; i++) {
         let { _id, tx } = transactions[i];
@@ -775,5 +773,9 @@ export const _rollbackPendingTxs = async (db, { port, mailConfig, dbConnect, con
         }
     }
 };
+
+
+
+
 
 

@@ -8,7 +8,6 @@ var configure = async (
     app,
     config
 ) => {
-    console.log("config callll")
     let { mailConfig, dbConnect, mongoConnect, fileConnect, resourceConnect, crons, rhsCrons, context, port } = config;
     process.on("uncaughtException", function (err) {
         console.log(">>>>uncaughtException>>>>>>>>>>>>", err.stack);
@@ -62,9 +61,10 @@ var configure = async (
     app.all("/invoke", async (req, resp) => {
         try {
             var reqParams = getRequestParams(req, false);
-            console.log("reqParams>>>>>>>",JSON.stringify(reqParams))
+            console.log("invoke called with params>>>>>>>",JSON.stringify(reqParams))
             let reqInfo = getRequestInfo(req);
             let result = await _invoke(reqParams, reqInfo, config);
+            console.log("invoke result is>>>>>>"+JSON.stringify(result))
             var { data, options } = parseResponseHeader(result);
             await writeJSONResponse(data, req, resp, options);
         } catch (err) {
@@ -114,7 +114,7 @@ const isServiceLogEnabled = (context) => {
 const _invoke = async (params, reqInfo, config) => {
     console.log(">>>>/invoke called >>>>>>", JSON.stringify(params));
     let logs, user, endHttpRequestLogging;
-    let { mongoConnect, port, globalCache, context, systemProfiler,logger, mailConfig } = config || {};
+    let { mongoConnect, port, globalCache, context} = config || {};
     try {
         await modifyInvokeParams(params, config);
         let {id, token, appVersion, platform, deleteToken} = params;
@@ -125,19 +125,16 @@ const _invoke = async (params, reqInfo, config) => {
             throw new Error(`token is mandatory in invoke service >>>> ${id}`);
         }
 
-        const transactionConnect = new Transaction(mongoConnect, void 0, { logger, port, mailConfig, context });
-        const dbConnect = DbConnect(transactionConnect);
+        const transactionConnect = new Transaction(mongoConnect);
+        // const dbConnect = DbConnect(transactionConnect);
         let args = {
-            _dbConnect: dbConnect,
-            logger,
-            req : reqInfo,
+            _dbConnect: transactionConnect,
             globalCache,
-            appVersion,
             platform
         }
         user = await authenticateUser(token, args, id);
         //used in mongo profiling
-        let result = await invokeInternal(params, user, args, config);
+       let result = await invokeInternal(params, user, args, config);
         return result;
     } catch (err) {
         console.log("error in http", err)
@@ -169,33 +166,21 @@ const invokeInternal = async (params, user, args, config) => {
             ...paramValue,
             user
         };
-        let result = await dbConnect(
-            invoke(id, paramValue, {
+        let result = await dbConnect.invoke(id, paramValue, {
                 user,
                 timezoneOffset,
                 globalParamValue,
                 ...args
             })
-        );
-        await dbConnect(commit());
+
+        await dbConnect.commit();
         return result;
     } catch (err) {
-        const mailConfig = config && config["mailConfig"];
         try {
             await dbConnect(rollback(dbConnect));
         } catch (rollbackError) {
-
-            sendErrorMail(
-                mailConfig && mailConfig.frameworkDeveloper,
-                rollbackError,
-                "Rollback Error",
-                dbConnect,
-                params,
-                config
-            );
+            console.log("error called>>>>>")
         }
-        let developers = mailConfig && mailConfig.applicationDeveloper;
-        sendErrorMail(developers, err, "Service Log Error", dbConnect, params, config);
         throw err;
     }
 }
@@ -259,7 +244,7 @@ var sendErrorMail = async (to, error, subject, dbConnect, params, config) => {
     if(mode!=="dev"){
         console.log("Sending mail",to);
         if (!to) {
-            to = "rohit.bansal@daffodilsw.com";
+            to = "sushil.nagvan@daffodilsw.com";
         }
         let mailOptions = {
             to,
@@ -556,22 +541,34 @@ const getServiceByToken = async (reqParams, token, mongoConnect) => {
 
 //Authenticate user form token
 const authenticateUser = async (token, args, service) => {
+    console.log("authenticateUser called>>>>"+token)
     if (!token) {
         return;
     }
-    let authenticatedUserInfo = await args._dbConnect(args._dbConnect.invoke("_getAuthenticatedUser", { token, service }, args));
-    const user = authenticatedUserInfo && authenticatedUserInfo.result;
+    let authenticatedUserInfo = await authenticatedUserData(args._dbConnect,{token,service});
+    const user = authenticatedUserInfo && authenticatedUserInfo.result.length > 0 && authenticatedUserInfo.result[0];
     if (!user) {
         throw new Error("Invalid token >>>>>>>>>>>>", token);
     }
+    console.log("user  authenticateUser successfully>>>>"+JSON.stringify(user))
     return user;
 };
+
 
 const DbConnect = nativeDB => {
     return (fn, data) => {
         return fn(nativeDB, data);
     };
 };
+const invoke=(methodName, methodParams, args)=> {
+    return allFunction[methodName](methodParams,args)
+}
+let authenticatedUserData=async(db,data)=>{
+    let user=await db.find("Connection",{filter:{token:data.token}},{limit:1})
+    return user;
+}
+
+
 
 
 module.exports = {

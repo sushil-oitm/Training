@@ -11,10 +11,10 @@ var app = express();
 
 var server = http.Server(app);
 let connection={
-    host: "127.0.0.1",
+    host: "192.168.100.119",
     port: 27017,
     authEnabled:false,
-    dbName: "test1",
+    dbName: "productivity_testing",
     fileDBName: "files_db",
     logDBName: "app_v3_logs"
 }
