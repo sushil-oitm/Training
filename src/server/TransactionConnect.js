@@ -18,7 +18,6 @@ export default class Transaction {
         });
     }
     find(table, query,option) {
-        console.log("tranaction find called")
         return this._db.find(table, query, { ...option,logger: this.logger }).then(res => {
             return res;
         });

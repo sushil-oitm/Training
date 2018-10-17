@@ -64,7 +64,7 @@ class MongoConnect {
         });
     }
     find(table, query,option) {
-        console.log("mongo find called :")
+        // console.log("mongo find called :")
         let { filter } = query;
         return new Promise((resolve, reject) => {
             this.connectDB()
@@ -74,7 +74,7 @@ class MongoConnect {
                             reject(err);
                             return;
                         }
-                        console.log("mongo result is>>>>"+JSON.stringify(result))
+                        // console.log("mongo result is>>>>"+JSON.stringify(result))
                         resolve({ result });
                     });
                 })
