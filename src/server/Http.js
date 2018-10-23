@@ -152,7 +152,7 @@ const invokeInternal = async (params, user, args, config) => {
         return result;
     } catch (err) {
         try {
-            await dbConnect(rollback(dbConnect));
+            await dbConnect.rollback();
         } catch (rollbackError) {
             console.log("error called>>>>>")
         }

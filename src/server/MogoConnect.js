@@ -65,11 +65,14 @@ class MongoConnect {
     }
     find(table, query,option) {
         // console.log("mongo find called :")
-        let { filter } = query;
+        let { filter, fields, ...restOptions } = query;
+        console.log("filter>>>>>>",filter)
+        console.log("fields>>>>>>",fields)
+        console.log("table>>>>>>",table)
         return new Promise((resolve, reject) => {
             this.connectDB()
                 .then(mongoDB => {
-                    mongoDB.collection(table).find(filter, option).toArray((err, result) => {
+                    mongoDB.collection(table).find(filter, {fields,...restOptions,...option}).toArray((err, result) => {
                         if (err) {
                             reject(err);
                             return;

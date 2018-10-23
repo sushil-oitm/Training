@@ -1,55 +1,81 @@
-import MongoConnect from "./MongoConnect"
+import MongoConnect from "./MogoConnect"
 let mongo = require("mongodb");
+
 export const config={
     host: "192.168.100.119",
     port: 27017,
-    dbName: "productivity_testing",
+    dbName: "autoload",
     authEnabled: false
 }
+let db=new MongoConnect({config})
 
 let tripSchema = {
     _id :{type :"objectId"},
-    truck: {type: "fk", table:"trucks"},
+    vehicle: {type: "fk", table:"vehicle"},
     transporter: {type: "fk", table:"entities"},
     customer: {type: "fk", table:"entities"},
-    imei_mapping: {type: "fk", table:"imei_mapping"},
+    // imei_mapping: {type: "fk", table:"imei_mapping"},
     imei: "string",
     status: "string",
 }
 let truckSchema = {
     _id :{type :"objectId"},
     truck_no: "string",
+    vehicle_type: "string",
     imei: "string",
     alert_time: "date",
     powercut: "boolean",
-    fleet_owner: {type: "fk", table:"entities"},
+    transporter: {type: "fk", table:"transpoter"},
 }
 let entitySchema={
     _id :{type :"objectId"},
     name:"string",
-    email:"string"
+    email:"string",
+    branch: {type: "fk", table:"transpoterbranch"}
+}
+let entityBranchSchema={
+    _id :{type :"objectId"},
+    name:"string",
+    email:"string",
+    city:{type:"fk",table:"city"}
+
+}
+let citySchema={
+    _id :{type :"objectId"},
+    name:"string",
+
+}
+let stateSchema={
+    _id :{type :"objectId"},
+    name:"string",
+    email:"string",
+
 }
 
 var getSchema = (table)=>{
-    if(table =="offers"){
+    if(table =="trip"){
         return tripSchema;
-    }else if(table =="trucks"){
+    }else if(table =="vehicle"){
         return truckSchema;
-    }else if(table =="entities"){
+    }else if(table =="transpoter"){
         return entitySchema;
+    }else if(table =="transpoterbranch"){
+        return entityBranchSchema;
     }
     return null;
 }
 
 
 
-export const getTripData=async (mongoConnect,query)=>{
+export const getTripData=async (mongoConnect)=>{
     console.log("getTripData called>>>>>")
-    // let query={"imei" : "358735072873754",_id:mongo.ObjectID("5b618c299970c08c655ae7ff")}
-    let fields={_id:1,status:1,imei:1,"customer.email":1,"customer._id":1,"transporter.email":1,"transporter._id":1,"truck":1}
-    let table="offers"
+     // let query={"imei" : "358735072873754",_id:mongo.ObjectID("5b30cd3eff56bf4752e26ea8")}
+     let query={_id:mongo.ObjectID("5b30cd3eff56bf4752e26ea8")}
+    // let fields={_id:1,status:1,imei:1,"vehicle._id":1,"vehicle.vehicle_type":1}
+    let fields={_id:1,status:1,imei:1,vehicle:{_id:1,vehicle_type:1,transporter:{_id:1,name:1,branch:{_id:1,name:1}}}}
+    let table="trip"
     let result = await getTableData(query,fields,table,mongoConnect);
-    // console.log("final result >>>>."+JSON.stringify(result));
+     console.log("final result >>>>."+JSON.stringify(result));
     return result;
 }
 
@@ -57,10 +83,11 @@ export const getTripData=async (mongoConnect,query)=>{
 let getTableData=async(query ,fields, table,mongoConnect)=>{
     // console.log(`getTableData called with fields>>>> ${JSON.stringify(fields)} table ${table}`)
     let subqueryFields= resolveSubqueryFields(fields,table);
-    // console.log(`fields pass to query>>>> ${JSON.stringify(fields)}`)
-    let salData = await mongoConnect.find(table,{filter:query,fields:fields});
+     console.log(`fields pass to query>>>> ${JSON.stringify(fields)}`)
+    let realFields=resolveFields(fields)
+    let salData = await mongoConnect.find(table,{filter:query,fields:realFields});
     salData=salData.result;
-    // console.log(`result of query>>>> ${JSON.stringify(salData)}`)
+     console.log(`result of query>>>> ${JSON.stringify(salData)}`)
     let subResult = await getSubqueryResult(salData,subqueryFields,mongoConnect);
     let data = salData;
     if(subResult && Object.keys(subResult).length >0){
@@ -92,16 +119,29 @@ let mapOfRelation=(tar, rel)=>{
 }
 
 // let subqueryFields
+const  resolveFields =(obj,target,prefix)=> {
+    target = target || {},
+        prefix = prefix || "";
+
+    Object.keys(obj).forEach(function(key) {
+        if ( typeof(obj[key]) === "object" ) {
+            resolveFields(obj[key],target,prefix + key + ".");
+        } else {
+            return target[prefix + key] = obj[key];
+        }
+    });
+
+    return target;
+}
 let resolveSubqueryFields=(fields, table)=>{
     let subqueryFields = {};
     let schema = getSchema(table);
+    console.log("fields>>>>>"+JSON.stringify(fields))
     for(let key in fields){
         let mainKey = key;
         let secondPart = null;
-        let index = key.indexOf(".");
-        if(index > -1){
-            mainKey = key.substring(0, index);
-            secondPart = key.substring(index+1);
+        if(key && Object.keys(fields[key]).length > 0){
+            mainKey = key;
         }
         if(schema[mainKey].type == "fk"){
             if(!subqueryFields[schema[mainKey].table]){
@@ -109,17 +149,15 @@ let resolveSubqueryFields=(fields, table)=>{
             }
             if(!subqueryFields[schema[mainKey].table]["fields"]){
                 subqueryFields[schema[mainKey].table]["fields"] = {};
-                subqueryFields[schema[mainKey].table]["fields"][secondPart] = 1;
+                subqueryFields[schema[mainKey].table]["fields"] = fields[key];
                 subqueryFields[schema[mainKey].table]["relation"] = {
                     localField :mainKey,
                     foreignKey : "_id"
                 }
             }else {
                 subqueryFields[schema[mainKey].table]["fields"] =subqueryFields[schema[mainKey].table]["fields"]
-                subqueryFields[schema[mainKey].table]["fields"][secondPart] = 1;
+                subqueryFields[schema[mainKey].table]["fields"] = fields[key];
             }
-            // if(secondPart == "_id")
-            // delete fields[key];
         }
     }
     return subqueryFields;
@@ -133,14 +171,23 @@ let getSubqueryResult = async (subdata,subqueryFields,mongoConnect) =>{
     let table = Object.keys(subqueryFields)[0];
     if(table){
         let relation = clone(subqueryFields[table]["relation"]);
+        console.log("relation>>>>>",relation)
         let filter = [];
         if(subdata && subdata.length>0){
             for(let i=0;i<subdata.length; i++){
-                filter.push(mongo.ObjectID(subdata[i][relation.localField]["_id"]));
+                if(subdata[i][relation.localField] && mongo.ObjectID(subdata[i][relation.localField]["_id"])){
+                    filter.push(subdata[i][relation.localField]["_id"]);
+                }
+
             }
         }
-        let data = await getTableData({_id:{$in: filter}} ,clone(subqueryFields[table]["fields"]), table,mongoConnect);
-        return {data, relation}
+        console.log("filter>>>>>",filter)
+        if(filter && filter.length >0){
+            let data = await getTableData({_id:{$in: filter}} ,clone(subqueryFields[table]["fields"]), table,mongoConnect);
+            return {data, relation}
+        }
+        return;
+
     }
 }
 
@@ -151,5 +198,7 @@ let clone=(obj)=>{
         c[k] = obj[k]
     return c;
 }
+
+getTripData(db);
 
 
