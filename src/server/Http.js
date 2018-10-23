@@ -114,7 +114,7 @@ const _invoke = async (params, reqInfo, config) => {
         }
 
         const transactionConnect = new Transaction(mongoConnect);
-        // const dbConnect = DbConnect(transactionConnect);
+         // const dbConnect = new DbConnect(transactionConnect);
         let args = {
             _dbConnect: transactionConnect,
             globalCache,
@@ -399,6 +399,7 @@ const authenticateUser = async (token, args, service) => {
     }
     let authenticatedUserInfo = await authenticatedUserData(args._dbConnect,{token,service});
     const user = authenticatedUserInfo && authenticatedUserInfo.result.length > 0 && authenticatedUserInfo.result[0];
+   // console.log("user>>>>>",user)
     if (!user) {
         throw new Error("Invalid token >>>>>>>>>>>>", token);
     }

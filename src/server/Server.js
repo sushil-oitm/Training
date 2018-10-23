@@ -13,7 +13,7 @@ let connection={
     host: "192.168.100.119",
     port: 27017,
     authEnabled:false,
-    dbName: "productivity_testing",
+    dbName: "autoload",
     fileDBName: "files_db",
     logDBName: "app_v3_logs"
 }

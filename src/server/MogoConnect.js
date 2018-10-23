@@ -1,4 +1,7 @@
+import {isJSONObject} from "../../../../excentus-store/src/rhs-common/PureFunctions";
+
 var MongoClient = require("mongodb").MongoClient;
+var ObjectId = require("mongodb").ObjectID;
 
 class MongoConnect {
     constructor({ config}) {
@@ -49,6 +52,11 @@ class MongoConnect {
         });
     }
     update(table,filter,update,options={}){
+        for(let i in filter) {
+            if (i == "_id" && "string" == typeof filter._id) {
+                filter._id = ObjectId(filter._id)
+            }
+        }
         return new Promise((resolve, reject) => {
             this.connectDB()
                 .then(mongoDB => {
@@ -66,9 +74,18 @@ class MongoConnect {
     find(table, query,option) {
         // console.log("mongo find called :")
         let { filter, fields, ...restOptions } = query;
-        console.log("filter>>>>>>",filter)
-        console.log("fields>>>>>>",fields)
-        console.log("table>>>>>>",table)
+        fields = populateDottedFields({ ...fields });
+          // console.log("filter>>>>>>",filter)
+         // console.log("fields>>>>>>",fields)
+        // console.log("table>>>>>>",table)
+        // for(let i in filter) {
+        //    console.log("type of>>>>"+typeof i)
+        // }
+        for(let i in filter) {
+            if (i == "_id" && "string" == typeof filter._id) {
+                filter._id = ObjectId(filter._id)
+            }
+        }
         return new Promise((resolve, reject) => {
             this.connectDB()
                 .then(mongoDB => {
@@ -128,6 +145,11 @@ class MongoConnect {
 
     remove(table, filter) {
         // console.log("Mongo >>> remove >>> Table>>>>>", table, ">>>filter>>>>>", filter);
+        for(let i in filter) {
+            if (i == "_id" && "string" == typeof filter._id) {
+                filter._id = ObjectId(filter._id)
+            }
+        }
         return new Promise((resolve, reject) => {
             const options = { w: 1 };
             this.connectDB()
@@ -145,5 +167,23 @@ class MongoConnect {
     }
 
 }
+
+const populateDottedFields = (fields, pField) => {
+    if (!fields) {
+        return;
+    }
+    var queryFields = {};
+    for (var key in fields) {
+        var value = fields[key];
+        var mainKey = pField ? pField + "." + key : key;
+        if (isJSONObject(value)) {
+            var dottedFields = populateDottedFields(value, mainKey);
+            Object.assign(queryFields, dottedFields);
+        } else {
+            queryFields[mainKey] = value;
+        }
+    }
+    return queryFields;
+};
 
 export default MongoConnect;
