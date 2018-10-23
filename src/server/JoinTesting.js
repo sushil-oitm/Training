@@ -43,12 +43,12 @@ let entityBranchSchema={
 let citySchema={
     _id :{type :"objectId"},
     name:"string",
+    state:{type:"fk",table:"state"}
 
 }
 let stateSchema={
     _id :{type :"objectId"},
     name:"string",
-    email:"string",
 
 }
 
@@ -62,6 +62,12 @@ var getSchema = (table)=>{
     }else if(table =="transpoterbranch"){
         return entityBranchSchema;
     }
+    else if(table == "city"){
+        return citySchema
+    }
+    else if(table == "state"){
+        return stateSchema
+    }
     return null;
 }
 
@@ -72,7 +78,7 @@ export const getTripData=async (mongoConnect)=>{
      // let query={"imei" : "358735072873754",_id:mongo.ObjectID("5b30cd3eff56bf4752e26ea8")}
      let query={_id:mongo.ObjectID("5b30cd3eff56bf4752e26ea8")}
     // let fields={_id:1,status:1,imei:1,"vehicle._id":1,"vehicle.vehicle_type":1}
-    let fields={_id:1,status:1,imei:1,vehicle:{_id:1,vehicle_type:1,transporter:{_id:1,name:1,branch:{_id:1,name:1}}}}
+    let fields={_id:1,status:1,imei:1,vehicle:{_id:1,vehicle_type:1,transporter:{_id:1,name:1,branch:{_id:1,name:1,city:{_id:1,name:1,state:{_id:1,name:1}}}}}}
     let table="trip"
     let result = await getTableData(query,fields,table,mongoConnect);
      console.log("final result >>>>."+JSON.stringify(result));
