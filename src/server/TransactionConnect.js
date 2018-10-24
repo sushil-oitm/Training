@@ -471,7 +471,7 @@ const handleRollback = async (transactionInstance, dbConnect, previousTransactio
     }
 };
 
-const processRollbackUpdates(transactionInstance, data, { txid, db }, dbConnect)=> {
+const processRollbackUpdates=(transactionInstance, data, { txid, db }, dbConnect)=> {
     /*
        * if the operation in transaction is insert or delete then rollback from the transaction
        * otherwise rollback from the document

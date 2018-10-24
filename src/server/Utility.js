@@ -5,24 +5,6 @@ export const isValidEmail = value => {
         return true;
     }
 };
-export const populateDottedFields = (fields, pField) => {
-    if (!fields) {
-        return;
-    }
-    var queryFields = {};
-    for (var key in fields) {
-        var value = fields[key];
-        var mainKey = pField ? pField + "." + key : key;
-        if (isJSONObject(value)) {
-            var dottedFields = populateDottedFields(value, mainKey);
-            Object.assign(queryFields, dottedFields);
-        } else {
-            queryFields[mainKey] = value;
-        }
-    }
-    return queryFields;
-};
-
 export const iterator = (array, task) => {
     return new Promise((resolve, reject) => {
         var length = array ? array.length : 0;
