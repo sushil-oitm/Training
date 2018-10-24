@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import {findData} from "./DbQuery";
-var objectID = require("mongodb").ObjectID;
+let objectID = require("mongodb").ObjectID;
 
 const _find = async (paramValue, args) => {
     console.log("paramValue>>>>" + JSON.stringify(paramValue))
@@ -36,7 +36,7 @@ const _save = async (paramValue, args) => {
     } else if (remove) {
         let old = await args._dbConnect.find(table, {filter: remove})
         old = old.result;
-        console.log("old>>>>" + JSON.stringify(old))
+        // console.log("old>>>>" + JSON.stringify(old))
         if (old && old.length > 0) {
             old = old[0]
         }
@@ -66,7 +66,7 @@ let updateData = async (table, update, db) => {
     let filter = {_id: _id}
     let old = await db.find(table, {filter})
     old = old.result;
-    console.log("old>>>>" + JSON.stringify(old))
+    // console.log("old>>>>" + JSON.stringify(old))
     if (old && old.length > 0) {
         old = old[0]
     }
