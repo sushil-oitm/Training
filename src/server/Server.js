@@ -14,13 +14,19 @@ let connection = {
     dbName: "autoload"
 }
 
+var openServices = [
+    "createUser",
+    "_authenticateUser"
+];
+
 let mongoConnect = new MongoConnect({config: connection});
 var context = {};
 context = getCLAs(context);
 const PORT = context.PORT;
 configure(app, {
     mongoConnect,
-    context
+    context,
+    openServices
 })
     .then(_ => {
         server.listen(PORT, () => console.log(`>> Server is now running on http://localhost:${PORT}`));

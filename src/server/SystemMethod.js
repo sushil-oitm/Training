@@ -1,4 +1,6 @@
+import crypto from "crypto";
 import {findData} from "./DbQuery";
+var objectID = require("mongodb").ObjectID;
 
 const _find = async (paramValue, args) => {
     console.log("paramValue>>>>" + JSON.stringify(paramValue))
@@ -45,7 +47,8 @@ const _save = async (paramValue, args) => {
 };
 
 let insertData = async (table, insert, db) => {
-    await db.insert(table, insert)
+   let insertedData= await db.insert(table, insert)
+    return insertedData;
 };
 
 let removeData = async (table, filter, option, db) => {
@@ -70,8 +73,98 @@ let updateData = async (table, update, db) => {
     await db.update(table, filter, changes, {old})
 };
 
+let _authenticateUser = async(params, args) => {
+       let {_dbConnect}=args;
+        let { email, password, _google_authenticated_, mobile } = params;
+        let filter={};
+        if (!_google_authenticated_) {
+            if ((!email && !mobile) ||  !password) {
+                throw new Error("Provide credential");
+            }
+        }
+
+        if (!_google_authenticated_) {
+            password = encryptPassword({ password });
+            filter["enc_p"] = password.encPassword;
+        }
+        let user = await _dbConnect.find("User", {filter})
+           user = user.result && user.result.length > 0 && user.result[0] || void 0;
+        let token = getToken();
+
+    if (!user) {
+        throw new Error("Not authorised");
+    }
+    await insertData("Connection", {user: { _id: user._id }, token}, args._dbConnect)
+
+    return {result: {user: {...user}, token}};
+
+};
+
+const createUser = async (params, args) => {
+        let { password, firstName = "", lastName = "", email, mobile } = params;
+        const { _dbConnect} = args;
+        if (!email || !password) {
+            throw new Error(`Please provide value of mandatory parameters [email/password]`);
+        }
+       let otp = getOtp();
+        let user = await _dbConnect.find("User", {filter:{email}})
+        user = user.result && user.result.length > 0 && user.result[0] || void 0;
+        // console.log("user>>>>",user)
+        if (user) {
+            throw new Error(`User [${email}] is already exists`);
+        }
+        if (mobile) {
+            let mobileResult = await _dbConnect.find("User", {filter:{mobile}})
+            mobileResult = mobileResult.result && mobileResult.result.length > 0 && mobileResult.result[0] || void 0;
+            if (mobileResult) {
+                throw new Error(`User [${mobile}] is already exists`);
+            }
+        }
+        let encPwd = encryptPassword({ password });
+        let userInsert = {
+            email,
+            otp,
+            enc_p: encPwd && encPwd.encPassword,
+            username: firstName + " " + lastName
+        };
+        if (mobile) {
+            userInsert.mobile = mobile;
+        }
+        let userResult =  await insertData("User", userInsert, args._dbConnect)
+        userResult=userResult.result;
+        // console.log("userResult>>>>>>"+JSON.stringify(userResult))
+        return userResult;
+};
+
+var getOtp = _ => {
+    var digit = void 0;
+    do {
+        digit = Number(Math.random() * 999999).toFixed();
+    } while (digit.length != 6);
+    return digit;
+};
+
+var encryptPassword = ({ password }) => {
+    if (password == undefined || password === null) {
+        return;
+    }
+    if (typeof password !== "string") {
+        password += "";
+    }
+    let _encPassword = crypto.createHash("sha256").update(password).digest("hex");
+    return {
+        encPassword: _encPassword
+    };
+};
+
+var getToken = _ => {
+    return require("crypto").createHash("sha1").update(objectID().toString()).digest("hex");
+};
+
 let allmethod = {
     transactiontest,
+    _authenticateUser,
+    createUser,
     _find,
     _save
 }

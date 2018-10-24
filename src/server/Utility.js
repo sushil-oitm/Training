@@ -5,6 +5,7 @@ export const isValidEmail = value => {
         return true;
     }
 };
+
 export const iterator = (array, task) => {
     return new Promise((resolve, reject) => {
         var length = array ? array.length : 0;

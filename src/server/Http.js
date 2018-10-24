@@ -9,7 +9,7 @@ var configure = async (
     app,
     config
 ) => {
-    let {mailConfig, mongoConnect, context, port} = config;
+    let {mailConfig, mongoConnect, context} = config;
     process.on("uncaughtException", function (err) {
         console.log(">>>>uncaughtException>>>>>>>>>>>>", err.stack);
     });
@@ -104,13 +104,18 @@ const getRequestInfo = (req) => {
 
 const _invoke = async (params, reqInfo, config) => {
     console.log(">>>>/invoke called >>>>>>", JSON.stringify(params));
-    let {mongoConnect, port, globalCache, context} = config || {};
+    let {mongoConnect, port, globalCache, context,openServices} = config || {};
     try {
-        let {id, token, appVersion, platform, deleteToken} = params;
+        let {id, token, platform,isOpenService=false,user={}} = params;
         if (!id) {
             throw new Error("id is mandatory in invoke service");
         }
-        if (!token) {
+        if(openServices && openServices.length > 0){
+           if(openServices.indexOf(id)>-1){
+               isOpenService=true;
+           }
+        }
+        if (!token && !isOpenService) {
             throw new Error(`token is mandatory in invoke service >>>> ${id}`);
         }
 
@@ -121,7 +126,10 @@ const _invoke = async (params, reqInfo, config) => {
             globalCache,
             platform
         }
-        let user = await authenticateUser(token, args, id);
+        if(!isOpenService){
+            user = await authenticateUser(token, args, id);
+        }
+
         //used in mongo profiling
         let result = await invokeInternal(params, user, args, config);
         return result;
@@ -389,7 +397,7 @@ const authenticateUser = async (token, args, service) => {
     if (!user) {
         throw new Error("Invalid token >>>>>>>>>>>>", token);
     }
-    console.log("user  authenticateUser successfully>>>>" + JSON.stringify(user))
+    // console.log("user  authenticateUser successfully>>>>" + JSON.stringify(user))
     return user;
 };
 
