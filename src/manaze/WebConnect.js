@@ -1,6 +1,6 @@
 import qs from "qs";
 import { observable } from "mobx";
-var io = require("socket.io-client");
+// var io = require("socket.io-client");
 
 export default class WebConnect {
     config = null;

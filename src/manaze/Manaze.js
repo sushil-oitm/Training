@@ -2,72 +2,25 @@ import React from "react";
 import { observable } from "mobx";
 import { Provider, observer, inject } from "mobx-react";
 import Router from "./Router";
- import WebConnect,{loadUser} from "./WebConnect";
-// import { find, findData, upload } from "./WebDbConnect";
-import Methods from "../component/Testing";
-let {Project,Progress,Task,Login,Resource,External}=Methods;
-
-let routes=
-    {
-        project_detail: {
-            component:Task
-        },
-        resources:{
-            component:Resource
-        },
-        projects:{
-            component:Project
-        },
-        tasks:{
-            component:Task
-        },
-        progress:{
-            component:Progress
-        },
-        login:{
-            component:Login
-        }
-    }
-function getLocation() {
-    if (typeof window !== undefined) {
-        return window.location || { pathname: "/" };
-    }
-}
+import {routes} from "./../Routes";
+import WebConnect,{loadUser} from "./WebConnect";
+import Methods from "../components/Testing";
+import {getLocation,splitPath} from "./ManazeUtilities"
+let {External}=Methods;
 
 const config = {
     url: "http://127.0.0.1:5000"
 };
-const splitPath = path => {
-    let split = path.trim().split("/");
-    let paths = [];
-    let pathToPush = "";
-    split.forEach(subPath => {
-        subPath = subPath.trim();
-        if (subPath.length === 0) {
-            return;
-        }
-        pathToPush += `/${subPath}`;
-        const indexOfHash = subPath.indexOf("#");
-        if (indexOfHash === -1) {
-            paths.push({ path: pathToPush });
-            pathToPush = "";
-        }
-    });
-    if (pathToPush) {
-        paths.push({ path: pathToPush });
-    }
-    return paths;
-};
- const webConnect = new WebConnect({ config });
+
+const webConnect = new WebConnect({ config });
 const userStore = observable.map({});
-userStore.set("status", "logged_in")
 loadUser()
     .then(user => {
         if (user) {
             webConnect.setUser(user);
             userStore.set("status", "logged_in");
         } else {
-            userStore.set("status", "logged_out");
+            userStore.set("status", "logged_in");
         }
     })
     .catch(e => {
@@ -95,7 +48,7 @@ class ManazeAppComponent extends React.Component {
         super(props);
         let { pathname, hash } = getLocation();
         let userStatus = userStore.get("status");
-        let pathToSet = userStatus !== "logged_in" ? "/login" : pathname === "/" ? "/resource" : pathname + hash;
+        let pathToSet = userStatus !== "logged_in" ? "/login" : pathname === "/" ? "/resources" : pathname + hash;
         this.path = observable(splitPath(pathToSet));
         this.params = {
             reportingPeriod: observable({

@@ -1,7 +1,5 @@
 import React from "react";
-import './../Manaze.css';
 import { observer, Provider, inject } from "mobx-react";
-import List from "./List"
 class External extends React.Component {
     constructor(props) {
         super(props);
@@ -36,7 +34,7 @@ class Resource extends React.Component {
         console.log("data in internal is>>>>"+JSON.stringify(data))
         return (
             <div className="flex-1">
-                   <List/>
+                Resource called
             </div>
         );
     }
@@ -50,8 +48,9 @@ class Project extends React.Component {
         const { data} = this.props;
         console.log("data in internal is>>>>"+JSON.stringify(data))
         return (
-
-                <List detail={"project_detail"}/>
+            <div className="flex-1">
+                Project called
+            </div>
 
         );
     }
@@ -66,7 +65,7 @@ class Task extends React.Component {
         console.log("data in internal is>>>>"+JSON.stringify(data))
         return (
             <div className="flex-1">
-                <List/>
+                Task called
             </div>
         );
     }
@@ -82,7 +81,7 @@ class Progress extends React.Component {
         console.log("data in internal is>>>>"+JSON.stringify(data))
         return (
             <div className="flex-1">
-                <List/>
+                Progress called
             </div>
         );
     }
