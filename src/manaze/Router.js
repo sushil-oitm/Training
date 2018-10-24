@@ -1,3 +1,4 @@
+"use strict";
 import React from "react";
 import { observer, Provider, inject } from "mobx-react";
 import  {appdata} from "./Data";
@@ -9,11 +10,11 @@ const matchView = ({ view, routes }) => {
     let requiredRoute = null;
     for (var index in routes) {
         const route = routes[index];
-        console.log("route>>>>>>"+JSON.stringify(route))
-        console.log("index>>>>>>"+index)
-        console.log("view>>>>>>"+view)
+        // console.log("route>>>>>>"+JSON.stringify(route))
+        // console.log("index>>>>>>"+index)
+        // console.log("view>>>>>>"+view)
         requiredView = (index==view)? true:false;
-        console.log("requiredView>>>>>>"+requiredView)
+        // console.log("requiredView>>>>>>"+requiredView)
         if (requiredView) {
             requiredRoute = route;
             break;
@@ -28,6 +29,7 @@ const matchView = ({ view, routes }) => {
     };
 };
 
+@inject("webConnect")
 @inject("path")
 @inject("params")
 @observer
@@ -35,9 +37,12 @@ class Router extends React.Component {
 
      constructor(props, context) {
         super(props, context);
+        let com=[]
+         com.push(<Test />)
+        this.state={Components:com}
     }
     componentDidMount() {
-        let { path } = this.props;
+        let { path,routes } = this.props;
         if (typeof window !== undefined && Platform.OS === "web") {
             /*onClick browser back button this listener will run -akshay 5JAn */
             window.onpopstate = _ => {
@@ -50,16 +55,25 @@ class Router extends React.Component {
                 path.replace(splitPath(pathname + hash));
             };
         }
+
+        const roots = this.splitRoots(path, routes);
+       this.getComponents(roots, path).then(comp=>{
+           this.setState({"Components":comp})
+       }).catch(e => {
+           alert(e.message || e);
+           console.log("error in load logo >>>", e);
+       });
     }
 
-    getComponents(roots, params) {
-        // const { find} = this.props;
+   async getComponents(roots, params) {
+         const { webConnect} = this.props;
         let components = [];
         for (let index = 0; index < roots.length; index++) {
             const {root, model} = roots[index];
              let  Rcomponent = model.component;
-             let data=appdata[root];
-             let meta=fields[root];
+               let  data=await webConnect.find("trip",{filter:{},fields:{}})
+            console.log("data in router>>>>>"+JSON.stringify(data))
+              let meta=fields[root];
             let com= (
                 <Provider data={data} meta={meta}>
                     <Rcomponent />
@@ -123,11 +137,25 @@ class Router extends React.Component {
     }
 
     render() {
-         const { path, children, routes, params } = this.props;
-         const roots = this.splitRoots(path, routes);
-         const Components = this.getComponents(roots, path);
+          const { path, children, routes, params } = this.props;
+         // const roots = this.splitRoots(path, routes);
+         const Components = this.state.Components
 
-        return React.cloneElement(children, { Internal: Components });
+        return React.cloneElement(children, { Internal: Components});
+    }
+}
+
+class Test extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        console.log("Test called>>>>>")
+        return (
+            <div className="flex-1">
+                test called
+            </div>
+        );
     }
 }
 

@@ -34,7 +34,7 @@ class ManazeApp extends React.Component {
             return "Loading...";
         }
         return (
-            <Provider userStore={userStore}>
+            <Provider userStore={userStore} webConnect={webConnect}>
                 <ManazeAppComponent />
             </Provider>
         );
