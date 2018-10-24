@@ -5,7 +5,7 @@ import Router from "./Router";
 import {routes} from "./../Routes";
 import WebConnect,{loadUser} from "./WebConnect";
 import Methods from "../components/Testing";
-import {getLocation,splitPath} from "./ManazeUtilities"
+import {getLocation,splitPath} from "./ManazeUtilities";
 let {External}=Methods;
 
 const config = {

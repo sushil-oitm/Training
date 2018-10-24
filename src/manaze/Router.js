@@ -2,43 +2,7 @@ import React from "react";
 import { observer, Provider, inject } from "mobx-react";
 import  {appdata} from "./Data";
 import  {fields} from "./metaData";
-
-
-let setLocation=(path)=> {
-    if (typeof window !== undefined && Platform.OS === "web") {
-        let location = window.location;
-        let pathname = location.pathname + location.hash;
-        let history = window.history;
-        /*check if the path is not same as current one on window refresh by pathname !== path akshay 2Jan*/
-        history && pathname !== path && history.pushState({}, "", path);
-    }
-};
-
-class Platform {
-    static OS = "web";
-};
-
-const splitPath = path => {
-    let split = path.trim().split("/");
-    let paths = [];
-    let pathToPush = "";
-    split.forEach(subPath => {
-        subPath = subPath.trim();
-        if (subPath.length === 0) {
-            return;
-        }
-        pathToPush += `/${subPath}`;
-        const indexOfHash = subPath.indexOf("#");
-        if (indexOfHash === -1) {
-            paths.push({ path: pathToPush });
-            pathToPush = "";
-        }
-    });
-    if (pathToPush) {
-        paths.push({ path: pathToPush });
-    }
-    return paths;
-};
+import {getLocation,splitPath,Platform,setLocation} from "./ManazeUtilities";
 
 const matchView = ({ view, routes }) => {
     let requiredView = null;
