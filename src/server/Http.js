@@ -166,23 +166,8 @@ const getIp = req => {
     return ip;
 };
 
-var sendErrorMail = async (to, error, subject, dbConnect, params, config) => {
-    console.log("Error in http: ", error);
-    const mode = config && config.context && config.context.MODE;
-    if(mode!=="dev"){
-        console.log("Sending mail",to);
-        if (!to) {
-            to = "sushil.nagvan@daffodilsw.com";
-        }
-        let mailOptions = {
-            to,
-            from: "developer@daffodilsw.com",
-            subject,
-            text: `Error: ${error.message}, Stack: ${error.stack}, params : ${params ? JSON.stringify(params) : ""} `
-        };
-        // await dbConnect(invoke("_sendMail", mailOptions, { _dbConnect: dbConnect }));
-    }
-
+var sendErrorMail = async () => {
+   //mail send from here
 };
 
 

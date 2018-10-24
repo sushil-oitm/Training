@@ -1,4 +1,5 @@
-import {findData} from "./DbQuery"
+import {findData} from "./DbQuery";
+
 const _find=async(paramValue,args)=>{
     console.log("paramValue>>>>"+JSON.stringify(paramValue))
     // console.log("args>>>>"+JSON.stringify(args))
