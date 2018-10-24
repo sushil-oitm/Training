@@ -1,4 +1,4 @@
-import {isJSONObject} from "../../../../excentus-store/src/rhs-common/PureFunctions";
+import {populateDottedFields} from "./Utility";
 
 var MongoClient = require("mongodb").MongoClient;
 var ObjectId = require("mongodb").ObjectID;
@@ -168,22 +168,6 @@ class MongoConnect {
 
 }
 
-const populateDottedFields = (fields, pField) => {
-    if (!fields) {
-        return;
-    }
-    var queryFields = {};
-    for (var key in fields) {
-        var value = fields[key];
-        var mainKey = pField ? pField + "." + key : key;
-        if (isJSONObject(value)) {
-            var dottedFields = populateDottedFields(value, mainKey);
-            Object.assign(queryFields, dottedFields);
-        } else {
-            queryFields[mainKey] = value;
-        }
-    }
-    return queryFields;
-};
+
 
 export default MongoConnect;

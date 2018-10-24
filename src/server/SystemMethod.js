@@ -61,7 +61,7 @@ let updateData=async(table,update,db)=>{
     if(old && old.length>0){
         old=old[0]
     }
-   await db.update(table, filter, changes,{},{old})
+   await db.update(table, filter, changes,{old})
 }
 let allmethod={
     transactiontest,

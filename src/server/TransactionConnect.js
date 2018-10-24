@@ -2,11 +2,10 @@ var ObjectId = require("mongodb").ObjectID;
 import {deepEqual,resolveValue,isJSONObject} from "./Utility";
 import allMethod from "./SystemMethod"
 export default class Transaction {
-    constructor(db, txid, {port, mailConfig, context } = {}) {
+    constructor(db, txid, {port, context } = {}) {
         this._db = db;
         this.txid = txid || new ObjectId();
         this.port = port;
-        this.mailConfig = mailConfig;
         this.context = context;
         // console.log("context>>>>"+JSON.stringify(context))
     }
@@ -21,12 +20,12 @@ export default class Transaction {
         });
     }
 
-    insert(table, insert, subModelChanges, options, { skipTx } = {}) {
+    insert(table, insert,options, { skipTx } = {}) {
         return beforeInsert(
-            { table, insert, subModelChanges, txid: this.txid, port: this.port, skipTx },
+            { table, insert, txid: this.txid, port: this.port, skipTx },
             this._db
         ).then(_ => {
-            return this._db.insert(table, insert, subModelChanges, options, {}).then(result => {
+            return this._db.insert(table, insert, options, {}).then(result => {
                 return result;
             });
         });
@@ -43,12 +42,12 @@ export default class Transaction {
         });
     }
 
-     update(table, filter, update, subModelChanges, options = {}, { skipTx } = {}) {
+     update(table, filter, update, options = {}, { skipTx } = {}) {
         return beforeUpdate(
-            { ...options, update, subModelChanges, filter, table, txid: this.txid, port: this.port, skipTx },
+            { ...options, update, filter, table, txid: this.txid, port: this.port, skipTx },
             this._db
         ).then(_ => {
-            return this._db.update(table, filter, update, subModelChanges, options, { logger: this.logger }).then(result => {
+            return this._db.update(table, filter, update, options, {}).then(result => {
                 return result;
             });
         });
@@ -472,7 +471,7 @@ const handleRollback = async (transactionInstance, dbConnect, previousTransactio
     }
 };
 
-function processRollbackUpdates(transactionInstance, data, { txid, db }, dbConnect) {
+const processRollbackUpdates(transactionInstance, data, { txid, db }, dbConnect)=> {
     /*
        * if the operation in transaction is insert or delete then rollback from the transaction
        * otherwise rollback from the document
@@ -716,22 +715,7 @@ async function rollbackTopLevelFields(collection, txToRollback, newUpdate, db, d
 }
 
 var sendMailforErrorInRollBack = (err, tx, dbConnect, mailConfig, recepients, subject) => {
-    var os = require("os");
-    var date = new Date();
-    var options = {};
-    const { to } = mailConfig;
-    options.to = to;
-    options.from = "sushil.oitm@daffodilsw.com";
-    options.subject = subject || "Error in Rollback Transaction";
-    options.html = `
-       <p> Error: ${err.message} </p></br>
-       <p> dir: ${__dirname} </p></br>
-       <p> host: ${os.hostname()} </p></br>
-       <p> Date: ${date} </p></br>
-       <p> Stack: ${err.stack} </p></br>  
-       <p> tx:${JSON.stringify(tx)} </p></br>
-    `;
-    // return dbConnect && dbConnect(invoke("_sendMail", options));
+   //send mail from here
 };
 
 /**
