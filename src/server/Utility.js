@@ -1,4 +1,4 @@
-import { map, get, uniq, flatten, pullAll } from "lodash";
+import {map, get, uniq, flatten, pullAll} from "lodash";
 
 export const isValidEmail = value => {
     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
@@ -15,7 +15,7 @@ export const iterator = (array, task) => {
         var index = 0;
         var loop = index => {
             try {
-                var onResolve = function() {
+                var onResolve = function () {
                     index = index + 1;
                     if (index === array.length) {
                         resolve();
@@ -29,7 +29,7 @@ export const iterator = (array, task) => {
                         onResolve();
                         return;
                     }
-                    p.then(onResolve).catch(function(err) {
+                    p.then(onResolve).catch(function (err) {
                         reject(err);
                     });
                 } catch (e) {
@@ -68,7 +68,8 @@ export const getCLAs = (config = {}) => {
             if (value !== undefined) {
                 try {
                     value = JSON.parse(value);
-                } catch (err) {}
+                } catch (err) {
+                }
                 putDottedValue(prev, current.substring(0, indexOf), value);
             }
         }

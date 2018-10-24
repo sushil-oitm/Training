@@ -1,28 +1,31 @@
 var ObjectId = require("mongodb").ObjectID;
-import {deepEqual,resolveValue,isJSONObject} from "./Utility";
+import {deepEqual, resolveValue, isJSONObject} from "./Utility";
 import allMethod from "./SystemMethod"
+
 export default class Transaction {
-    constructor(db, txid, {port, context } = {}) {
+    constructor(db, txid, {port, context} = {}) {
         this._db = db;
         this.txid = txid || new ObjectId();
         this.port = port;
         this.context = context;
         // console.log("context>>>>"+JSON.stringify(context))
     }
+
     aggregate(table, query) {
         return this._db.aggregate(table, query, {}).then(res => {
             return res;
         });
     }
-    find(table, query,option) {
-        return this._db.find(table, query, { ...option}).then(res => {
+
+    find(table, query, option) {
+        return this._db.find(table, query, {...option}).then(res => {
             return res;
         });
     }
 
-    insert(table, insert,options, { skipTx } = {}) {
+    insert(table, insert, options, {skipTx} = {}) {
         return beforeInsert(
-            { table, insert, txid: this.txid, port: this.port, skipTx },
+            {table, insert, txid: this.txid, port: this.port, skipTx},
             this._db
         ).then(_ => {
             return this._db.insert(table, insert, options, {}).then(result => {
@@ -31,9 +34,9 @@ export default class Transaction {
         });
     }
 
-    remove(table, filter, options = {}, { skipTx } = {}) {
+    remove(table, filter, options = {}, {skipTx} = {}) {
         return beforeDelete(
-            { ...options, table, txid: this.txid, port: this.port, skipTx, status: this.status },
+            {...options, table, txid: this.txid, port: this.port, skipTx, status: this.status},
             this._db
         ).then(_ => {
             return this._db.remove(table, filter).then(result => {
@@ -42,9 +45,9 @@ export default class Transaction {
         });
     }
 
-     update(table, filter, update, options = {}, { skipTx } = {}) {
+    update(table, filter, update, options = {}, {skipTx} = {}) {
         return beforeUpdate(
-            { ...options, update, filter, table, txid: this.txid, port: this.port, skipTx },
+            {...options, update, filter, table, txid: this.txid, port: this.port, skipTx},
             this._db
         ).then(_ => {
             return this._db.update(table, filter, update, options, {}).then(result => {
@@ -54,7 +57,7 @@ export default class Transaction {
     }
 
     invoke(methodName, methodParams, args) {
-    return allMethod[methodName](methodParams,args)
+        return allMethod[methodName](methodParams, args)
     }
 
     async commit() {
@@ -75,7 +78,8 @@ export default class Transaction {
         console.log("rollback successfully")
         // delete this.txid;
     }
-     getTxId = () => {
+
+    getTxId = () => {
         return this.txid;
     };
 
@@ -94,7 +98,7 @@ export default class Transaction {
 }
 
 
-const beforeInsert = async ({ table, insert, txid, port, skipTx }, db) => {
+const beforeInsert = async ({table, insert, txid, port, skipTx}, db) => {
     if (!txid) {
         throw new Error("Transaction id is mandatory");
     }
@@ -110,7 +114,7 @@ const beforeInsert = async ({ table, insert, txid, port, skipTx }, db) => {
         [txid]: {}
     };
     var TxInsert = {
-        tx: { collection: table, delete: { _id: _id } },
+        tx: {collection: table, delete: {_id: _id}},
         status: "Pending",
         txid,
         port,
@@ -120,7 +124,7 @@ const beforeInsert = async ({ table, insert, txid, port, skipTx }, db) => {
     return await insertTransactionDetails(db, TxInsert);
 };
 
-const beforeDelete = async ({ table, old, filter, txid, port, skipTx }, db) => {
+const beforeDelete = async ({table, old, filter, txid, port, skipTx}, db) => {
     if (!txid) {
         throw new Error("Transaction id is mandatory");
     }
@@ -129,7 +133,7 @@ const beforeDelete = async ({ table, old, filter, txid, port, skipTx }, db) => {
     }
     // console.log("old>>>>>>"+JSON.stringify(old));
     var txInsert = {
-        tx: { collection: table, insert: old },
+        tx: {collection: table, insert: old},
         status: "Pending",
         txid,
         port,
@@ -138,7 +142,7 @@ const beforeDelete = async ({ table, old, filter, txid, port, skipTx }, db) => {
     return await insertTransactionDetails(db, txInsert);
 };
 
-const beforeUpdate = async ({ update, old, filter, subModelChanges, table, txid, port, skipTx }, db) => {
+const beforeUpdate = async ({update, old, filter, subModelChanges, table, txid, port, skipTx}, db) => {
     // console.log("beforeUpdate called>>>>>")
     if (!txid) {
         throw new Error("Transaction id is mandatory");
@@ -150,7 +154,7 @@ const beforeUpdate = async ({ update, old, filter, subModelChanges, table, txid,
     var isUpdateRequired = true;
     var alreadyInProgress = false;
 
-    let data = await getTransactions({ filter: { txid, "tx.collection": table } }, db);
+    let data = await getTransactions({filter: {txid, "tx.collection": table}}, db);
     data = data && data.result;
 
     for (var i = 0; i < data.length; i++) {
@@ -169,7 +173,7 @@ const beforeUpdate = async ({ update, old, filter, subModelChanges, table, txid,
     if (isUpdateRequired && !alreadyInProgress) {
         // console.log("isUpdateRequired called>>>>>")
         var txInsert = {
-            tx: { collection: table, update: { _id: recordId } },
+            tx: {collection: table, update: {_id: recordId}},
             status: "Pending",
             txid,
             port,
@@ -180,12 +184,12 @@ const beforeUpdate = async ({ update, old, filter, subModelChanges, table, txid,
     }
 
     if (isUpdateRequired) {
-        updateDocument({ txid, update, old, subModelChanges, recordId });
+        updateDocument({txid, update, old, subModelChanges, recordId});
     }
     // console.log("out from update transaction>>>>>>>>>>>>>>>>>>>")
 };
 
-function updateDocument({ txid, update, old, subModelChanges, recordId }) {
+function updateDocument({txid, update, old, subModelChanges, recordId}) {
     // console.log("updateDocument called>>>>>")
     old = old || {};
     var previousTransaction = old["__txs__"] || {};
@@ -194,37 +198,37 @@ function updateDocument({ txid, update, old, subModelChanges, recordId }) {
     if (pTx !== void 0) {
         pTx = pTx.tx || {};
     } else {
-        pTx = { _id: recordId, array: [] };
+        pTx = {_id: recordId, array: []};
     }
     updateTransaction(pTx, update, subModelChanges, old);
 
     update.$set = update.$set || {};
-    update.$set[`__txs__.${txid}`] = { tx: pTx };
+    update.$set[`__txs__.${txid}`] = {tx: pTx};
 }
 
 function updateTransaction(tx, updates, subModelChanges, old) {
     // console.log("updateTransaction called>>>>>")
-    let { $set, $unset, $inc } = updates;
+    let {$set, $unset, $inc} = updates;
 
     for (let updatedField in $set) {
         if (updatedField === "__txs__") {
             continue;
         }
-        handleSet(tx, { field: updatedField, data: $set, old });
+        handleSet(tx, {field: updatedField, data: $set, old});
     }
 
     for (let updatedField in $unset) {
         if (updatedField === "__txs__") {
             continue;
         }
-        handleSet(tx, { field: updatedField, data: $unset, old });
+        handleSet(tx, {field: updatedField, data: $unset, old});
     }
 
     for (let updatedField in $inc) {
         if (updatedField === "__txs__") {
             continue;
         }
-        handleInc(tx, { field: updatedField, data: $inc, old });
+        handleInc(tx, {field: updatedField, data: $inc, old});
     }
     // handleArrayDataValues(tx.array, subModelChanges, old);
 }
@@ -320,7 +324,7 @@ function updateTransaction(tx, updates, subModelChanges, old) {
 //     }
 // };
 
-function handleInc(tx, { field, data, old }) {
+function handleInc(tx, {field, data, old}) {
     tx.inc = tx.inc || [];
     if (isParentModifiedInSameTx(tx.set, field) === void 0) {
         let index = isParentModifiedInSameTx(tx.inc, field);
@@ -329,28 +333,28 @@ function handleInc(tx, { field, data, old }) {
             var oldValue = tx.inc[index].value;
             tx.inc[index].value = oldValue + -1 * value;
         } else {
-            tx.inc.push({ key: field, value: -1 * value });
+            tx.inc.push({key: field, value: -1 * value});
         }
     }
 }
 
-var handleSet = (tx, { field, data, old }) => {
+var handleSet = (tx, {field, data, old}) => {
     tx.set = tx.set || [];
     if (isParentModifiedInSameTx(tx.set, field) === void 0) {
         var oldValue = resolveValue(old, field);
         if (oldValue === void 0 || oldValue === null) {
             if (isChildModifiedInSameTx(tx.set, field) === void 0) {
                 if (resolveValue(data, field) !== null) {
-                    tx.set.push({ key: field, value: null });
+                    tx.set.push({key: field, value: null});
                 }
             }
         } else {
             if (isJSONObject(oldValue)) {
                 for (var key in oldValue) {
-                    handleSet(tx, { field: field + "." + key, data, old });
+                    handleSet(tx, {field: field + "." + key, data, old});
                 }
             } else {
-                tx.set.push({ key: field, value: oldValue });
+                tx.set.push({key: field, value: oldValue});
             }
         }
     }
@@ -384,22 +388,22 @@ const commitTransaction = async transactionInstance => {
     var txid = transactionInstance.getTxId();
     var db = transactionInstance.getDB();
     // console.log("txid>>>>>",txid)
-    let transactionsss = await getTransactions({ filter: {txid } }, db);
+    let transactionsss = await getTransactions({filter: {txid}}, db);
     // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     // console.log("transactionsss pre>>>>>>"+JSON.stringify(transactionsss))
-    await db.update("TXS", { txid: txid }, { $set: { status: "Commiting" } },{ multi: true });
-    await db.remove("TXS", { txid: txid, status: "Commiting", "tx.insert": { $exists: true } });
-    let transactions = await getTransactions({ filter: { status: "Commiting", txid } }, db);
+    await db.update("TXS", {txid: txid}, {$set: {status: "Commiting"}}, {multi: true});
+    await db.remove("TXS", {txid: txid, status: "Commiting", "tx.insert": {$exists: true}});
+    let transactions = await getTransactions({filter: {status: "Commiting", txid}}, db);
     // console.log("transactions>>>>>>"+JSON.stringify(transactions))
     transactions = transactions && transactions.result;
     for (let i = 0; i < transactions.length; i++) {
-        let { _id, tx } = transactions[i];
+        let {_id, tx} = transactions[i];
         if (tx.update !== void 0) {
             await removeTxsFromRecord(
                 {
                     txid,
                     table: tx.collection,
-                    filter: { _id: tx.update._id }
+                    filter: {_id: tx.update._id}
                 },
                 db
             );
@@ -408,7 +412,7 @@ const commitTransaction = async transactionInstance => {
                 {
                     txid,
                     table: tx.collection,
-                    filter: { _id: tx.delete._id }
+                    filter: {_id: tx.delete._id}
                 },
                 db
             );
@@ -417,16 +421,16 @@ const commitTransaction = async transactionInstance => {
     }
 };
 
-const getTransactions = ({ table, filter, ...rest }, db) => {
-    return db.find("TXS", { filter, sort: { _id: -1 }, fields: { _id: 1, tx: 1, db: 1 }, ...rest });
+const getTransactions = ({table, filter, ...rest}, db) => {
+    return db.find("TXS", {filter, sort: {_id: -1}, fields: {_id: 1, tx: 1, db: 1}, ...rest});
 };
 
 async function deleteTransaction(recordId, db) {
-    return db.remove("TXS", { _id: recordId });
+    return db.remove("TXS", {_id: recordId});
 }
 
-const removeTxsFromRecord = ({ txid, table, filter }, db) => {
-    return db.update(table, filter, { $unset: { ["__txs__." + txid]: "" } });
+const removeTxsFromRecord = ({txid, table, filter}, db) => {
+    return db.update(table, filter, {$unset: {["__txs__." + txid]: ""}});
 };
 
 const insertTransactionDetails = (db, TxInsert) => {
@@ -437,7 +441,7 @@ const handleRollback = async (transactionInstance, dbConnect, previousTransactio
     var txid = transactionInstance.getTxId();
     var db = transactionInstance.getDB();
 
-    let transactions = await getTransactions({ filter: { txid }, limit: 1 }, db);
+    let transactions = await getTransactions({filter: {txid}, limit: 1}, db);
     transactions = transactions && transactions.result;
 
     let transaction = transactions && transactions.length > 0 ? transactions[0] : void 0;
@@ -457,11 +461,11 @@ const handleRollback = async (transactionInstance, dbConnect, previousTransactio
             sendMailforErrorInRollBack(err, transaction, dbConnect, transactionInstance.mailConfig);
             throw err;
         }
-        return processRollbackUpdates(transactionInstance, transaction, { txid, db }, dbConnect)
-            .then(function() {
+        return processRollbackUpdates(transactionInstance, transaction, {txid, db}, dbConnect)
+            .then(function () {
                 return deleteTransaction(transaction._id, db);
             })
-            .then(function() {
+            .then(function () {
                 return handleRollback(transactionInstance, dbConnect, transaction._id);
             })
             .catch(err => {
@@ -471,12 +475,12 @@ const handleRollback = async (transactionInstance, dbConnect, previousTransactio
     }
 };
 
-const processRollbackUpdates=(transactionInstance, data, { txid, db }, dbConnect)=> {
+const processRollbackUpdates = (transactionInstance, data, {txid, db}, dbConnect) => {
     /*
        * if the operation in transaction is insert or delete then rollback from the transaction
        * otherwise rollback from the document
        * */
-    var { tx } = data;
+    var {tx} = data;
     if (tx) {
         var collection = tx.collection;
         /*manage info for sending mail on server restart rollback @sunil - 08/3/18*/
@@ -497,7 +501,7 @@ const processRollbackUpdates=(transactionInstance, data, { txid, db }, dbConnect
                 }
             }
         } else if (tx.delete !== void 0) {
-            return db.remove(collection, { _id: tx.delete._id, [`__txs__.${txid}`]: { $exists: true } });
+            return db.remove(collection, {_id: tx.delete._id, [`__txs__.${txid}`]: {$exists: true}});
         } else if (tx.update !== void 0 && tx.type == "sequence") {
             var sequenceFilter = tx.update.filter;
             var filter = {
@@ -505,7 +509,7 @@ const processRollbackUpdates=(transactionInstance, data, { txid, db }, dbConnect
                 _id: tx.update._id,
                 ...sequenceFilter
             };
-            return db.update(collection, filter, { $inc: { [tx.updateField]: -1 } });
+            return db.update(collection, filter, {$inc: {[tx.updateField]: -1}});
         } else {
             return rollbackFromRecord(
                 data._id,
@@ -525,7 +529,7 @@ const processRollbackUpdates=(transactionInstance, data, { txid, db }, dbConnect
 async function rollbackFromRecord(_id, tx, collection, initialArrayCount, db, txid, txInfo, dbConnect, mailConfig) {
     var updates = tx.update;
 
-    let data = await db.find(collection, { filter: { _id: updates._id }, fields: { __txs__: 1 } });
+    let data = await db.find(collection, {filter: {_id: updates._id}, fields: {__txs__: 1}});
     data = data && data.result;
     if (!data || !data.length) {
         return;
@@ -548,7 +552,7 @@ async function rollbackFromRecord(_id, tx, collection, initialArrayCount, db, tx
                     JSON.stringify(array)
                 );
             }
-            await handleArrayRollback({ tx: array[0], id, txid, collection, db });
+            await handleArrayRollback({tx: array[0], id, txid, collection, db});
 
             await rollbackFromRecord(_id, tx, collection, array.length, db, txid, txInfo, dbConnect, mailConfig);
         } else {
@@ -571,14 +575,14 @@ async function rollbackFromRecord(_id, tx, collection, initialArrayCount, db, tx
  * @param db
  * @returns {Promise}
  */
-function handleArrayRollback({ tx, id: recordId, txid, collection, db }) {
+function handleArrayRollback({tx, id: recordId, txid, collection, db}) {
     var type = tx.type;
     if (type === "insert") {
-        return handleInsertOperationRollback({ tx, txid, recordId, collection, db });
+        return handleInsertOperationRollback({tx, txid, recordId, collection, db});
     } else if (type === "delete") {
-        return handleDeleteOperationRollback({ tx, txid, recordId, collection, db });
+        return handleDeleteOperationRollback({tx, txid, recordId, collection, db});
     } else {
-        return handleUpdateOperationRollback({ txid, tx, recordId, collection, db });
+        return handleUpdateOperationRollback({txid, tx, recordId, collection, db});
     }
 }
 
@@ -591,7 +595,7 @@ function handleArrayRollback({ tx, id: recordId, txid, collection, db }) {
  * @param db
  * @returns {Promise.<void>}
  */
-async function handleInsertOperationRollback({ tx, txid, recordId, collection, db }) {
+async function handleInsertOperationRollback({tx, txid, recordId, collection, db}) {
     var push = {};
     var sort = {};
     if (tx.sort) {
@@ -599,12 +603,12 @@ async function handleInsertOperationRollback({ tx, txid, recordId, collection, d
     } else {
         sort["_id"] = 1;
     }
-    push[tx.field] = { $each: [tx.value], $sort: sort, $slice: -20000 };
-    var update = { $push: push };
+    push[tx.field] = {$each: [tx.value], $sort: sort, $slice: -20000};
+    var update = {$push: push};
     update.$pull = {};
-    update.$pull["__txs__." + txid + ".tx.array"] = { _id: tx._id, uniqueId: tx.uniqueId };
+    update.$pull["__txs__." + txid + ".tx.array"] = {_id: tx._id, uniqueId: tx.uniqueId};
 
-    await db.update(collection, { _id: recordId }, update);
+    await db.update(collection, {_id: recordId}, update);
 }
 
 /**
@@ -616,12 +620,12 @@ async function handleInsertOperationRollback({ tx, txid, recordId, collection, d
  * @param db
  * @returns {Promise.<void>}
  */
-async function handleDeleteOperationRollback({ tx, txid, recordId, collection, db }) {
+async function handleDeleteOperationRollback({tx, txid, recordId, collection, db}) {
     var pull = {};
-    pull[tx.field] = { _id: tx._id };
-    pull["__txs__." + txid + ".tx.array"] = { _id: tx._id, uniqueId: tx.uniqueId };
-    var update = { $pull: pull };
-    await db.update(collection, { _id: recordId }, update);
+    pull[tx.field] = {_id: tx._id};
+    pull["__txs__." + txid + ".tx.array"] = {_id: tx._id, uniqueId: tx.uniqueId};
+    var update = {$pull: pull};
+    await db.update(collection, {_id: recordId}, update);
 }
 
 /**
@@ -633,7 +637,7 @@ async function handleDeleteOperationRollback({ tx, txid, recordId, collection, d
  * @param db
  * @returns {Promise.<void>}
  */
-async function handleUpdateOperationRollback({ txid, tx, recordId, collection, db }) {
+async function handleUpdateOperationRollback({txid, tx, recordId, collection, db}) {
     var query = {};
     query._id = recordId;
     query[tx.field + "._id"] = tx._id;
@@ -657,7 +661,7 @@ async function handleUpdateOperationRollback({ txid, tx, recordId, collection, d
         }
     }
     update.$pull = {};
-    update.$pull["__txs__." + txid + ".tx.array"] = { _id: tx._id, uniqueId: tx.uniqueId };
+    update.$pull["__txs__." + txid + ".tx.array"] = {_id: tx._id, uniqueId: tx.uniqueId};
 
     await db.update(collection, query, update);
 }
@@ -684,7 +688,7 @@ async function rollbackTopLevelFields(collection, txToRollback, newUpdate, db, d
         }
     }
 
-    var matchedRecords = { $inc: {} };
+    var matchedRecords = {$inc: {}};
 
     if (txToRollback.inc && txToRollback.inc.length > 0) {
         for (var i = 0; i < txToRollback.inc.length; i++) {
@@ -701,9 +705,9 @@ async function rollbackTopLevelFields(collection, txToRollback, newUpdate, db, d
         }
     }
     try {
-        await db.update(collection, { _id: txToRollback._id }, newUpdate);
+        await db.update(collection, {_id: txToRollback._id}, newUpdate);
         if (Object.keys(matchedRecords.$inc).length > 0) {
-            await await db.update(collection, { _id: txToRollback._id }, matchedRecords);
+            await await db.update(collection, {_id: txToRollback._id}, matchedRecords);
         }
     } catch (err) {
         if (err.code !== 11000 && err.code !== 16837) {
@@ -715,7 +719,7 @@ async function rollbackTopLevelFields(collection, txToRollback, newUpdate, db, d
 }
 
 var sendMailforErrorInRollBack = (err, tx, dbConnect, mailConfig, recepients, subject) => {
-   //send mail from here
+    //send mail from here
 };
 
 /**
@@ -724,7 +728,7 @@ var sendMailforErrorInRollBack = (err, tx, dbConnect, mailConfig, recepients, su
  * @returns {Promise.<void>}
  * @private
  */
-export const _rollbackPendingTxs = async (db, { port, mailConfig, dbConnect, context }) => {
+export const _rollbackPendingTxs = async (db, {port, mailConfig, dbConnect, context}) => {
     /*query to find the txid's for removing the txs and status for rollback or commit operation
        * $stages defined because $sort is not supported in $group query.
        * $sort is defined so that id any record and status committing it places at first place.
@@ -732,9 +736,9 @@ export const _rollbackPendingTxs = async (db, { port, mailConfig, dbConnect, con
     // sort: { status: 1 },
     // group: { _id: "$txid", status: { $first: "$status" } }
     let txInfos = await db.aggregate("TXS", [
-        { $match: { port } },
-        { $sort: { status: 1 } },
-        { $group: { _id: "$txid", status: { $first: "$status" } } }
+        {$match: {port}},
+        {$sort: {status: 1}},
+        {$group: {_id: "$txid", status: {$first: "$status"}}}
     ]);
     txInfos = txInfos && txInfos.result;
     for (let i = 0; i < txInfos.length; i++) {
@@ -745,7 +749,7 @@ export const _rollbackPendingTxs = async (db, { port, mailConfig, dbConnect, con
         }
         var status = txInfo.status;
 
-        let transactionInstance = new Transaction(db, txId, { port, mailConfig, context });
+        let transactionInstance = new Transaction(db, txId, {port, mailConfig, context});
 
         if (status === "committing") {
             await transactionInstance.commit();

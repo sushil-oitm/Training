@@ -1,20 +1,21 @@
 import Transaction from "./TransactionConnect";
 import * as Formidable from "formidable";
 import bodyParser from "body-parser";
-import { isJSONObject, deepClone } from "./Utility.js";
+import {isJSONObject, deepClone} from "./Utility.js";
+
 var urlParser = require("url");
 var ObjectID = require("mongodb").ObjectID;
 var configure = async (
     app,
     config
 ) => {
-    let { mailConfig, mongoConnect, context, port } = config;
+    let {mailConfig, mongoConnect, context, port} = config;
     process.on("uncaughtException", function (err) {
         console.log(">>>>uncaughtException>>>>>>>>>>>>", err.stack);
     });
 
-    app.use(bodyParser.json({ limit: 2000 * 1024 })); // 2000Kb
-    app.use(bodyParser.urlencoded({ extended: true, limit: 2000 * 1024 }));
+    app.use(bodyParser.json({limit: 2000 * 1024})); // 2000Kb
+    app.use(bodyParser.urlencoded({extended: true, limit: 2000 * 1024}));
 
     app.options("*", (req, res) => {
         res.writeHead(200, {
@@ -30,17 +31,17 @@ var configure = async (
 
     app.all("/download", async (req, resp) => {
         try {
-            var { fileKey, download, inline, token } = getRequestParams(req);
+            var {fileKey, download, inline, token} = getRequestParams(req);
             if (!token) {
                 throw new Error("Token is mandatory to download");
             }
             let ip = getIp(req);
-            const transactionConnect = new Transaction(mongoConnect, void 0, { port, mailConfig, context });
+            const transactionConnect = new Transaction(mongoConnect, void 0, {port, mailConfig, context});
             const dbConnect = DbConnect(transactionConnect);
-            await authenticateUser(token, { _dbConnect: dbConnect, req: getRequestInfo(req) });
+            await authenticateUser(token, {_dbConnect: dbConnect, req: getRequestInfo(req)});
 
-            var { data, fileName, contentType } = await fileConnect.download(fileKey);
-            var options = { ignoreGzip: true, ignoreWrap: true };
+            var {data, fileName, contentType} = await fileConnect.download(fileKey);
+            var options = {ignoreGzip: true, ignoreWrap: true};
             if (download || inline) {
                 var head = {};
                 head["Content-Disposition"] = (download ? "attachment" : "inline") + '; filename="' + fileName + '"';
@@ -61,10 +62,10 @@ var configure = async (
     app.all("/invoke", async (req, resp) => {
         try {
             var reqParams = getRequestParams(req, false);
-            console.log("invoke called with params>>>>>>>",JSON.stringify(reqParams))
+            console.log("invoke called with params>>>>>>>", JSON.stringify(reqParams))
             let reqInfo = getRequestInfo(req);
             let result = await _invoke(reqParams, reqInfo, config);
-            var { data, options } = parseResponseHeader(result);
+            var {data, options} = parseResponseHeader(result);
             await writeJSONResponse(data, req, resp, options);
         } catch (err) {
             await writeJSONResponse(err, req, resp);
@@ -74,14 +75,14 @@ var configure = async (
 
 const uploadFiles = async (req, resp, nativeConnect) => {
     try {
-        var { files, token } = await readFiles(req);
+        var {files, token} = await readFiles(req);
         if (!token) {
             throw new Error("Token is mandatory to upload");
         }
         let ip = getIp(req);
-        const transactionConnect = new Transaction(mongoConnect, void 0, { port, mailConfig, context });
+        const transactionConnect = new Transaction(mongoConnect, void 0, {port, mailConfig, context});
         const dbConnect = DbConnect(transactionConnect);
-        await authenticateUser(token, { _dbConnect: dbConnect, req: getRequestInfo(req) });
+        await authenticateUser(token, {_dbConnect: dbConnect, req: getRequestInfo(req)});
 
         var mongoResult = await nativeConnect.upload(files);
         await writeJSONResponse(mongoResult, req, resp);
@@ -103,7 +104,7 @@ const getRequestInfo = (req) => {
 
 const _invoke = async (params, reqInfo, config) => {
     console.log(">>>>/invoke called >>>>>>", JSON.stringify(params));
-    let { mongoConnect, port, globalCache, context} = config || {};
+    let {mongoConnect, port, globalCache, context} = config || {};
     try {
         let {id, token, appVersion, platform, deleteToken} = params;
         if (!id) {
@@ -114,15 +115,15 @@ const _invoke = async (params, reqInfo, config) => {
         }
 
         const transactionConnect = new Transaction(mongoConnect);
-         // const dbConnect = new DbConnect(transactionConnect);
+        // const dbConnect = new DbConnect(transactionConnect);
         let args = {
             _dbConnect: transactionConnect,
             globalCache,
             platform
         }
-       let user = await authenticateUser(token, args, id);
+        let user = await authenticateUser(token, args, id);
         //used in mongo profiling
-       let result = await invokeInternal(params, user, args, config);
+        let result = await invokeInternal(params, user, args, config);
         return result;
     } catch (err) {
         console.log("error in http", err)
@@ -131,9 +132,9 @@ const _invoke = async (params, reqInfo, config) => {
 }
 
 const invokeInternal = async (params, user, args, config) => {
-    let { _dbConnect: dbConnect } = args;
+    let {_dbConnect: dbConnect} = args;
     try {
-        let { id, paramValue, timezoneOffset, globalParamValue } = params;
+        let {id, paramValue, timezoneOffset, globalParamValue} = params;
         if (paramValue && typeof paramValue === "string") {
             paramValue = JSON.parse(paramValue);
         }
@@ -142,11 +143,11 @@ const invokeInternal = async (params, user, args, config) => {
             user
         };
         let result = await dbConnect.invoke(id, paramValue, {
-                user,
-                timezoneOffset,
-                globalParamValue,
-                ...args
-            })
+            user,
+            timezoneOffset,
+            globalParamValue,
+            ...args
+        })
 
         await dbConnect.commit();
         return result;
@@ -167,14 +168,14 @@ const getIp = req => {
 };
 
 var sendErrorMail = async () => {
-   //mail send from here
+    //mail send from here
 };
 
 
 var parseResponseHeader = response => {
     var responseInfo = {};
     if (response && response._headers) {
-        var { _pipe, _data, _headers, _download, _inline, _fileName, _ignoreGzip, _ignoreWrap, _code } = response;
+        var {_pipe, _data, _headers, _download, _inline, _fileName, _ignoreGzip, _ignoreWrap, _code} = response;
         responseInfo.data = _data;
         responseInfo.options = {
             head: {
@@ -251,7 +252,7 @@ const writeJSONResponse = async (result, req, resp, options = {}) => {
         }
         resp.write(JSON.stringify(errorResponse));
         resp.end();
-    } else if(options._pipe){
+    } else if (options._pipe) {
         let request = require("request-promise");
         return await request(result).pipe(resp);
     } else {
@@ -359,7 +360,7 @@ function readFiles(req) {
             });
 
             part.on("end", function () {
-                files.push({ filename: fileName, data: data, name: part.name });
+                files.push({filename: fileName, data: data, name: part.name});
             });
         };
 
@@ -367,10 +368,10 @@ function readFiles(req) {
             if (fields.contents) {
                 var contents = fields.contents.split(",").pop();
                 var fileBuffer = new Buffer(contents, "base64");
-                files.push({ filename: fields.name, type: fields.type, data: [fileBuffer] });
+                files.push({filename: fields.name, type: fields.type, data: [fileBuffer]});
             }
             const token = fields && fields.token ? fields.token : body && body.token;
-            return resolve({ files, token });
+            return resolve({files, token});
         });
         form.parse(req);
     });
@@ -378,22 +379,22 @@ function readFiles(req) {
 
 
 const authenticateUser = async (token, args, service) => {
-    console.log("authenticateUser called>>>>"+token)
+    console.log("authenticateUser called>>>>" + token)
     if (!token) {
         return;
     }
-    let authenticatedUserInfo = await authenticatedUserData(args._dbConnect,{token,service});
+    let authenticatedUserInfo = await authenticatedUserData(args._dbConnect, {token, service});
     const user = authenticatedUserInfo && authenticatedUserInfo.result.length > 0 && authenticatedUserInfo.result[0];
-   // console.log("user>>>>>",user)
+    // console.log("user>>>>>",user)
     if (!user) {
         throw new Error("Invalid token >>>>>>>>>>>>", token);
     }
-    console.log("user  authenticateUser successfully>>>>"+JSON.stringify(user))
+    console.log("user  authenticateUser successfully>>>>" + JSON.stringify(user))
     return user;
 };
 
-let authenticatedUserData=async(db,data)=>{
-    let user=await db.find("Connection",{filter:{token:data.token}},{limit:1})
+let authenticatedUserData = async (db, data) => {
+    let user = await db.find("Connection", {filter: {token: data.token}}, {limit: 1})
     return user;
 }
 

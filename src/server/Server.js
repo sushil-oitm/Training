@@ -3,17 +3,18 @@ import express from "express";
 import {configure} from "./Http"
 import MongoConnect from "./MogoConnect"
 import {getCLAs} from "./Utility";
+
 var app = express();
 
 var server = http.Server(app);
-let connection={
+let connection = {
     host: "192.168.100.119",
     port: 27017,
-    authEnabled:false,
+    authEnabled: false,
     dbName: "autoload"
 }
 
-let mongoConnect=new MongoConnect({config:connection});
+let mongoConnect = new MongoConnect({config: connection});
 var context = {};
 context = getCLAs(context);
 const PORT = context.PORT;
