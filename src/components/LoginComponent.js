@@ -44,11 +44,11 @@ class LoginComponent extends Component {
        await webConnect.setUser(loggeduser.result.user)
        await webConnect.setToken(loggeduser.result.token)
        await webConnect.setLocalStorage("token",loggeduser.result.token)
-       await webConnect.setLocalStorage("user",loggeduser.result.user)
-       // let pathLength=path.length;
+       await webConnect.setLocalStorage("user",loggeduser.result.user.email)
+        let pathLength=path.length;
        params.reload=true;
        userStore.set("status","logged_in")
-        path.pop();
+        path.splice(0,pathLength,{"path":"/resources"})
        event.preventDefault();
     }
     updatePath=()=>{

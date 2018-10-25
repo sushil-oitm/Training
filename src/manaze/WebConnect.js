@@ -20,8 +20,9 @@ export default class WebConnect {
 
     async find(param={}) {
         let user=await AsyncStorage.getItem("user")
+        console.log("user in find>>",user)
         if (user) {
-            user = JSON.parse(user);
+            // user = JSON.parse(user);
         }
         let fields=param.fields || {};
         let filter=param.filter || {};
