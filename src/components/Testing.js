@@ -1,5 +1,6 @@
 import React from "react";
 import { observer, Provider, inject } from "mobx-react";
+import "../App.css"
 class External extends React.Component {
     constructor(props) {
         super(props);
@@ -9,13 +10,15 @@ class External extends React.Component {
         console.log("internal>>>>",Internal)
         return (
            <div className="outer">
-               <div className="flex-1">
-                   {<div className="App-header">
-                       Header
-                   </div>}
+               <div className="header">
+                 <header><h3>Header</h3></header>
                </div>
-               {Internal.map((m1)=>(<div className="flex-1">{m1}</div>)) }
-
+               <div class="content">
+               {Internal.map((m1)=>(<div className="inner-text">{m1}</div>)) }
+               </div>
+               <div className="footer">
+                   <footer><h3>Footer</h3></footer>
+               </div>
            </div>
         );
     }

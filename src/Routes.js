@@ -1,4 +1,6 @@
 import Methods from "./components/Testing";
+import LoginComponent from "./components/LoginComponent";
+import SignupComponent from "./components/SignupComponent";
 let {Project,Progress,Task,Login,Resource,External}=Methods;
 export const routes= {
         project_detail: {
@@ -17,7 +19,10 @@ export const routes= {
             component:Progress
         },
         login:{
-            component:Login
+            component:LoginComponent
+        },
+        signup:{
+            component:SignupComponent
         }
     }
 
