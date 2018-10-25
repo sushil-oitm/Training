@@ -40,6 +40,7 @@ class Router extends React.Component {
         this.state={loading:true}
     }
     componentDidMount() {
+         console.log("did mount called")
         let { path,routes } = this.props;
         if (typeof window !== undefined && Platform.OS === "web") {
             /*onClick browser back button this listener will run -akshay 5JAn */
@@ -54,9 +55,24 @@ class Router extends React.Component {
             };
         }
         const roots = this.splitRoots(path, routes);
-       this.getComponents(roots, path).then(comp=>{
+        this.getComponents(roots, path).then(comp=>{
            this.setState({"Components":comp,loading:false})
        })
+    }
+    componentDidUpdate(prevProps) {
+        console.log("componentDidUpdate mount called")
+        // Typical usage (don't forget to compare props):
+        let {path,routes,params}=this.props;
+        let prepath=prevProps.path;
+        console.log("params"+JSON.stringify(params))
+        if (params.reload) {
+            console.log("path updated")
+            const roots = this.splitRoots(path, routes);
+            this.getComponents(roots, path).then(comp=>{
+                this.setState({"Components":comp,loading:false})
+            })
+            params.reload=false;
+        }
     }
 
    async getComponents(roots, params) {
@@ -132,6 +148,7 @@ class Router extends React.Component {
 
     render() {
           const { path, children, routes, params } = this.props;
+          console.log("Router path called>>>>>"+JSON.stringify(path))
          // const roots = this.splitRoots(path, routes);
          const Components = this.state.Components;
          const loading = this.state.loading;

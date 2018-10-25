@@ -1,6 +1,18 @@
 import React, { Component } from 'react';
+import {inject,observer} from "mobx-react"
 import '../Login.css'
+
+@inject("path")
+@inject("params")
+@observer
 class LoginComponent extends Component {
+    handleNext=()=>{
+        let {path,params}=this.props;
+        let pathLength=path.length;
+        path.splice(0, pathLength, { path: "/signup"});
+        params.reload=true;
+        // path.push({path:"/signup"})
+    }
     render() {
         return (
             <div class="wrapper">
@@ -18,10 +30,11 @@ class LoginComponent extends Component {
                                     <input type="submit" value="Login" />
                                 <div class="row">
                                     <div class="colfot">
-                                        <a href="#" style={{"color":"black"}} class="btn">Sign up</a>
+                                        <a href="" style={{"color": "black"}} onClick={this.handleNext}
+                                           className="btn">Sign up</a>
                                     </div>
                                     <div class="colfot">
-                                        <a href="#" style={{"color":"black"}} class="btn">Forgot password?</a>
+                                        <a href="" style={{"color":"black"}}onClick={this.handleNext} class="btn">Forgot password</a>
                                     </div>
                             </div>
                         </div>

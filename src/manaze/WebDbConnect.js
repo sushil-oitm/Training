@@ -1,16 +1,5 @@
 import Dataset from "./Dataset";
 
-export const DbConnect = db => {
-    return (fn, data) => {
-        if (fn && fn._pipeline) {
-            fn._pipeline.init(db, data);
-        } else if (typeof fn == "function") {
-            return fn(db, data);
-        } else {
-            return data;
-        }
-    };
-};
 
 //for computations
 const _find = (model, query) => {

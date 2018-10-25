@@ -50,11 +50,9 @@ class ManazeAppComponent extends React.Component {
         let userStatus = userStore.get("status");
         let pathToSet = userStatus !== "logged_in" ? "/login" : pathname === "/" ? "/resources" : pathname + hash;
         this.path = observable(splitPath(pathToSet));
-        this.params = {
-            reportingPeriod: observable({
-                value: null
-            })
-        };
+        this.params = observable({
+            reload: false
+        })
     }
     render() {
         return (
