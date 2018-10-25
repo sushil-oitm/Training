@@ -20,7 +20,7 @@ loadUser()
             webConnect.setUser(user);
             userStore.set("status", "logged_in");
         } else {
-            userStore.set("status", "logged_in");
+            userStore.set("status", "logged_out");
         }
     })
     .catch(e => {
@@ -48,6 +48,7 @@ class ManazeAppComponent extends React.Component {
         super(props);
         let { pathname, hash } = getLocation();
         let userStatus = userStore.get("status");
+        console.log("userStatus????",userStatus)
         let pathToSet = userStatus !== "logged_in" ? "/login" : pathname === "/" ? "/resources" : pathname + hash;
         this.path = observable(splitPath(pathToSet));
         this.params = observable({

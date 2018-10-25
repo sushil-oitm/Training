@@ -14,8 +14,8 @@ export default class WebConnect {
     setToken(token) {
         this.token = token;
     }
-    async setLocalStorage(params) {
-       await AsyncStorage.setItem(...params)
+    async setLocalStorage(key,value) {
+       await AsyncStorage.setItem(key,value)
     }
 
     async find(param={}) {
@@ -178,8 +178,8 @@ export default class WebConnect {
 }
 
 const AsyncStorage = {
-    setItem(...args) {
-        return Promise.resolve(localStorage.setItem(...args));
+    setItem(key,value) {
+        return Promise.resolve(localStorage.setItem(key,value));
     },
     getItem(...args) {
         return Promise.resolve(localStorage.getItem(...args));

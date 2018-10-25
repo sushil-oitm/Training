@@ -5,6 +5,7 @@ import '../Login.css';
 @inject("path")
 @inject("params")
 @inject("webConnect")
+@inject("userStore")
 @observer
 class LoginComponent extends Component {
     constructor(props) {
@@ -28,19 +29,26 @@ class LoginComponent extends Component {
 
    async handleSubmit(event) {
        console.log("handleSubmit called>>>>")
-       let {path,params,webConnect}=this.props;
+       let {path,params,webConnect,userStore}=this.props;
        let data= {
            "email":this.state.email ,
            "password":this.state.password,
        }
        let loggeduser= await webConnect.invoke({"id":"_authenticateUser",param:data})
        console.log("loggeduser>>>>>>>",JSON.stringify(loggeduser))
+       if(!loggeduser.result)
+       {
+           this.setState({loginErrMessage:loggeduser.message})
+           return
+       }
        await webConnect.setUser(loggeduser.result.user)
-       await webConnect.setToken(loggeduser.token)
-       await webConnect.setLocalStorage({"token":loggeduser.token})
+       await webConnect.setToken(loggeduser.result.token)
+       await webConnect.setLocalStorage("token",loggeduser.result.token)
+       await webConnect.setLocalStorage("user",loggeduser.result.user)
        // let pathLength=path.length;
        params.reload=true;
-       // path.pop();
+       userStore.set("status","logged_in")
+        path.pop();
        event.preventDefault();
     }
     updatePath=()=>{
@@ -64,6 +72,9 @@ class LoginComponent extends Component {
                                 <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} required />
                             <button style={{"color": "black","background":"green"}} onClick={this.handleSubmit}
                                     className="btn">Login</button>
+                            <div>
+                                {this.state.loginErrMessage}
+                            </div>
                                 <div class="row">
                                     <div class="colfot">
                                         <button style={{"color": "black"}} onClick={this.updatePath}
