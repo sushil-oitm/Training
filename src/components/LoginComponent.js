@@ -43,8 +43,9 @@ class LoginComponent extends Component {
        }
        await webConnect.setUser(loggeduser.result.user)
        await webConnect.setToken(loggeduser.result.token)
-       await webConnect.setLocalStorage("token",loggeduser.result.token)
-       await webConnect.setLocalStorage("user",loggeduser.result.user.email)
+       let finaluser=loggeduser.result.user;
+       finaluser["token"]=loggeduser.result.token;
+       await webConnect.setLocalStorage("user",JSON.stringify(finaluser))
         let pathLength=path.length;
        params.reload=true;
        userStore.set("status","logged_in")

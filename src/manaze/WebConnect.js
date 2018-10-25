@@ -14,15 +14,16 @@ export default class WebConnect {
     setToken(token) {
         this.token = token;
     }
-    async setLocalStorage(key,value) {
-       await AsyncStorage.setItem(key,value)
+    async setLocalStorage(...args) {
+       await AsyncStorage.setItem(...args)
     }
 
     async find(param={}) {
+        console.log("param in find>>>>>>"+JSON.stringify(param))
         let user=await AsyncStorage.getItem("user")
         console.log("user in find>>",user)
         if (user) {
-            // user = JSON.parse(user);
+             user = JSON.parse(user);
         }
         let fields=param.fields || {};
         let filter=param.filter || {};
@@ -32,6 +33,7 @@ export default class WebConnect {
                         token:"c72c43595459de9151151360a627891d9171e613"
                     };
         try{
+            console.log("queryInfo>>>>>>",queryInfo)
             let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
             return data;
         }catch(e){
@@ -179,8 +181,8 @@ export default class WebConnect {
 }
 
 const AsyncStorage = {
-    setItem(key,value) {
-        return Promise.resolve(localStorage.setItem(key,value));
+    setItem(...args) {
+        return Promise.resolve(localStorage.setItem(...args));
     },
     getItem(...args) {
         return Promise.resolve(localStorage.getItem(...args));
@@ -193,7 +195,7 @@ const AsyncStorage = {
 export const loadUser= () => {
     return AsyncStorage.getItem("user").then(user => {
         if (user) {
-            user = JSON.parse(user);
+             user = JSON.parse(user);
         }
         return user;
     });

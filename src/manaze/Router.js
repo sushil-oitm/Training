@@ -79,7 +79,10 @@ class Router extends React.Component {
          const { webConnect} = this.props;
         let components = [];
         for (let index = 0; index < roots.length; index++) {
+
             const {root, model} = roots[index];
+            console.log("root>>>>>"+JSON.stringify(roots[index]))
+            console.log("model>>>>>"+JSON.stringify(model))
              let  Rcomponent = model.component;
              let  query = model.query;
             let  data={}
@@ -87,6 +90,7 @@ class Router extends React.Component {
                  data=await webConnect.find(query)
              }
             console.log("data in router>>>>>"+JSON.stringify(data))
+            console.log("Rcomponent>>>>>",Rcomponent)
               let meta=fields[root];
             let com= (
                 <Provider data={data} meta={meta}>
@@ -132,8 +136,9 @@ class Router extends React.Component {
             let route = void 0;
             let relation = void 0;
                 let matchViewInfo = matchView({ view: viewName, routes });
-                view = matchViewInfo.view;
-                route = matchViewInfo.route;
+            console.log("matchViewInfo is>>>>",matchViewInfo)
+            view = matchViewInfo.view;
+            route = matchViewInfo.route;
             console.log("route is>>>>",route)
             roots.push({
                 hash,
