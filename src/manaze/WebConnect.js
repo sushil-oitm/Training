@@ -4,7 +4,6 @@ import { observable } from "mobx";
 export default class WebConnect {
     config = null;
     constructor({ config }) {
-        console.log("WebConnect constructor called>>>")
         this.config = config;
         const { url } = this.config;
     }
@@ -14,7 +13,6 @@ export default class WebConnect {
     }
 
     async find(table, query) {
-        console.log("web find called>>>>")
         let user=await AsyncStorage.getItem("user")
         if (user) {
             user = JSON.parse(user);
@@ -24,9 +22,13 @@ export default class WebConnect {
                         paramValue:{table:"trip",query:{filter:{_id:"5b72602bf4bd7f56575d7fe0"}}},
                         token:"c72c43595459de9151151360a627891d9171e613"
                     };
-       let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
-        console.log("fetch result>>>>>",data)
-        return data;
+        try{
+            let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
+            return data;
+        }catch(e){
+           alert("Error is >>>>"+e.stack)
+        }
+
 
     }
 
@@ -112,7 +114,6 @@ export default class WebConnect {
     // }
 
     async fetchData(props) {
-        console.log("fetchData called>>>>>")
         return this.fetch(this.config.url, props).then(result => {
             let { status, code, response } = result;
             if (status === "error" && code === 500) {
@@ -126,7 +127,6 @@ export default class WebConnect {
     }
 
     async fetch(url, { uri, body, multipart, method = "POST" }) {
-        console.log("fetch called>>>>>>",body)
         var url = `${url}${uri || ""}`;
         let fetchUrl = url;
         let parameters = void 0;
@@ -157,8 +157,6 @@ export default class WebConnect {
             const encodedQuery = qs.stringify(body);
             fetchUrl += `?${encodedQuery}`;
         }
-        console.log("fetchUrl>>>>>",fetchUrl)
-        console.log("parameters>>>>>"+JSON.stringify(parameters))
         return fetch(fetchUrl, parameters).then(_res => {
             return _res.json();
         })

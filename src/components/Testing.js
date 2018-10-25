@@ -8,8 +8,7 @@ class External extends React.Component {
         super(props);
     }
     render() {
-        const {Internal} = this.props;
-        console.log("internal>>>>",Internal)
+        const {Internal,loading} = this.props;
         return (
            <div className="outer">
                <div className="flex-1">
@@ -17,7 +16,7 @@ class External extends React.Component {
                        Header
                    </div>}
                </div>
-               {Internal.map((m1)=>(<div className="flex-1">{m1}</div>)) }
+               {!loading && Internal && Internal.map((m1)=>(<div className="flex-1">{m1}</div>)) }
 
            </div>
         );

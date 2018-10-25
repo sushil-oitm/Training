@@ -37,9 +37,7 @@ class Router extends React.Component {
 
      constructor(props, context) {
         super(props, context);
-        let com=[]
-         com.push(<Test />)
-        this.state={Components:com}
+        this.state={loading:true}
     }
     componentDidMount() {
         let { path,routes } = this.props;
@@ -55,14 +53,10 @@ class Router extends React.Component {
                 path.replace(splitPath(pathname + hash));
             };
         }
-
         const roots = this.splitRoots(path, routes);
        this.getComponents(roots, path).then(comp=>{
-           this.setState({"Components":comp})
-       }).catch(e => {
-           alert(e.message || e);
-           console.log("error in load logo >>>", e);
-       });
+           this.setState({"Components":comp,loading:false})
+       })
     }
 
    async getComponents(roots, params) {
@@ -139,25 +133,11 @@ class Router extends React.Component {
     render() {
           const { path, children, routes, params } = this.props;
          // const roots = this.splitRoots(path, routes);
-         const Components = this.state.Components
+         const Components = this.state.Components;
+         const loading = this.state.loading;
 
-        return React.cloneElement(children, { Internal: Components});
+        return React.cloneElement(children, { Internal: Components,loading});
     }
 }
-
-class Test extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        console.log("Test called>>>>>")
-        return (
-            <div className="flex-1">
-                test called
-            </div>
-        );
-    }
-}
-
 
 export default Router;
