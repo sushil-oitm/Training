@@ -21,7 +21,7 @@ export default class WebConnect {
         let filter=param.filter || {};
         let queryInfo = {
                         id:"_find",
-                        paramValue:{table:query.table,query:{fields,filter}},
+                        paramValue:{table:param.table,query:{fields,filter}},
                         token:"c72c43595459de9151151360a627891d9171e613"
                     };
         try{
