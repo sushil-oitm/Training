@@ -4,6 +4,7 @@ import '../Login.css'
 
 @inject("path")
 @inject("params")
+@inject("webConnect")
 class SignupComponent extends Component {
     constructor(props) {
         super(props);
@@ -27,17 +28,24 @@ class SignupComponent extends Component {
     }
 
     async handleSubmit(event) {
-        let {path,params}=this.props;
-        event.preventDefault();
+        let {path,params,webConnect}=this.props;
+       /* let data= {
+            "firstName":this.state.firstname + " "+this.state.lastname,
+            "password":this.state.password,
+            "email":this.state.email,
+            }
+        await webConnect.invoke({"id":"createUser",param:data})*/
         path.pop()
         params.reload=true;
+        event.preventDefault();
+
     }
     render() {
         console.log("this.state>>>>>>>>>>>>>",this.state)
         return (
             <div class="wrapper">
                 <div class="container">
-                    <form onSubmit={this.handleSubmit}>
+                    <form >
                         <div class="row">
                             <div class="colSignup">
                                 <h2 style={{"text-align":"center"}}>Sign Up</h2>
@@ -49,7 +57,8 @@ class SignupComponent extends Component {
                                 <input type="text" name="lastname" placeholder="Lirst Name" value={this.state.lastname} onChange={this.handleChange}/>
                                 <input type="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} />
                                 <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange}/>
-                                <input type="submit" value="Submit" />
+                                <button style={{"color": "black"}} onClick={this.handleSubmit}
+                                        className="btn">Submit</button>
                             </div>
 
                         </div>

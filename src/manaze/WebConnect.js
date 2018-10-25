@@ -28,7 +28,7 @@ export default class WebConnect {
             let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
             return data;
         }catch(e){
-           alert("Error is >>>>"+e.stack)
+           // alert("Error is >>>>"+e.stack)
         }
     }
     async save(param) {
@@ -48,7 +48,7 @@ export default class WebConnect {
            alert("Error is >>>>"+e.stack)
         }
     }
-    async invoke(id,param) {
+    async invoke({id,param}) {
         let user=await AsyncStorage.getItem("user")
         if (user) {
             user = JSON.parse(user);
@@ -62,7 +62,7 @@ export default class WebConnect {
             let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
             return data;
         }catch(e){
-           alert("Error is >>>>"+e.stack)
+           // alert("Error is >>>>"+e.stack)
         }
     }
     // upload(file, fileOptions) {
