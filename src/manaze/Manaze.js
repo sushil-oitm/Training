@@ -5,7 +5,7 @@ import Router from "./Router";
 import {routes} from "./../Routes";
 import WebConnect,{loadUser} from "./WebConnect";
 import Methods from "../components/Testing";
-import {getLocation,splitPath} from "./ManazeUtilities"
+import {getLocation,splitPath} from "./ManazeUtilities";
 let {External}=Methods;
 
 const config = {
@@ -34,7 +34,7 @@ class ManazeApp extends React.Component {
             return "Loading...";
         }
         return (
-            <Provider userStore={userStore}>
+            <Provider userStore={userStore} webConnect={webConnect}>
                 <ManazeAppComponent />
             </Provider>
         );

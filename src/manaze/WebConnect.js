@@ -1,6 +1,5 @@
 import qs from "qs";
 import { observable } from "mobx";
-// var io = require("socket.io-client");
 
 export default class WebConnect {
     config = null;
@@ -13,34 +12,24 @@ export default class WebConnect {
         this.user = user;
     }
 
-    find(model, query) {
-        if (typeof model === "function") {
-            model = model();
+    async find(table, query) {
+        let user=await AsyncStorage.getItem("user")
+        if (user) {
+            user = JSON.parse(user);
         }
-        console.log("web find called>>>>")
-        return new Promise((resolve, reject) => {
-            AsyncStorage.getItem("user").then(user => {
-                if (user) {
-                    user = JSON.parse(user);
-                }
-                if (typeof query == "string") {
-                    query = { id: query };
-                }
-                let queryInfo = {
-                    query: query,
-                    model: model._id,
-                    user
-                };
-                this.socket.emit("load", queryInfo, (errMessage, data) => {
-                    if (errMessage) {
-                        window.alert(`Err in loading data>>>>>${errMessage}`);
-                        reject(errMessage);
-                    } else {
-                        resolve(data);
-                    }
-                });
-            });
-        });
+        let queryInfo = {
+                        id:"_find",
+                        paramValue:{table:"trip",query:{filter:{_id:"5b72602bf4bd7f56575d7fe0"}}},
+                        token:"c72c43595459de9151151360a627891d9171e613"
+                    };
+        try{
+            let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
+            return data;
+        }catch(e){
+           alert("Error is >>>>"+e.stack)
+        }
+
+
     }
 
     save(updates, model) {
@@ -73,58 +62,58 @@ export default class WebConnect {
         });
     }
 
-    upload(file, fileOptions) {
-        let { multipart = true } = fileOptions || {};
-        if (multipart) {
-            /*by default multipart property is true , it is used to upload large size  of file @dipak*/
-            let formData = new FormData();
-            formData.append("", file);
-            return this.fetchData({
-                uri: `/upload?`,
-                body: formData,
-                multipart: true
-            });
-        } else {
-            return new Promise((resolve, reject) => {
-                try {
-                    var fileReader = new FileReader();
-                    fileReader.onload = event => {
-                        this.fetchData({
-                            uri: "/upload",
-                            body: {
-                                name: file.name,
-                                type: file.type,
-                                contents: event.target.result
-                            }
-                        })
-                            .then(result => {
-                                resolve(result);
-                            })
-                            .catch(err => {
-                                reject(err);
-                            });
-                    };
-                    fileReader.readAsDataURL(file);
-                } catch (err) {
-                    reject(err);
-                }
-            });
-        }
+    // upload(file, fileOptions) {
+    //     let { multipart = true } = fileOptions || {};
+    //     if (multipart) {
+    //         /*by default multipart property is true , it is used to upload large size  of file @dipak*/
+    //         let formData = new FormData();
+    //         formData.append("", file);
+    //         return this.fetchData({
+    //             uri: `/upload?`,
+    //             body: formData,
+    //             multipart: true
+    //         });
+    //     } else {
+    //         return new Promise((resolve, reject) => {
+    //             try {
+    //                 var fileReader = new FileReader();
+    //                 fileReader.onload = event => {
+    //                     this.fetchData({
+    //                         uri: "/upload",
+    //                         body: {
+    //                             name: file.name,
+    //                             type: file.type,
+    //                             contents: event.target.result
+    //                         }
+    //                     })
+    //                         .then(result => {
+    //                             resolve(result);
+    //                         })
+    //                         .catch(err => {
+    //                             reject(err);
+    //                         });
+    //                 };
+    //                 fileReader.readAsDataURL(file);
+    //             } catch (err) {
+    //                 reject(err);
+    //             }
+    //         });
+    //     }
+    //
+    //     //if(mobile){
+    //     //  return this.fetchData({
+    //     //    uri: "/upload",
+    //     //    body: {
+    //     //      name: file.fileName,
+    //     //      type: file.type,
+    //     //      contents: "data:image/jpeg;base64," + file.data,
+    //     //      fileSize: file.fileSize
+    //     //    }
+    //     //  }).then(response => response.response && response.response.length && response.response[0]);
+    //     //}
+    // }
 
-        //if(mobile){
-        //  return this.fetchData({
-        //    uri: "/upload",
-        //    body: {
-        //      name: file.fileName,
-        //      type: file.type,
-        //      contents: "data:image/jpeg;base64," + file.data,
-        //      fileSize: file.fileSize
-        //    }
-        //  }).then(response => response.response && response.response.length && response.response[0]);
-        //}
-    }
-
-    fetchData(props) {
+    async fetchData(props) {
         return this.fetch(this.config.url, props).then(result => {
             let { status, code, response } = result;
             if (status === "error" && code === 500) {
@@ -137,12 +126,13 @@ export default class WebConnect {
         });
     }
 
-    fetch(url, { uri, body, multipart, method = "POST" }) {
+    async fetch(url, { uri, body, multipart, method = "POST" }) {
         var url = `${url}${uri || ""}`;
         let fetchUrl = url;
         let parameters = void 0;
         if (method === "POST") {
-            var headers = {};
+            var headers = {
+            }
             /*if uploading a  multipart file then do not make headers and modify body @Dipak   */
             if (!multipart) {
                 headers = {
@@ -169,7 +159,7 @@ export default class WebConnect {
         }
         return fetch(fetchUrl, parameters).then(_res => {
             return _res.json();
-        });
+        })
     }
 }
 
