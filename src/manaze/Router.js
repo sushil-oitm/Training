@@ -93,6 +93,7 @@ class Router extends React.Component {
                     <Rcomponent />
                 </Provider>
             );
+            components = [];
             components.push(com)
         }
         return components;

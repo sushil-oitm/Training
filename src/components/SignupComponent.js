@@ -28,15 +28,27 @@ class SignupComponent extends Component {
     }
 
     async handleSubmit(event) {
+        console.log("handleSubmit called>>>>")
         let {path,params,webConnect}=this.props;
-       /* let data= {
-            "firstName":this.state.firstname + " "+this.state.lastname,
-            "password":this.state.password,
-            "email":this.state.email,
+        // let data= {
+        //     "firstName":this.state.firstname + " "+this.state.lastname,
+        //     "password":this.state.password,
+        //     "email":this.state.email,
+        //     }
+            let data= {
+            "firstName":"a",
+            "password":"b",
+            "email":"c",
             }
-        await webConnect.invoke({"id":"createUser",param:data})*/
-        path.pop()
+        console.log("createuser called>>>>")
+       let createuser= await webConnect.invoke({"id":"createUser",param:data})
+        console.log("createuser successfully")
+        console.log("path in handleSubmit>>>>>"+JSON.stringify(path))
+        // let pathLength=path.length;
         params.reload=true;
+        path.pop();
+        console.log("params>>>>>>>"+params)
+        console.log("pop called>>>>"+params)
         event.preventDefault();
 
     }
@@ -45,24 +57,19 @@ class SignupComponent extends Component {
         return (
             <div class="wrapper">
                 <div class="container">
-                    <form >
+
                         <div class="row">
                             <div class="colSignup">
                                 <h2 style={{"text-align":"center"}}>Sign Up</h2>
                                 <div class="hide-md-lg">
-                                    <p>Or sign in manually:</p>
+                                    <p>sign in manually:</p>
                                 </div>
-
-                                <input type="text" name="firstname" placeholder="First Name" value={this.state.firstname} onChange={this.handleChange} required />
-                                <input type="text" name="lastname" placeholder="Lirst Name" value={this.state.lastname} onChange={this.handleChange}/>
-                                <input type="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} />
-                                <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange}/>
                                 <button style={{"color": "black"}} onClick={this.handleSubmit}
                                         className="btn">Submit</button>
                             </div>
 
                         </div>
-                    </form>
+
                 </div>
             </div>
         );

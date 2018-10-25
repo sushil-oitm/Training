@@ -49,6 +49,8 @@ export default class WebConnect {
         }
     }
     async invoke({id,param}) {
+        console.log("invoke called>>>>")
+        return
         let user=await AsyncStorage.getItem("user")
         if (user) {
             user = JSON.parse(user);
@@ -62,6 +64,7 @@ export default class WebConnect {
             let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
             return data;
         }catch(e){
+            console.log("error on server>>>>",e)
            // alert("Error is >>>>"+e.stack)
         }
     }
