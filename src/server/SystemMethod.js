@@ -87,15 +87,17 @@ let _authenticateUser = async(params, args) => {
             password = encryptPassword({ password });
             filter["enc_p"] = password.encPassword;
         }
-        let user = await _dbConnect.find("User", {filter})
+    filter["email"] = email;
+    let user = await _dbConnect.find("User", {filter})
            user = user.result && user.result.length > 0 && user.result[0] || void 0;
+
         let token = getToken();
 
     if (!user) {
         throw new Error("Not authorised");
     }
     await insertData("Connection", {user: { _id: user._id }, token}, args._dbConnect)
-
+console.log("user>>>>>",JSON.stringify(user))
     return {result: {user: {...user}, token}};
 
 };
