@@ -12,13 +12,13 @@ export default class WebConnect {
         this.user = user;
     }
 
-    async find(query={}) {
+    async find(param={}) {
         let user=await AsyncStorage.getItem("user")
         if (user) {
             user = JSON.parse(user);
         }
-        let fields=query.fields || {};
-        let filter=query.filter || {};
+        let fields=param.fields || {};
+        let filter=param.filter || {};
         let queryInfo = {
                         id:"_find",
                         paramValue:{table:query.table,query:{fields,filter}},
