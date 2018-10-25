@@ -14,7 +14,7 @@ class External extends React.Component {
                  <header><h3>Header</h3></header>
                </div>
                <div class="content">
-                   {!loading && Internal && Internal.map((m1)=>(<div className="flex-1">{m1}</div>)) }
+                   {!loading && Internal && Internal.map((m1)=>(<div className="inner-text">{m1}</div>)) }
                </div>
                <div className="footer">
                    <footer><h3>Footer</h3></footer>
