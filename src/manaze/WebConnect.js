@@ -36,8 +36,6 @@ export default class WebConnect {
         if (user) {
             user = JSON.parse(user);
         }
-        let fields=query.fields || {};
-        let filter=query.filter || {};
         let queryInfo = {
                         id:"_save",
                         paramValue:param,
@@ -55,8 +53,6 @@ export default class WebConnect {
         if (user) {
             user = JSON.parse(user);
         }
-        let fields=query.fields || {};
-        let filter=query.filter || {};
         let queryInfo = {
                         id:id,
                         paramValue:param,
