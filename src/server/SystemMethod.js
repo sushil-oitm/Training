@@ -133,7 +133,7 @@ const createUser = async (params, args) => {
             userInsert.mobile = mobile;
         }
         let userResult =  await insertData("User", userInsert, args._dbConnect)
-        userResult=userResult.result;
+        // userResult=userResult;
         // console.log("userResult>>>>>>"+JSON.stringify(userResult))
         return userResult;
 };

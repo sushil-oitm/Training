@@ -70,7 +70,8 @@ export default class WebConnect {
             return data;
         }catch(e){
             console.log("error on server>>>>",e)
-            alert("Error is >>>>",e)
+            return e
+            // alert("Error is >>>>",e)
         }
     }
     // upload(file, fileOptions) {
@@ -128,8 +129,10 @@ export default class WebConnect {
         return this.fetch(this.config.url, props).then(result => {
             let { status, code, response } = result;
             if (status === "error" && code === 500) {
+                response=response.error
                 let error = new Error(response.message);
                 error.code = response.code;
+                console.log("error in fetch>>>>>",error)
                 throw error;
             } else {
                 return response;

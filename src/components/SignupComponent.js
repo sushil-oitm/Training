@@ -36,6 +36,14 @@ class SignupComponent extends Component {
             "email":this.state.email,
             }
        let createuser= await webConnect.invoke({"id":"createUser",param:data})
+        if(!createuser.result)
+        {
+            console.log("createuser>>>>",createuser)
+            this.setState({errMessage:createuser.message})
+            return
+        }
+        console.log("createuser out >>>>",createuser)
+
         // let pathLength=path.length;
         params.reload=true;
         path.pop();
@@ -59,6 +67,9 @@ class SignupComponent extends Component {
                                 <input name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange}/>
                                 <button style={{"color": "black"}} onClick={this.handleSubmit}
                                         className="btn">Submit</button>
+                                <div>
+                                    {this.state.errMessage}
+                                </div>
                             </div>
 
                         </div>
