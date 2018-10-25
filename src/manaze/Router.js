@@ -81,7 +81,11 @@ class Router extends React.Component {
         for (let index = 0; index < roots.length; index++) {
             const {root, model} = roots[index];
              let  Rcomponent = model.component;
-               let  data=await webConnect.find("trip",{filter:{},fields:{}})
+             let  query = model.query;
+            let  data={}
+             if(query && query.table){
+                 data=await webConnect.find(query)
+             }
             console.log("data in router>>>>>"+JSON.stringify(data))
               let meta=fields[root];
             let com= (

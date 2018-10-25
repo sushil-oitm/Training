@@ -12,14 +12,16 @@ export default class WebConnect {
         this.user = user;
     }
 
-    async find(table, query) {
+    async find(query={}) {
         let user=await AsyncStorage.getItem("user")
         if (user) {
             user = JSON.parse(user);
         }
+        let fields=query.fields || {};
+        let filter=query.filter || {};
         let queryInfo = {
                         id:"_find",
-                        paramValue:{table:"trip",query:{filter:{_id:"5b72602bf4bd7f56575d7fe0"}}},
+                        paramValue:{table:query.table,query:{fields,filter}},
                         token:"c72c43595459de9151151360a627891d9171e613"
                     };
         try{
@@ -28,40 +30,45 @@ export default class WebConnect {
         }catch(e){
            alert("Error is >>>>"+e.stack)
         }
-
-
     }
-
-    save(updates, model) {
-        if (typeof model === "function") {
-            model = model();
+    async save(param) {
+        let user=await AsyncStorage.getItem("user")
+        if (user) {
+            user = JSON.parse(user);
         }
-        return new Promise((resolve, reject) => {
-            AsyncStorage.getItem("user").then(user => {
-                if (user) {
-                    user = JSON.parse(user);
-                }
-                this.socket.emit(
-                    "save",
-                    {
-                        updates,
-                        model: model._id,
-                        user
-                    },
-                    (errMessage, data) => {
-                        if (errMessage) {
-                            window.alert(`Err in save data>>>>>>>>>>${errMessage}`);
-                            reject(errMessage);
-                        } else {
-                            console.log("data>>>>>>>>>>>>>", data);
-                            resolve(data);
-                        }
-                    }
-                );
-            });
-        });
+        let fields=query.fields || {};
+        let filter=query.filter || {};
+        let queryInfo = {
+                        id:"_save",
+                        paramValue:param,
+                        token:"c72c43595459de9151151360a627891d9171e613"
+                    };
+        try{
+            let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
+            return data;
+        }catch(e){
+           alert("Error is >>>>"+e.stack)
+        }
     }
-
+    async invoke(id,param) {
+        let user=await AsyncStorage.getItem("user")
+        if (user) {
+            user = JSON.parse(user);
+        }
+        let fields=query.fields || {};
+        let filter=query.filter || {};
+        let queryInfo = {
+                        id:id,
+                        paramValue:param,
+                        token:"c72c43595459de9151151360a627891d9171e613"
+                    };
+        try{
+            let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
+            return data;
+        }catch(e){
+           alert("Error is >>>>"+e.stack)
+        }
+    }
     // upload(file, fileOptions) {
     //     let { multipart = true } = fileOptions || {};
     //     if (multipart) {
