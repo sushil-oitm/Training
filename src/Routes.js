@@ -30,6 +30,7 @@ export const routes= {
                 _id: 1,
                 imei: 1,
                 status: 1,
+                start_time: 1,
                  // vehicle: {_id: 1, name: 1},
                 //  customer: {_id: 1, name: 1},
                 // transporter: {_id: 1, name: 1}

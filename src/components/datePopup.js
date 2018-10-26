@@ -205,6 +205,3 @@ render(){
 }
 export default DateCom;
 
-// ReacdivOM.render((
-// <div><DateCom /></div>
-// 	),document.getElementById('root'))

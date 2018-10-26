@@ -1,9 +1,8 @@
-var React=require("react");
-var ReactDOM=require('react-dom');
+import React from "react";
+import  ReactDOM  from 'react-dom';
 import DatePopup from './datePopup';
 import  {downArrow,down} from '../images/images'
-import {actions} from './../redux'
-import {connect, Provider} from 'react-redux';
+
 
 
 class DateCom extends React.Component{
@@ -173,9 +172,4 @@ class DateCom extends React.Component{
   }
 }
 
-export default DateCom = connect(store=> {
-    return {
-        // detail:store.detail
-    }
-},{DETAIL:actions.DETAIL,unmount:actions.unmount})(DateCom);
-// ReactDOM.render((<div><DateCom /></div>),document.getElementById('root'));
+export default DateCom;

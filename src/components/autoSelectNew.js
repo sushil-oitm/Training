@@ -1,11 +1,9 @@
 'use strict';
-var React = require('react');
-var ReactDOM = require('react-dom');
-var $ = require('jquery');
+import React from "react";
+import  ReactDOM  from 'react-dom';
 import Popup from './popup';
 import  {downArrow,down} from '../images/images'
-import {connect, Provider} from 'react-redux';
-import {actions} from './../redux'
+var $ = require('jquery');
 var maxHeightPopup=126;
 var listItemHeight=18;
 var styles={'dropDown':{
@@ -42,7 +40,7 @@ class AutoSuggest extends React.Component {
     }
 
     onOutSideClick(){
-          this.setState({possibleValues:[],dropDownBehaviour,"value":"","focused":0,"isFocused":false},()=>{
+          this.setState({possibleValues:[],'dropDownBehaviour':[],"value":"","focused":0,"isFocused":false},()=>{
         });
     }
     componentWillReceiveProps(newProps){
@@ -208,9 +206,9 @@ else if (e.keyCode == 13 && this.state.focused>-1) { // this focused check is fo
             )
     }
 }
-AutoSuggest.propTypes={
-  callFieldFocusOut :React.PropTypes.func.isRequired
-}
+// AutoSuggest.propTypes={
+//   callFieldFocusOut :React.PropTypes.func.isRequired
+// }
 
 AutoSuggest.defaultProps = {
   disabled : false,
@@ -218,15 +216,15 @@ AutoSuggest.defaultProps = {
 };
 
 
-AutoSuggest = connect(store=> {
-    // console.log("Store in fk>>>>>"+JSON.stringify(store))
-    let newstate={}
-    if(!store.onFieldFocusOut){
-        newstate.onFieldFocusOut=(value)=>{
-        }
-    }
-    newstate.disabled=false;
-    return newstate},{loadData:actions.loadData,unmount:actions.unmount})(AutoSuggest);
+// AutoSuggest = connect(store=> {
+//     // console.log("Store in fk>>>>>"+JSON.stringify(store))
+//     let newstate={}
+//     if(!store.onFieldFocusOut){
+//         newstate.onFieldFocusOut=(value)=>{
+//         }
+//     }
+//     newstate.disabled=false;
+//     return newstate},{loadData:actions.loadData,unmount:actions.unmount})(AutoSuggest);
 
 
 
