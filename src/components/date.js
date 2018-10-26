@@ -154,6 +154,7 @@ class DateCom extends React.Component{
           width  : info.width,
           height:info.height,
           border:'none',
+          color:"black"
           // 'borderBottom':'1px solid lightgray'
       }
       if(detail){

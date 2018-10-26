@@ -3,6 +3,7 @@ import { observer, Provider, inject } from "mobx-react";
 import Field from './field';
 import  {umbrella,menuicon,detailIcon,insertIcon,deleteIcon} from '../images/images'
 import Style from './../theme/styles'
+import "../CSS/List.css"
 
 
 @inject("path")
@@ -44,18 +45,18 @@ class List extends Component {
         }
         return (
             <div>
-                <div style={{"max-height": 900,"min-height": 700}}>
-                {data.map((rowData,index)=>(<div style={{flexDirection:'row',flex:1,display:'flex',"margin-bottom": 0, "background-color": "white", "padding": "10px", "border-bottom": "0.5px solid rgb(231, 231, 231)", "cursor": "pointer"}} key={index}>
-                    <RenderRow DETAIL={this.props.DETAIL} rowData={rowData} fields={fields}></RenderRow>
+                <div class="wrapper">
+                {data.map((rowData,index)=>(<div class="list_data" key={index}>
+                    <RenderRow DETAIL={this.props.detail} rowData={rowData} fields={fields}></RenderRow>
 
                         {!detail &&<div style={{paddingLeft:"10"}}>
-                        <img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,dataset)}} height="20px" width="20px"/>
+                        <img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,dataset)}} height="35px" width="20px" style={{"padding-top":"15px"}}/>
                     </div>}
 
                 </div>))}
                 </div>
-                {!detail && <div style={{paddingLeft:20,paddingTop:20,"justify-content": "flex-end","display": "flex"}}>
-                    <div onClick={(e)=>{this.detail({})}} style={{display:"flex",height: 50,width: 50,"border-radius": 25, "background-color": "yellow","text-align": "center", "justify-content": "center", "align-items": "center"}}><span>Add</span></div>
+                {!detail && <div class="add_wrapper">
+                    <div onClick={(e)=>{this.detail({})}} class="add_button"><span>Add</span></div>
                 </div>}
 
                 </div>
@@ -69,7 +70,8 @@ class RenderRow extends Component {
         this.detail = this.detail.bind(this);
     }
     detail(rowData){
-        this.props.DETAIL(rowData)
+        // this.props.DETAIL(rowData)
+        console.log("detail view not define")
     }
     getFields(fields,rowData={}){
         let fieldsdata=[];
@@ -78,8 +80,8 @@ class RenderRow extends Component {
         });
         for(let i=0;i<fields.length;i++){
             fieldsdata.push(
-                    <div key={i} style={{flexDirection:'row',display:'flex', flex:1 }}>
-                    <div style={{flex:1}}>
+                    <div key={i} class="list_wrapper">
+                    <div class="list_inner_wrapper">
                     <Field key={i+"__"} id={fields[i].id} value={rowData[fields[i].id]} info={fields[i]} onChange={this.handleChange}></Field>
                     </div>
                     </div>
@@ -91,7 +93,7 @@ class RenderRow extends Component {
         var  {fields,rowData}= this.props;
         console.log("rowData in RenderRow>>>>>"+JSON.stringify(rowData))
         console.log("fields in RenderRow>>>>>"+JSON.stringify(fields))
-        return (<div onClick={()=>{this.detail(rowData)}} style={{flexDirection:'row',flex:1,display:'flex'}}>
+        return (<div onClick={()=>{this.detail(rowData)}} class="content">
             {this.getFields(fields,rowData)}
         </div>)
 

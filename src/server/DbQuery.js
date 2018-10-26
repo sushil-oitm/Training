@@ -13,9 +13,9 @@ let getTableData = async (query, table, option, args) => {
     // console.log(`getTableData called with fields>>>> ${JSON.stringify(fields)} table ${table}`)
     let subqueryFields = resolveSubqueryFields(query.fields, table);
     let finalQuery = processQuery(query)
-    let salData = await args._dbConnect.find(table, query, option)
+    let salData = await args._dbConnect.find(table, finalQuery, option)
     salData = salData.result;
-    // console.log(`result of query>>>> ${JSON.stringify(salData)}`)
+     console.log(`result of query>>>> ${JSON.stringify(salData)}`)
     let subResult = await getSubqueryResult(salData, subqueryFields, args);
     let data = salData;
     if (subResult && Object.keys(subResult).length > 0) {
@@ -54,6 +54,7 @@ let processQuery = (query) => {
         }
 
     }
+    return query
 }
 
 let mergeResult = (src, tar, rel) => {
@@ -116,7 +117,7 @@ let getSubqueryResult = async (subdata, subqueryFields, args) => {
     let table = Object.keys(subqueryFields)[0];
     if (table) {
         let relation = clone(subqueryFields[table]["relation"]);
-        // console.log("relation>>>>>",relation)
+         console.log("relation>>>>>",relation)
         let filter = [];
         if (subdata && subdata.length > 0) {
             for (let i = 0; i < subdata.length; i++) {
@@ -126,7 +127,7 @@ let getSubqueryResult = async (subdata, subqueryFields, args) => {
 
             }
         }
-        // console.log("filter>>>>>",filter)
+         console.log("filter>>>>>",filter)
         if (filter && filter.length > 0) {
             let data = await getTableData({
                 filter: {_id: {$in: filter}},

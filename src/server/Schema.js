@@ -50,12 +50,13 @@ let studentSchema = {
 let employeeSchema={
     _id: {type: "objectId"},
     reportingTo: {type: "fk", table: "Resource"},
+    functional_manager: {type: "fk", table: "Resource"},
     dob:"date",
     card_no:"number",
     employee_status: "string",
     name: "string",
     salary_payment_mode: "string",
-    email: "string",
+    official_email_id: "string",
     photo:"file"
 }
 

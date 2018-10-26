@@ -169,6 +169,7 @@ else if (e.keyCode == 13 && this.state.focused>-1) { // this focused check is fo
        var inputStyle=styles['inputStyle'];
        inputStyle["height"]=info.height
        inputStyle["width"]=info.width
+       inputStyle["color"]="black"
        if(detail){
            inputStyle["borderBottom"]='1px solid lightgray'
        }else{

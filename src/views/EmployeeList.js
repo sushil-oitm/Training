@@ -15,13 +15,14 @@ class EmployeeList extends React.Component {
         const {data} = this.props;
         console.log("data in internal is>>>>"+JSON.stringify(data))
         let meta=[
-            {id:"photo",label:"Photo"},
-            {id:"name",label:"Name"},
-            {id:"dob",label:"DOB"},
-            {id:"email",label:"Email"},
-            {id:"card_no",label:"Card No"},
-            // {id:"reportingTo",label:"Reporting To"},
-            {id:"salary_payment_mode",label:"Salary Mode"},
+            // {id:"photo",label:"Photo"},
+            {id:"name",label:"Name",type:"string"},
+            {id:"dob",label:"DOB",type:"date"},
+            {id:"official_email_id",label:"Email",type:"string"},
+            {id:"card_no",label:"Card No",type:"number"},
+            {id:"functional_manager",label:"Functional Manager",type:"fk",display:"name"},
+            // {id:"reportingTo",label:"Reporting Manager",type:"select",display:"name"},
+            {id:"salary_payment_mode",label:"Salary Mode",type:"string"},
 
         ]
         return (
