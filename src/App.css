@@ -22,7 +22,7 @@
   font-size: large;
 }
 .outer{
-  background-color: wheat;
+  /*background-color: wheat;*/
   width: 100%;
   height: 100%;
   position:fixed;
