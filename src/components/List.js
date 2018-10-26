@@ -101,13 +101,6 @@ class RenderRow extends Component {
 
     }
 }
-// export default List = connect(store=> {
-//      // console.log("store in list>>>>"+JSON.stringify(store))
-//         return {
-//             ...store
-//         }
-//     }
-//     ,{DETAIL:actions.DETAIL,unmount:actions.unmount,onDelete:actions.onDelete,loadData:actions.loadData})(List);
 
 
 export default List

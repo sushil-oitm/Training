@@ -5,6 +5,7 @@ let tripSchema = {
     customer: {type: "fk", table: "entities"},
     // imei_mapping: {type: "fk", table:"imei_mapping"},
     imei: "string",
+    start_time: "date",
     status: "string",
 }
 let truckSchema = {

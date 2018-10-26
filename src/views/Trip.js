@@ -14,17 +14,17 @@ class Trip extends React.Component {
     render() {
         const {data} = this.props;
         console.log("data in internal is>>>>"+JSON.stringify(data))
-       let meta=[
-            {id:"status",label:"Status"},
-            {id:"imei",label:"Imei"},
-            {id:"3",label:"3"},
-            {id:"4",label:"4"},
-            {id:"5",label:"5"},
+       let fieldinfo=[
+            {id:"status",label:"Status",type:"string"},
+            {id:"imei",label:"Imei",type:"string"},
+            {id:"3",label:"3",type:"number"},
+            {id:"start_time",label:"Start",type:"date"},
+            {id:"5",label:"5",type:"string"},
 
         ]
         return (
             <div className="flex-1">
-               <List fields={meta} />
+               <List fields={fieldinfo} />
             </div>
         );
     }

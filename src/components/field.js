@@ -1,13 +1,10 @@
 'use strict';
-var React = require('react');
-var ReactDOM = require('react-dom');
-// var DatePicker = require('react-datepicker');
-// import {actions} from './../redux'
-// import {connect, Provider} from 'react-redux';
-// import AutoSelect from './autoSelect';
-// import AutoSelectNew from './autoSelectNew';
-// import DateCom from './date';
-// var moment = require('moment');
+import React from "react";
+import  ReactDOM  from 'react-dom';
+import AutoSelect from './autoSelect';
+ import AutoSelectNew from './autoSelectNew';
+import DateCom from './date';
+
 class Field extends React.Component{
     constructor(p){
         super(p);
@@ -77,22 +74,22 @@ class Field extends React.Component{
         }
         var fieldView;
         var placeholder='Enter the '+this.props.info.label;
-        fieldView=<input  style={stringStyle} key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.state.value} onChange={(e)=>{this.onChange(e)}} disabled={!this.props.info.is_edit}/>
-            // if(this.props.info.type=="string"){
-            //     fieldView=<input  style={stringStyle} key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.state.value} onChange={(e)=>{this.onChange(e)}} disabled={!this.props.info.is_edit}/>
-            // }
-            // else if(this.props.info.type=="number"){
-            //     fieldView=<input   style={numberStyle} type="number" key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.props.value} onChange={(e)=>{this.onChange(e)}}  disabled={!this.props.info.is_edit}/>
-            // }
-            // else if(this.props.info.type=="date"){
-            //     fieldView=<DateCom detail={detail || false} defaultValue={this.props.value} info={this.props.info} disabled={!this.props.info.is_edit} onChange={(e)=>{this.onDateChange(e)}}/>
-            // }
-            // else if(this.props.info.type=="select"){
-            //     fieldView=<AutoSelectNew  detail={detail || false} placeholder={this.props.info.label} onChange={this.props.onChange} info={this.props.info} callFieldFocusOut={this.onFieldFocusOut} possibleValues={this.props.info.possibleValues}  defaultValue={this.props.value || ''}  disabled={!this.props.info.is_edit} />
-            // }
-            // else if(this.props.info.type=="fk"){
-            //             fieldView=<AutoSelect detail={detail || false}  callFieldFocusOut={this.onFieldFocusOut} info={this.props.info} onChange={this.props.onChange} defaultValue={this.props.value}  disabled={!this.props.info.is_edit}/>
-            // }
+
+            if(this.props.info.type=="string"){
+                fieldView=<input  style={stringStyle} key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.state.value} onChange={(e)=>{this.onChange(e)}} disabled={!this.props.info.is_edit}/>
+            }
+            else if(this.props.info.type=="number"){
+                fieldView=<input   style={numberStyle} type="number" key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.props.value} onChange={(e)=>{this.onChange(e)}}  disabled={!this.props.info.is_edit}/>
+            }
+            else if(this.props.info.type=="date"){
+                fieldView=<DateCom detail={detail || false} defaultValue={this.props.value} info={this.props.info} disabled={!this.props.info.is_edit} onChange={(e)=>{this.onDateChange(e)}}/>
+            }
+            else if(this.props.info.type=="select"){
+                 fieldView=<AutoSelectNew  detail={detail || false} placeholder={this.props.info.label} onChange={this.props.onChange} info={this.props.info} callFieldFocusOut={this.onFieldFocusOut} possibleValues={this.props.info.possibleValues}  defaultValue={this.props.value || ''}  disabled={!this.props.info.is_edit} />
+            }
+            else if(this.props.info.type=="fk"){
+                      fieldView=<AutoSelect detail={detail || false}  callFieldFocusOut={this.onFieldFocusOut} info={this.props.info} onChange={this.props.onChange} defaultValue={this.props.value}  disabled={!this.props.info.is_edit}/>
+            }
         return (
             <div>           
                 {fieldView}
