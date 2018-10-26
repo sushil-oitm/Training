@@ -1,8 +1,11 @@
 import React ,{Component} from "react";
-import Button from "./Button"
-import {actions} from './../redux'
-import {connect, Provider} from 'react-redux';
 import Field from './field';
+import {inject, observer} from "mobx-react/index";
+
+
+@inject("path")
+@inject("params")
+@observer
 class Form extends Component {
     constructor(props){
         super(props);
@@ -18,11 +21,14 @@ class Form extends Component {
             }
     componentWillUnmount(){
         // console.log("unmount from form")
-        this.props.unmount({dataname:"formdata"})
+        // this.props.unmount({dataname:"formdata"})
     } 
     calcel(){
+        const {path,params}=this.props
         // console.log("HIDEFORM from form"+JSON.stringify(this.props))
-        this.props.unmount({dataname:"formdata"})
+        // this.props.unmount({dataname:"formdata"})
+        params.reload=true
+        path.pop()
     }
     onInsert(dataset,rowData){
          // console.log("rowData>>>>"+JSON.stringify(rowData))
@@ -76,15 +82,4 @@ class Form extends Component {
     }
 }
 
-//connect to redux
-export default Form = connect(state=>{
-    // console.log("form state>>>>"+JSON.stringify(state))
-    return state
-}, {onInsert:actions.onInsert,onUpdate:actions.onUpdate,unmount:actions.unmount,HIDEFORM:actions.HIDEFORM})(Form);
-
-/**
- * Created by root on 20/10/16.
- */
-
-// <div style={{flex:1}}>{renderField}</div>
-// <input type="text" name={renderField} defaultValue={rowData && rowData[renderField]} onChange={this.handleChange}/>
+export default Form;

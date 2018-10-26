@@ -26,7 +26,10 @@ class List extends Component {
 
     }
     detail(rowData){
-        console.log("delete called>>>>",rowData)
+        const {path,params}=this.props;
+        console.log("delete called>>>>",rowData);
+        params.reload=true
+        path.push({path:"/resources-detail"})
     }
     async deletedata(rowData) {
         let {params,webConnect}=this.props;
@@ -39,6 +42,7 @@ class List extends Component {
     }
     render(){
         var  {dataset,fields,data,detail,filter={}}= this.props;
+        console.log("props in list>>>>>"+JSON.stringify(this.props))
         console.log("data in list>>>>>"+JSON.stringify(data))
         console.log("fields in list>>>>>"+JSON.stringify(fields))
         // data=this.props[dataset+"-listdata"]
@@ -68,6 +72,13 @@ class List extends Component {
             )
     }
 }
+
+@inject("path")
+@inject("params")
+@inject("webConnect")
+@inject("userStore")
+@inject("data")
+@observer
 class RenderRow extends Component {
     constructor(props){
         super(props);
@@ -75,8 +86,10 @@ class RenderRow extends Component {
         this.detail = this.detail.bind(this);
     }
     detail(rowData){
-        // this.props.DETAIL(rowData)
-        console.log("detail view not define")
+        const {path,params}=this.props;
+        console.log("delete called>>>>",rowData);
+        params.reload=true
+        path.push({path:"/resources-detail"})
     }
     getFields(fields,rowData={}){
         let fieldsdata=[];
@@ -96,6 +109,7 @@ class RenderRow extends Component {
     }
     render(){
         var  {fields,rowData}= this.props;
+        console.log("props in render row>>>>>"+JSON.stringify(this.props))
         console.log("rowData in RenderRow>>>>>"+JSON.stringify(rowData))
         console.log("fields in RenderRow>>>>>"+JSON.stringify(fields))
         return (<div onClick={()=>{this.detail(rowData)}} class="content">

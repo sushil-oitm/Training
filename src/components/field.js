@@ -14,7 +14,7 @@ class Field extends React.Component{
         this.onFieldFocusOut=this.onFieldFocusOut.bind(this);
     }
     componentWillUnmount(){
-        this.props.unmount({dataname:"autoload"})
+        // this.props.unmount({dataname:"autoload"})
     }
     componentWillReceiveProps(newProps){
         // console.log("newProps>>>>"+JSON.stringify(newProps))
