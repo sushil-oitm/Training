@@ -20,6 +20,7 @@ var styles={'dropDown':{
     inputStyle:{
         width  : 206,
         border:'none',
+        color:"black"
         // height:40
         // 'borderBottom':'1px solid lightgray'
 
