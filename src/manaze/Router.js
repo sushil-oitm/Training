@@ -64,7 +64,7 @@ class Router extends React.Component {
         // Typical usage (don't forget to compare props):
         let {path,routes,params}=this.props;
         let prepath=prevProps.path;
-        // console.log("params"+JSON.stringify(params))
+         console.log("params"+JSON.stringify(params))
         if (params.reload) {
             // console.log("path updated")
             const roots = this.splitRoots(path, routes);

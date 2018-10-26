@@ -63,9 +63,12 @@ let mergeResult = (src, tar, rel) => {
     }
     let map = mapOfRelation(tar, rel);
     for (let i = 0; i < src.length; i++) {
-        let value = src[i][rel.localField]["_id"];
-        delete src[i][rel.localField]["_id"];
-        src[i][rel.localField] = map[value];
+        if(src[i][rel.localField] && src[i][rel.localField]["_id"]){
+            let value = src[i][rel.localField]["_id"];
+            delete src[i][rel.localField]["_id"];
+            src[i][rel.localField] = map[value];
+        }
+
     }
     return src;
 }

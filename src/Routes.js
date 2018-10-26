@@ -41,7 +41,8 @@ export const routes= {
         component:EmployeeList,
         query: {
             table: "Resource",
-            filter: {"employee_status" : "Active","name":"Jyoti Patwal"},
+            // filter: {"employee_status" : "Active",name:"Rambir Singh"},
+            filter: {"employee_status" : "Active"},
             fields: {
                 _id: 1,
                 functional_manager: {_id:1,name:1},

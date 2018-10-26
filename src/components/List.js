@@ -28,8 +28,13 @@ class List extends Component {
     detail(rowData){
         console.log("delete called>>>>",rowData)
     }
-    deletedata(rowData) {
+    async deletedata(rowData) {
+        let {params,webConnect}=this.props;
          console.log("delete called>>>>",rowData)
+        let finalupdates= {table:"Resource",updates:{remove:{_id:rowData._id}}}
+        let deleterow= await webConnect.invoke({"id":"_save",param:finalupdates})
+        params.reload=true;
+        console.log("params>>>>>",params)
 
     }
     render(){

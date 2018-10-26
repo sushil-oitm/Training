@@ -60,7 +60,7 @@ export default class WebConnect {
         }
     }
     async invoke({id,param}) {
-        // console.log("invoke called>>>>")
+         console.log("invoke called>>>>")
         let user=await AsyncStorage.getItem("user")
         if (user) {
             user = JSON.parse(user);
@@ -68,9 +68,10 @@ export default class WebConnect {
         let queryInfo = {
                         id:id,
                         paramValue:param,
-                        // token:"c72c43595459de9151151360a627891d9171e613"
-                        token:user.token
                     };
+        if(user && user.token){
+            queryInfo["token"]=user.token
+        }
         try{
             let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
             return data;

@@ -159,13 +159,13 @@ class AutoSuggest extends React.Component {
         var {info,detail}=this.props;
         var possibleValues=JSON.parse(JSON.stringify(this.state.possibleValues));
         var inputStyle=styles['inputStyle'];
-        inputStyle["height"]=info.height
-        inputStyle["width"]=info.width
-        inputStyle["color"]="black"
+        // inputStyle["height"]=info.height
+        // inputStyle["width"]=info.width
+        // inputStyle["color"]="black"
         if(detail){
-            inputStyle["borderBottom"]='1px solid lightgray'
+            // inputStyle["borderBottom"]='1px solid lightgray'
         }else{
-            inputStyle["borderBottom"]='none'
+            // inputStyle["borderBottom"]='none'
         }
         if(Object.keys(this.state.dropDownBehaviour).length>0){
             var dropDownStyle=  Object.assign({},styles['dropDown'],this.state.dropDownBehaviour);
