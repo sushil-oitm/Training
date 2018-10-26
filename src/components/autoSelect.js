@@ -23,8 +23,7 @@ var styles={'dropDown':{
         color:"black"
         // height:40
         // 'borderBottom':'1px solid lightgray'
-
-    }
+     }
 }
 
 
