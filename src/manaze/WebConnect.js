@@ -19,9 +19,9 @@ export default class WebConnect {
     }
 
     async find(param={}) {
-        console.log("param in find>>>>>>"+JSON.stringify(param))
+        // console.log("param in find>>>>>>"+JSON.stringify(param))
         let user=await AsyncStorage.getItem("user")
-        console.log("user in find>>",user)
+        // console.log("user in find>>",user)
         if (user) {
              user = JSON.parse(user);
         }
@@ -33,7 +33,7 @@ export default class WebConnect {
                         token:"c72c43595459de9151151360a627891d9171e613"
                     };
         try{
-            console.log("queryInfo>>>>>>",queryInfo)
+            // console.log("queryInfo>>>>>>",queryInfo)
             let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
             return data;
         }catch(e){
@@ -58,7 +58,7 @@ export default class WebConnect {
         }
     }
     async invoke({id,param}) {
-        console.log("invoke called>>>>")
+        // console.log("invoke called>>>>")
         let user=await AsyncStorage.getItem("user")
         if (user) {
             user = JSON.parse(user);
@@ -135,7 +135,7 @@ export default class WebConnect {
                 response=response.error
                 let error = new Error(response.message);
                 error.code = response.code;
-                console.log("error in fetch>>>>>",error)
+                // console.log("error in fetch>>>>>",error)
                 throw error;
             } else {
                 return response;

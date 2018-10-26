@@ -64,9 +64,9 @@ class Router extends React.Component {
         // Typical usage (don't forget to compare props):
         let {path,routes,params}=this.props;
         let prepath=prevProps.path;
-        console.log("params"+JSON.stringify(params))
+        // console.log("params"+JSON.stringify(params))
         if (params.reload) {
-            console.log("path updated")
+            // console.log("path updated")
             const roots = this.splitRoots(path, routes);
             this.getComponents(roots, path).then(comp=>{
                 this.setState({"Components":comp,loading:false})
@@ -81,16 +81,16 @@ class Router extends React.Component {
         for (let index = 0; index < roots.length; index++) {
 
             const {root, model} = roots[index];
-            console.log("root>>>>>"+JSON.stringify(roots[index]))
-            console.log("model>>>>>"+JSON.stringify(model))
+            // console.log("root>>>>>"+JSON.stringify(roots[index]))
+            // console.log("model>>>>>"+JSON.stringify(model))
              let  Rcomponent = model.component;
              let  query = model.query;
             let  data={}
              if(query && query.table){
                  data=await webConnect.find(query)
              }
-            console.log("data in router>>>>>"+JSON.stringify(data))
-            console.log("Rcomponent>>>>>",Rcomponent)
+            // console.log("data in router>>>>>"+JSON.stringify(data))
+            // console.log("Rcomponent>>>>>",Rcomponent)
               let meta=fields[root];
             let com= (
                 <Provider data={data} meta={meta}>
@@ -104,7 +104,7 @@ class Router extends React.Component {
     }
 
     splitRoots(paths, routes) {
-        console.log(">>>>>>>path>>>>>", paths);
+        // console.log(">>>>>>>path>>>>>", paths);
         const roots = [];
         var accumPath = "";
         let lastRoute = null;
@@ -123,7 +123,7 @@ class Router extends React.Component {
             let hash = null;
 
             let lastIndexOf = subPath.lastIndexOf("/");
-            console.log("lastIndexOf>>>>"+lastIndexOf)
+            // console.log("lastIndexOf>>>>"+lastIndexOf)
             if (lastIndexOf > 0) {
                 viewName = subPath.substring(lastIndexOf + 1);
                 hash = subPath.substring(1, lastIndexOf).split("#").join("");
@@ -131,15 +131,15 @@ class Router extends React.Component {
                 viewName = subPath.substring(1);
             }
             accumPath = `${accumPath}${subPath}`;
-            console.log("accumPath>>>>"+accumPath)
+            // console.log("accumPath>>>>"+accumPath)
             let view = void 0;
             let route = void 0;
             let relation = void 0;
                 let matchViewInfo = matchView({ view: viewName, routes });
-            console.log("matchViewInfo is>>>>",matchViewInfo)
+            // console.log("matchViewInfo is>>>>",matchViewInfo)
             view = matchViewInfo.view;
             route = matchViewInfo.route;
-            console.log("route is>>>>",route)
+            // console.log("route is>>>>",route)
             roots.push({
                 hash,
                 accumPath,
@@ -152,7 +152,7 @@ class Router extends React.Component {
             lastRoute = route;
         }
         setLocation(accumPath);
-        console.log("root>>>>",roots)
+        // console.log("root>>>>",roots)
         return roots;
     }
 
