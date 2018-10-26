@@ -3,7 +3,6 @@ import { observer, Provider, inject } from "mobx-react";
 import Field from './field';
 import  {umbrella,menuicon,detailIcon,insertIcon,deleteIcon} from '../images/images'
 import Style from './../theme/styles'
-import Popup from './menupopup'
 
 
 @inject("path")
@@ -22,17 +21,15 @@ class List extends Component {
         }
     }
     componentWillUnmount(){
-        // console.log("list unmount called>>>")
-        this.props.unmount({dataname:"listdata"})
+         console.log("list unmount called>>>")
+
     }
     detail(rowData){
-        this.props.DETAIL(rowData)
+        console.log("delete called>>>>",rowData)
     }
-    deletedata(rowData,dataset) {
-        // console.log("delete called>>>>"+dataset)
-        let data={_id:rowData._id,dataset:dataset}
-        // console.log("data>>>>",data)
-        this.props.onDelete(data)
+    deletedata(rowData) {
+         console.log("delete called>>>>",rowData)
+
     }
     render(){
         var  {dataset,fields,data,detail,filter={}}= this.props;
@@ -51,18 +48,17 @@ class List extends Component {
                 {data.map((rowData,index)=>(<div style={{flexDirection:'row',flex:1,display:'flex',"margin-bottom": 0, "background-color": "white", "padding": "10px", "border-bottom": "0.5px solid rgb(231, 231, 231)", "cursor": "pointer"}} key={index}>
                     <RenderRow DETAIL={this.props.DETAIL} rowData={rowData} fields={fields}></RenderRow>
 
-                        {/*{!detail &&<div style={{paddingLeft:"10"}}>*/}
-                        {/*<img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,dataset)}} height="20px" width="20px"/>*/}
-                    {/*</div>}*/}
+                        {!detail &&<div style={{paddingLeft:"10"}}>
+                        <img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,dataset)}} height="20px" width="20px"/>
+                    </div>}
 
                 </div>))}
                 </div>
-                {/*{!detail && <div style={{paddingLeft:20,paddingTop:20,"justify-content": "flex-end","display": "flex"}}>*/}
-                    {/*<div onClick={(e)=>{this.detail({})}} style={{display:"flex",height: 50,width: 50,"border-radius": 25, "background-color": "yellow","text-align": "center", "justify-content": "center", "align-items": "center"}}><span>Add</span></div>*/}
-                {/*</div>}*/}
+                {!detail && <div style={{paddingLeft:20,paddingTop:20,"justify-content": "flex-end","display": "flex"}}>
+                    <div onClick={(e)=>{this.detail({})}} style={{display:"flex",height: 50,width: 50,"border-radius": 25, "background-color": "yellow","text-align": "center", "justify-content": "center", "align-items": "center"}}><span>Add</span></div>
+                </div>}
 
                 </div>
-
             )
     }
 }
