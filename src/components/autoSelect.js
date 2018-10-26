@@ -51,7 +51,7 @@ class AutoSuggest extends React.Component {
         });
     }
     componentWillUnmount(){
-        this.props.unmount({dataname:this.props.info.dataset+"-autodata"})
+        // this.props.unmount({dataname:this.props.info.dataset+"-autodata"})
     }
     onChange(e) {
         var elementValue=e.target.value;
