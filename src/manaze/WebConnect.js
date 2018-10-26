@@ -30,7 +30,8 @@ export default class WebConnect {
         let queryInfo = {
                         id:"_find",
                         paramValue:{table:param.table,query:{fields,filter}},
-                        token:"c72c43595459de9151151360a627891d9171e613"
+                        // token:"c72c43595459de9151151360a627891d9171e613"
+                        token:user.token
                     };
         try{
             // console.log("queryInfo>>>>>>",queryInfo)
@@ -48,7 +49,8 @@ export default class WebConnect {
         let queryInfo = {
                         id:"_save",
                         paramValue:param,
-                        token:"c72c43595459de9151151360a627891d9171e613"
+                        // token:"c72c43595459de9151151360a627891d9171e613"
+                         token:user.token
                     };
         try{
             let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
@@ -67,6 +69,7 @@ export default class WebConnect {
                         id:id,
                         paramValue:param,
                         // token:"c72c43595459de9151151360a627891d9171e613"
+                        token:user.token
                     };
         try{
             let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})

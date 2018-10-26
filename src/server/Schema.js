@@ -46,6 +46,59 @@ let studentSchema = {
 
 }
 
+let employeeSchema={
+    _id: {type: "objectId"},
+    reportingTo: {type: "fk", table: "Resource"},
+    dob:"date",
+    card_no:"number",
+    employee_status: "string",
+    name: "string",
+    salary_payment_mode: "string",
+    email: "string",
+    photo:"file"
+}
+
+let bloodGroupSchema={
+    _id:{type:"objectId"},
+    name:"string"
+}
+let nomineeSchema={
+    _id:{type:"objectId"},
+    name:"string"
+}
+
+let skillSchema={
+    _id:{type:"objectId"},
+    name:"string",
+    skill_levels: {type:"fk",table:"SkillLevel"},
+}
+
+let skillLevelSchema={
+    _id: {type:"objectId"},
+    level: "string",
+}
+
+let bankAccountSchema={
+    _id:{type:"objectId"},
+    name_id:{type:"fk", table:"BankType"},
+    name_in_bank:"string",
+    branch:"string",
+    account_no:"string",
+    account_type_id:{type:"fk" ,table:"Account"}
+}
+
+let bankTypeSchema={
+    _id:{type:"objectId"},
+    name:"string"
+}
+
+let accountSchema={
+    _id:{type:"objectId"},
+    name:"string",
+    is_bank:"boolean",
+    description:"string",
+    account_group_type:"string"
+}
 export const getSchema = (table) => {
     if (table == "trip") {
         return tripSchema;
@@ -65,5 +118,30 @@ export const getSchema = (table) => {
     else if (table == "student") {
         return studentSchema
     }
+    else if (table == "Resource") {
+        return employeeSchema
+    }
+    else if (table == "BloodGroup") {
+        return bloodGroupSchema
+    }
+    else if (table == "NomineeRelation") {
+        return nomineeSchema
+    }
+    else if (table == "skill") {
+        return skillSchema
+    }
+    else if (table == "SkillLevel") {
+        return skillLevelSchema
+    }
+    else if (table == "BankAccount") {
+        return bankAccountSchema
+    }
+    else if (table == "BankType") {
+        return bankTypeSchema
+    }
+    else if (table == "Account") {
+        return accountSchema
+    }
+
     return null;
 }
