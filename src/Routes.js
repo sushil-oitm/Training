@@ -1,6 +1,7 @@
 import Methods from "./components/Testing";
 import LoginComponent from "./components/LoginComponent";
 import SignupComponent from "./components/SignupComponent";
+import SimpleMenu from "./components/Menu"
 import Trip from "./views/Trip";
 import EmployeeList,{EmployeeForm} from "./views/EmployeeList"
 let {Project,Progress,Task,Login,Resource,External}=Methods;
@@ -16,6 +17,9 @@ export const routes= {
     projects:{
         component:Project,
         query:{table:"trip",filter:{_id:"5b72602bf4bd7f56575d7fe0"},fields:{_id:1,vehicle:{_id:1}}}
+    },
+    menu:{
+        component:SimpleMenu
     },
     tasks:{
         component:Task,
@@ -82,6 +86,4 @@ export const routes= {
         component:SignupComponent
     }
 }
-
-
 

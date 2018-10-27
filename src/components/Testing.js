@@ -1,5 +1,6 @@
 import React from "react";
 import { observer, Provider, inject } from "mobx-react";
+import SimpleMenu from "./Menu"
 import "../App.css"
 @observer
 class External extends React.Component {
@@ -12,7 +13,7 @@ class External extends React.Component {
         return (
            <div className="outer">
                <div className="header">
-                 <header></header>
+                 <header ><SimpleMenu/></header>
                </div>
                <div class="content">
                    {!loading && Internal && Internal.map((m1)=>(<div className="inner-text">{m1}</div>)) }
