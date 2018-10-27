@@ -9,13 +9,12 @@ import "../CSS/List.css"
 @inject("path")
 @inject("params")
 @inject("webConnect")
-@inject("userStore")
 @inject("data")
 @observer
 class List extends Component {
     constructor(props){
         super(props);
-        this.detail = this.detail.bind(this);
+        this.listdetail = this.listdetail.bind(this);
         this.deletedata = this.deletedata.bind(this);
         if(!this.state || !this.state.popupMENU){
             this.state={popupMENU:Style.menu.popupMENU}
@@ -25,7 +24,7 @@ class List extends Component {
          console.log("list unmount called>>>")
 
     }
-    detail(rowData){
+    listdetail(rowData){
         const {path,params}=this.props;
         console.log("delete called>>>>",rowData);
         params.reload=true
@@ -41,14 +40,10 @@ class List extends Component {
 
     }
     render(){
-        var  {dataset,fields,data,detail,filter={}}= this.props;
+        var  {dataset,fields,data,onrowTouch,filter={}}= this.props;
         console.log("props in list>>>>>"+JSON.stringify(this.props))
         console.log("data in list>>>>>"+JSON.stringify(data))
         console.log("fields in list>>>>>"+JSON.stringify(fields))
-        // data=this.props[dataset+"-listdata"]
-        // data=this.props["listdata"]
-        //   console.log("list render called"+JSON.stringify(data))
-         // console.log("dataset"+dataset)
         if(!data){
             return <div>loading.......</div>
         }
@@ -56,15 +51,15 @@ class List extends Component {
             <div>
                 <div class="wrapper">
                 {data.map((rowData,index)=>(<div class="list_data" key={index}>
-                    <RenderRow DETAIL={this.props.detail} rowData={rowData} fields={fields}></RenderRow>
+                    <RenderRow detailpath={onrowTouch} rowData={rowData} fields={fields}></RenderRow>
 
-                        {!detail &&<div style={{paddingLeft:"10"}}>
+                        {<div style={{paddingLeft:"10"}}>
                         <img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,dataset)}} height="35px" width="20px" style={{"padding-top":"15px"}}/>
                     </div>}
 
                 </div>))}
                 </div>
-                {!detail && <div class="add_wrapper">
+                {<div class="add_wrapper">
                     <div onClick={(e)=>{this.detail({})}} class="add_button"><span>Add</span></div>
                 </div>}
 
@@ -75,8 +70,6 @@ class List extends Component {
 
 @inject("path")
 @inject("params")
-@inject("webConnect")
-@inject("userStore")
 @inject("data")
 @observer
 class RenderRow extends Component {
@@ -85,11 +78,10 @@ class RenderRow extends Component {
         this.getFields = this.getFields.bind(this);
         this.detail = this.detail.bind(this);
     }
-    detail(rowData){
+    detail(detailpath){
         const {path,params}=this.props;
-        console.log("delete called>>>>",rowData);
         params.reload=true
-        path.push({path:"/resources-detail"})
+        path.push({path:detailpath})
     }
     getFields(fields,rowData={}){
         let fieldsdata=[];
@@ -108,11 +100,11 @@ class RenderRow extends Component {
         return fieldsdata;
     }
     render(){
-        var  {fields,rowData}= this.props;
+        var  {fields,rowData,detailpath}= this.props;
         console.log("props in render row>>>>>"+JSON.stringify(this.props))
         console.log("rowData in RenderRow>>>>>"+JSON.stringify(rowData))
         console.log("fields in RenderRow>>>>>"+JSON.stringify(fields))
-        return (<div onClick={()=>{this.detail(rowData)}} class="content">
+        return (<div onClick={()=>{this.detail(detailpath)}} class="content">
             {this.getFields(fields,rowData)}
         </div>)
 

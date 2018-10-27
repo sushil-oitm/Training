@@ -24,11 +24,12 @@ class EmployeeList extends React.Component {
             {id:"functional_manager",label:"Functional Manager",type:"fk",display:"name"},
             // {id:"reportingTo",label:"Reporting Manager",type:"select",display:"name"},
             {id:"salary_payment_mode",label:"Salary Mode",type:"string"},
+            {id:"employee_status",label:"Status",type:"string"}
 
         ]
         return (
             <div className="flex-1">
-                <List fields={meta} />
+                <List fields={meta} onrowTouch={"/resources-detail"} />
             </div>
         );
     }
@@ -51,8 +52,9 @@ export class EmployeeForm extends React.Component {
             {id:"official_email_id",label:"Email",type:"string"},
             {id:"card_no",label:"Card No",type:"number"},
             {id:"functional_manager",label:"Functional Manager",type:"fk",display:"name"},
-            // {id:"reportingTo",label:"Reporting Manager",type:"select",display:"name"},
             {id:"salary_payment_mode",label:"Salary Mode",type:"string"},
+            // {id:"reportingTo",label:"Reporting Manager",type:"select",display:"name"},
+            {id:"employee_status",label:"Status",type:"string"}
 
         ]
         return (
