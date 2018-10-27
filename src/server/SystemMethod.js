@@ -45,6 +45,7 @@ const _save = async (paramValue, args) => {
         return removedata;
     } else if (update) {
         let updatedata=  await updateData(table, update, args._dbConnect)
+        console.log("updatedata>>>>>>"+JSON.stringify(updatedata))
         return updatedata;
     }
 };
@@ -71,12 +72,13 @@ let updateData = async (table, update, db) => {
     let filter = {_id: _id}
     let old = await db.find(table, {filter})
     old = old.result;
-    // console.log("old>>>>" + JSON.stringify(old))
+     console.log("old>>>>" + JSON.stringify(old))
     if (old && old.length > 0) {
         old = old[0]
     }
     let updateData= await db.update(table, filter, changes, {old});
-    return updateData;
+     console.log("updateData>>>>>>"+JSON.stringify(updateData))
+    return {result:updateData};
 };
 
 let _authenticateUser = async(params, args) => {

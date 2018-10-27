@@ -13,7 +13,7 @@ class External extends React.Component {
         return (
            <div className="outer">
                <div className="header">
-                 <header ><SimpleMenu/></header>
+                 <header></header>
                </div>
                <div class="content">
                    {!loading && Internal && Internal.map((m1)=>(<div className="inner-text">{m1}</div>)) }

@@ -1,9 +1,7 @@
 "use strict";
 import React from "react";
 import { observer, Provider, inject } from "mobx-react";
-import  {appdata} from "./Data";
-import  {fields} from "./metaData";
-import {getLocation,splitPath,Platform,setLocation} from "./ManazeUtilities";
+import {getLocation,splitPath,Platform,setLocation,deepClone} from "./ManazeUtilities";
 
 const matchView = ({ view, routes }) => {
     let requiredView = null;
@@ -63,37 +61,41 @@ class Router extends React.Component {
         console.log("componentDidUpdate mount called")
         // Typical usage (don't forget to compare props):
         let {path,routes,params}=this.props;
-        let prepath=prevProps.path;
          console.log("params"+JSON.stringify(params))
         if (params.reload) {
             // console.log("path updated")
             const roots = this.splitRoots(path, routes);
-            this.getComponents(roots, path).then(comp=>{
+            this.getComponents(roots).then(comp=>{
                 this.setState({"Components":comp,loading:false})
+                return;
             })
             params.reload=false;
         }
     }
 
-   async getComponents(roots, params) {
-         const { webConnect} = this.props;
+   async getComponents(roots) {
+         const { webConnect,params} = this.props;
         let components = [];
         for (let index = 0; index < roots.length; index++) {
 
             const {root, model} = roots[index];
             // console.log("root>>>>>"+JSON.stringify(roots[index]))
-            // console.log("model>>>>>"+JSON.stringify(model))
-             let  Rcomponent = model.component;
-             let  query = model.query;
-            let  data={}
+            //  console.log("model>>>>>"+JSON.stringify(model))
+            let modeldata=deepClone(model)
+             let  Rcomponent = modeldata.component;
+             let  query = modeldata.query;
+            let  data={};
+            if(query && (params.isdetail || params.iscreate) && params.filter){
+                query.filter=params.filter;
+            }
              if(query && query.table){
                  data=await webConnect.find(query)
              }
-            // console.log("data in router>>>>>"+JSON.stringify(data))
             // console.log("Rcomponent>>>>>",Rcomponent)
-              let meta=fields[root];
+
+
             let com= (
-                <Provider data={data} meta={meta}>
+                <Provider data={data}>
                     <Rcomponent />
                 </Provider>
             );
@@ -157,13 +159,13 @@ class Router extends React.Component {
     }
 
     render() {
-          const { path, children, routes, params } = this.props;
+          const { path, children, routes} = this.props;
           console.log("Router path called>>>>>"+JSON.stringify(path))
          // const roots = this.splitRoots(path, routes);
          const Components = this.state.Components;
          const loading = this.state.loading;
 
-        return React.cloneElement(children, { Internal: Components,loading,params});
+        return React.cloneElement(children, { Internal: Components,loading});
     }
 }
 

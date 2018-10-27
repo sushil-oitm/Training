@@ -46,9 +46,9 @@ class Field extends React.Component{
     }
     render(){
         var  {detail}= this.props;
-        // console.log("fiels state render>>>"+JSON.stringify(this.state))
-        // console.log("fields props are>>>>"+JSON.stringify(this.props))
-        //  console.log("field render again")
+         console.log("fiels state render>>>"+JSON.stringify(this.state))
+         console.log("fields props are>>>>"+JSON.stringify(this.props))
+         console.log("field render again")
         var dateStyle={};
         var stringStyle={};
         var numberStyle={};
@@ -79,7 +79,7 @@ class Field extends React.Component{
         var placeholder='Enter the '+this.props.info.label;
 
             if(this.props.info.type=="string"){
-                fieldView=<input  style={stringStyle} key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.state.value} onChange={(e)=>{this.onChange(e)}} disabled={!this.props.info.is_edit}/>
+                fieldView=<input  style={stringStyle} key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.state.value} onChange={(e)=>{this.onChange(e)}} />
             }
             else if(this.props.info.type=="number"){
                 fieldView=<input   style={numberStyle} type="number" key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.props.value} onChange={(e)=>{this.onChange(e)}}  disabled={!this.props.info.is_edit}/>

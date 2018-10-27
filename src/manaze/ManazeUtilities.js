@@ -39,3 +39,43 @@ export const splitPath = path => {
     }
     return paths;
 };
+export const deepClone = value => {
+    var typeOfValue = typeof value;
+    var cloneValue = value;
+    if (
+        !value ||
+        typeOfValue === "boolean" ||
+        typeOfValue === "string" ||
+        typeOfValue === "function" ||
+        typeOfValue === "number"
+    ) {
+        //do nothing
+    } else if (value instanceof Date) {
+        cloneValue = new Date(value);
+    } else if (value instanceof Array) {
+        cloneValue = value.map(deepClone);
+    } else if (isJSONObject(value)) {
+        cloneValue = {};
+        for (var key in value) {
+            cloneValue[key] = deepClone(value[key]);
+        }
+    }
+    return cloneValue;
+};
+var ObjConstructor = {}.constructor;
+export const isJSONObject = obj => {
+    if (
+        obj === undefined ||
+        obj === null ||
+        obj === true ||
+        obj === false ||
+        typeof obj !== "object" ||
+        Array.isArray(obj)
+    ) {
+        return false;
+    } else if (obj.constructor === ObjConstructor || obj.constructor === undefined) {
+        return true;
+    } else {
+        return false;
+    }
+};

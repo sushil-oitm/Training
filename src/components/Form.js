@@ -5,6 +5,8 @@ import {inject, observer} from "mobx-react/index";
 
 @inject("path")
 @inject("params")
+@inject("data")
+@inject("webConnect")
 @observer
 class Form extends Component {
     constructor(props){
@@ -16,7 +18,7 @@ class Form extends Component {
         this.updates = {};
     }
     handleChange(key,value) {
-        // console.log("update>>>>"+JSON.stringify(this.updates))
+        console.log("update>>>>"+JSON.stringify(this.updates))
         this.updates[key] =value
             }
     componentWillUnmount(){
@@ -27,17 +29,39 @@ class Form extends Component {
         const {path,params}=this.props
         // console.log("HIDEFORM from form"+JSON.stringify(this.props))
         // this.props.unmount({dataname:"formdata"})
-        params.reload=true
+        params.reload=true;
+        delete params.isdetail;
+        delete params.iscreate;
+        delete params.filter;
         path.pop()
     }
-    onInsert(dataset,rowData){
+   async onInsert(table,rowData){
+        let {params,webConnect,path}=this.props;
          // console.log("rowData>>>>"+JSON.stringify(rowData))
          // console.log("updates>>>>"+JSON.stringify(this.updates))
-        if(rowData && rowData._id){
-            this.props.onUpdate({data:this.updates,dataset:dataset,filter:{_id:rowData._id}});
-        }else{
-            this.props.onInsert({data:this.updates,dataset:dataset});
+        if(rowData && rowData._id && params.isdetail){
+            let finalupdates= {table:table,updates:{update:{_id:rowData._id,changes:{$set:this.updates}}}}
+            let updaterow= await webConnect.invoke({"id":"_save",param:finalupdates})
+            console.log("updaterow>>>>"+JSON.stringify(updaterow))
+            if(!updaterow.result){
+                alert("Error in updaterow "+updaterow);
+                return;
+            }
+        }else if(params.iscreate){
+            let finalupdates= {table:table,updates:{insert:this.updates}}
+            let insertrow= await webConnect.invoke({"id":"_save",param:finalupdates})
+            console.log("insertrow>>>>"+JSON.stringify(insertrow))
+            if(!insertrow.result){
+                alert("Error in insertrow "+insertrow);
+                return;
+            }
         }
+
+       delete params.isdetail;
+       delete params.iscreate;
+       delete params.filter;
+       params["reload"]=true;
+       path.pop();
     }
     getFields(fields,rowData={}){
         let fieldsdata=[];
@@ -68,18 +92,31 @@ class Form extends Component {
         return fieldsdata;
     }
     render(){
-        var  {fields,rowData,create,dataset}= this.props;
-                // console.log("formdata>>>>>>"+JSON.stringify(this.props))
-                    return (
+        var  {fields,rowData,data:{data,meta}}= this.props;
+        rowData=rowData ? rowData:data && data.length > 0 ? data[0]:{};
+        let finalfields=mergeFields(fields,meta.fieldsinfo);
+        return (
                         <div style={{"max-height": 900,"min-height": 900,"background-color": "white",  "borderLeft": "0.5px solid rgb(231, 231, 231)", "borderTop": "0.5px solid rgb(231, 231, 231)", "cursor": "pointer"}}>
                             <div style={{flexDirection:'row',flex:1,"display":'flex',"min-height": "50px", "background-color": "rgb(235, 235, 235)","align-items": "center","text-align": "center","justify-content": "flex-end", "padding": "0px 10px"}}>
-                            <div style={{"paddingLeft":20}} onClick={()=>{this.onInsert(dataset,rowData)}}>Save</div>
+                            <div style={{"paddingLeft":20}} onClick={()=>{this.onInsert(meta.table,rowData)}}>Save</div>
                             <div style={{"paddingLeft":20}} onClick={()=>{this.calcel()}}>Cancel</div>
                             </div>
-                            {this.getFields(fields,rowData)}
+                            {this.getFields(finalfields,rowData)}
                         </div>
                     )
     }
+}
+const mergeFields=(fields,sfields={})=>{
+    return fields.map(fdata=>{
+        let key=fdata.id
+        if(typeof sfields[key]== "object"){
+            fdata={...fdata,...sfields[key]}
+        }else{
+            fdata={...fdata,type:sfields[key]}
+        }
+        fdata={...fdata}
+        return fdata;
+    })
 }
 
 export default Form;

@@ -24,11 +24,12 @@ class List extends Component {
          console.log("list unmount called>>>")
 
     }
-    listdetail(rowData,){
-        // const {path,params}=this.props;
-        // console.log("delete called>>>>",rowData);
-        // params.reload=true
-        // path.push({path:"/resources-detail"})
+    listdetail(detailpath){
+        const {path,params}=this.props;
+        params.reload=true;
+        params.iscreate=true;
+        params.filter={_id:"5bbfffe1ab06470200fe805d"}
+        path.push({path:detailpath})
     }
     async deletedata(rowData,table) {
         let {params,webConnect,path}=this.props;
@@ -46,7 +47,7 @@ class List extends Component {
 
     }
     render(){
-        var  {dataset,fields,data:{data,meta},onrowTouch,filter={}}= this.props;
+        var  {fields,data:{data,meta},onrowTouch,filter={}}= this.props;
         // console.log("props in list>>>>>"+JSON.stringify(this.props))
         //  console.log("meta in list>>>>>"+JSON.stringify(meta))
         //  console.log("fields in list>>>>>"+JSON.stringify(fields))
@@ -68,7 +69,7 @@ class List extends Component {
                 </div>))}
                 </div>
                 {<div class="add_wrapper">
-                    <div onClick={(e)=>{this.detail({})}} class="add_button"><span>Add</span></div>
+                    <div onClick={(e)=>{this.listdetail(onrowTouch)}} class="add_button"><span>Add</span></div>
                 </div>}
 
                 </div>
@@ -90,7 +91,7 @@ class RenderRow extends Component {
         const {path,params}=this.props;
         params.reload=true
         params.isdetail=true
-        params.filter={_id:rowData}
+        params.filter={_id:rowData._id}
         path.push({path:detailpath})
     }
     getFields(fields,rowData={}){
@@ -99,7 +100,6 @@ class RenderRow extends Component {
             return parseFloat(a.index) - parseFloat(b.index);
         });
         for(let i=0;i<fields.length;i++){
-            console.log("fieldinfo>>>>"+JSON.stringify(fields[i]))
             fieldsdata.push(
                     <div key={i} class="list_wrapper">
                     <div class="list_inner_wrapper">
