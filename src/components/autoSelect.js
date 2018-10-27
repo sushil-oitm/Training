@@ -160,7 +160,7 @@ class AutoSuggest extends React.Component {
         var possibleValues=JSON.parse(JSON.stringify(this.state.possibleValues));
         var inputStyle=styles['inputStyle'];
         // inputStyle["height"]=info.height
-        //  inputStyle["width"]=info.width
+        //   inputStyle["width"]=info.width
         // inputStyle["color"]="black"
         if(detail){
             // inputStyle["borderBottom"]='1px solid lightgray'
