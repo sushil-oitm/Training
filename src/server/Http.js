@@ -65,6 +65,7 @@ var configure = async (
             console.log("invoke called with params>>>>>>>", JSON.stringify(reqParams))
             let reqInfo = getRequestInfo(req);
             let result = await _invoke(reqParams, reqInfo, config);
+            console.log("result>>>>>"+JSON.stringify(result))
             var {data, options} = parseResponseHeader(result);
             await writeJSONResponse(data, req, resp, options);
         } catch (err) {

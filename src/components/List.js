@@ -31,12 +31,18 @@ class List extends Component {
         // path.push({path:"/resources-detail"})
     }
     async deletedata(rowData,table) {
-        let {params,webConnect}=this.props;
-         console.log("delete called>>>>",rowData)
+        let {params,webConnect,path}=this.props;
         let finalupdates= {table:table,updates:{remove:{_id:rowData._id}}}
-        console.log("params>>>>>",params)
-        // let deleterow= await webConnect.invoke({"id":"_save",param:finalupdates})
+         let deleterow= await webConnect.invoke({"id":"_save",param:finalupdates})
+        if(!deleterow.result){
+            alert("Error in delete "+deleterow);
+            return;
+        }
+        console.log("deleterow>>>>"+JSON.stringify(deleterow))
+        let newpath=path[path.length-1];
+        path.pop()
         params["reload"]=true;
+        path.push(newpath)
 
     }
     render(){
@@ -80,9 +86,11 @@ class RenderRow extends Component {
         this.getFields = this.getFields.bind(this);
         this.detail = this.detail.bind(this);
     }
-    detail(detailpath){
+    detail(detailpath,rowData){
         const {path,params}=this.props;
         params.reload=true
+        params.isdetail=true
+        params.filter={_id:rowData}
         path.push({path:detailpath})
     }
     getFields(fields,rowData={}){
@@ -107,7 +115,7 @@ class RenderRow extends Component {
         // console.log("props in render row>>>>>"+JSON.stringify(this.props))
         // console.log("rowData in RenderRow>>>>>"+JSON.stringify(rowData))
         // console.log("fields in RenderRow>>>>>"+JSON.stringify(fields))
-        return (<div onClick={()=>{this.detail(detailpath)}} class="content">
+        return (<div onClick={()=>{this.detail(detailpath,rowData)}} class="content">
             {this.getFields(fields,rowData)}
         </div>)
 

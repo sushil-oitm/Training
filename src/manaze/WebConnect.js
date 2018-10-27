@@ -73,7 +73,7 @@ export default class WebConnect {
             queryInfo["token"]=user.token
         }
         try{
-            let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
+            let data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
             return data;
         }catch(e){
             console.log("error on server>>>>",e)

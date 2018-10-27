@@ -163,7 +163,7 @@ class Router extends React.Component {
          const Components = this.state.Components;
          const loading = this.state.loading;
 
-        return React.cloneElement(children, { Internal: Components,loading});
+        return React.cloneElement(children, { Internal: Components,loading,params});
     }
 }
 

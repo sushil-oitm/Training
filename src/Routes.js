@@ -42,7 +42,7 @@ export const routes= {
         query: {
             table: "Resource",
             // filter: {"employee_status" : "Active",name:"Rambir Singh"},
-            filter: {"employee_status" : "Active",name:"Rambir Singh"},
+            filter: {"employee_status" : "Inactive"},
             fields: {
                 _id: 1,
                 functional_manager: {_id:1,name:1},

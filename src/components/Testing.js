@@ -8,6 +8,7 @@ class External extends React.Component {
     }
     render() {
         const {Internal,loading} = this.props;
+
         return (
            <div className="outer">
                <div className="header">

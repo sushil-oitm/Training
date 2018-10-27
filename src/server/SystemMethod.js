@@ -32,7 +32,7 @@ const _save = async (paramValue, args) => {
         throw new Error("table is mandetory in save")
     }
     if (insert) {
-        await insertData(table, insert, args._dbConnect)
+       return  await insertData(table, insert, args._dbConnect)
     } else if (remove) {
         let old = await args._dbConnect.find(table, {filter: remove})
         old = old.result;
@@ -40,9 +40,12 @@ const _save = async (paramValue, args) => {
         if (old && old.length > 0) {
             old = old[0]
         }
-        await removeData(table, remove, {old}, args._dbConnect)
+        let removedata=await removeData(table, remove, {old}, args._dbConnect)
+        console.log("removedata>>>>>>"+JSON.stringify(removedata))
+        return removedata;
     } else if (update) {
-        await updateData(table, update, args._dbConnect)
+        let updatedata=  await updateData(table, update, args._dbConnect)
+        return updatedata;
     }
 };
 
@@ -52,7 +55,9 @@ let insertData = async (table, insert, db) => {
 };
 
 let removeData = async (table, filter, option, db) => {
-    await db.remove(table, filter, {...option})
+    let removeData= await db.remove(table, filter, {...option});
+    console.log("removeData>>>>>>"+JSON.stringify(removeData))
+    return {result:removeData};
 };
 
 let updateData = async (table, update, db) => {
@@ -70,7 +75,8 @@ let updateData = async (table, update, db) => {
     if (old && old.length > 0) {
         old = old[0]
     }
-    await db.update(table, filter, changes, {old})
+    let updateData= await db.update(table, filter, changes, {old});
+    return updateData;
 };
 
 let _authenticateUser = async(params, args) => {
