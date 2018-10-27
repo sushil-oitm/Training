@@ -6,11 +6,22 @@ export const findData = async (paramValue, args) => {
     let {table, query, option} = paramValue;
     let result = await getTableData(query, table, option, args);
     console.log("final result >>>>." + JSON.stringify(result));
-    return result;
+    let fieldsinfo={}
+    if(query.fields){
+        let schema = getSchema(table);
+       for(let key in query.fields){
+          if(schema[key]){
+              fieldsinfo[key]=schema[key];
+          }
+       }
+    }
+    let meta={table:table,fieldsinfo:fieldsinfo}
+    return {data:result,meta};
 }
 
 let getTableData = async (query, table, option, args) => {
     // console.log(`getTableData called with fields>>>> ${JSON.stringify(fields)} table ${table}`)
+
     let subqueryFields = resolveSubqueryFields(query.fields, table);
     let finalQuery = processQuery(query)
     let salData = await args._dbConnect.find(table, finalQuery, option)
@@ -85,7 +96,7 @@ let mapOfRelation = (tar, rel) => {
 let resolveSubqueryFields = (fields, table) => {
     let subqueryFields = {};
     let schema = getSchema(table);
-    // console.log("fields>>>>>"+JSON.stringify(fields))
+     console.log("schema>>>>>"+JSON.stringify(schema))
     for (let key in fields) {
         let mainKey = key;
         let secondPart = null;

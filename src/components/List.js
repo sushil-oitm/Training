@@ -24,26 +24,28 @@ class List extends Component {
          console.log("list unmount called>>>")
 
     }
-    listdetail(rowData){
-        const {path,params}=this.props;
-        console.log("delete called>>>>",rowData);
-        params.reload=true
-        path.push({path:"/resources-detail"})
+    listdetail(rowData,){
+        // const {path,params}=this.props;
+        // console.log("delete called>>>>",rowData);
+        // params.reload=true
+        // path.push({path:"/resources-detail"})
     }
-    async deletedata(rowData) {
+    async deletedata(rowData,table) {
         let {params,webConnect}=this.props;
          console.log("delete called>>>>",rowData)
-        let finalupdates= {table:"Resource",updates:{remove:{_id:rowData._id}}}
-        let deleterow= await webConnect.invoke({"id":"_save",param:finalupdates})
-        params.reload=true;
+        let finalupdates= {table:table,updates:{remove:{_id:rowData._id}}}
         console.log("params>>>>>",params)
+        // let deleterow= await webConnect.invoke({"id":"_save",param:finalupdates})
+        params["reload"]=true;
 
     }
     render(){
-        var  {dataset,fields,data,onrowTouch,filter={}}= this.props;
-        console.log("props in list>>>>>"+JSON.stringify(this.props))
-        console.log("data in list>>>>>"+JSON.stringify(data))
-        console.log("fields in list>>>>>"+JSON.stringify(fields))
+        var  {dataset,fields,data:{data,meta},onrowTouch,filter={}}= this.props;
+        // console.log("props in list>>>>>"+JSON.stringify(this.props))
+        //  console.log("meta in list>>>>>"+JSON.stringify(meta))
+        //  console.log("fields in list>>>>>"+JSON.stringify(fields))
+        let finalfields=mergeFields(fields,meta.fieldsinfo);
+        // console.log("finalfields>>>>"+JSON.stringify(finalfields))
         if(!data){
             return <div>loading.......</div>
         }
@@ -51,10 +53,10 @@ class List extends Component {
             <div>
                 <div class="wrapper">
                 {data.map((rowData,index)=>(<div class="list_data" key={index}>
-                    <RenderRow detailpath={onrowTouch} rowData={rowData} fields={fields}></RenderRow>
+                    <RenderRow detailpath={onrowTouch} rowData={rowData} fields={finalfields}></RenderRow>
 
                         {<div style={{paddingLeft:"10"}}>
-                        <img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,dataset)}} height="35px" width="20px" style={{"padding-top":"15px"}}/>
+                        <img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,meta.table)}} height="35px" width="20px" style={{"padding-top":"15px"}}/>
                     </div>}
 
                 </div>))}
@@ -89,6 +91,7 @@ class RenderRow extends Component {
             return parseFloat(a.index) - parseFloat(b.index);
         });
         for(let i=0;i<fields.length;i++){
+            console.log("fieldinfo>>>>"+JSON.stringify(fields[i]))
             fieldsdata.push(
                     <div key={i} class="list_wrapper">
                     <div class="list_inner_wrapper">
@@ -101,14 +104,27 @@ class RenderRow extends Component {
     }
     render(){
         var  {fields,rowData,detailpath}= this.props;
-        console.log("props in render row>>>>>"+JSON.stringify(this.props))
-        console.log("rowData in RenderRow>>>>>"+JSON.stringify(rowData))
-        console.log("fields in RenderRow>>>>>"+JSON.stringify(fields))
+        // console.log("props in render row>>>>>"+JSON.stringify(this.props))
+        // console.log("rowData in RenderRow>>>>>"+JSON.stringify(rowData))
+        // console.log("fields in RenderRow>>>>>"+JSON.stringify(fields))
         return (<div onClick={()=>{this.detail(detailpath)}} class="content">
             {this.getFields(fields,rowData)}
         </div>)
 
     }
+}
+
+const mergeFields=(fields,sfields)=>{
+    return fields.map(fdata=>{
+        let key=fdata.id
+        if(typeof sfields[key]== "object"){
+            fdata={...fdata,...sfields[key]}
+        }else{
+            fdata={...fdata,type:sfields[key]}
+        }
+        fdata={...fdata}
+        return fdata;
+    })
 }
 
 
