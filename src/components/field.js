@@ -55,16 +55,19 @@ class Field extends React.Component{
         dateStyle['width']=this.props.info.width;
         dateStyle['border']='0px solid';
         dateStyle['color']='black';
+        dateStyle['backgroundColor']='white';
         dateStyle['height']=this.props.info.height;
 
         stringStyle['width']=this.props.info.width;
         stringStyle['height']=this.props.info.height;
         stringStyle['color']="black";
+        stringStyle['backgroundColor']='white';
         stringStyle['border']='0px solid';
 
         numberStyle['border']='0px solid';
         numberStyle['width']=this.props.info.width;
         numberStyle['color']="black";
+        numberStyle['backgroundColor']='white';
         numberStyle['height']=this.props.info.height;
         if(detail){
             numberStyle['borderBottom']='1px solid lightgray';

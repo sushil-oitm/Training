@@ -90,6 +90,11 @@ export const ProjectMenu=[
     {
         label:"Employee",
         route:"/resources"
+    },
+    {
+        label:"Account",
+        route:"/login"
     }
+
 ]
 

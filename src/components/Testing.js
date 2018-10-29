@@ -2,18 +2,20 @@ import React from "react";
 import { observer, Provider, inject } from "mobx-react";
 import SimpleMenu from "./Menu"
 import "../App.css"
+
+@inject("userStore")
 @observer
 class External extends React.Component {
     constructor(props) {
         super(props);
     }
     render() {
-        const {Internal,loading} = this.props;
+        const {Internal,loading,userStore} = this.props;
 
         return (
            <div className="outer">
                <div className="header">
-                 <header><SimpleMenu /></header>
+                   <header><SimpleMenu /></header>
                </div>
                <div class="content">
                    {!loading && Internal && Internal.map((m1)=>(<div className="inner-text">{m1}</div>)) }
