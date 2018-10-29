@@ -60,12 +60,7 @@
 
 
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import {inject} from "mobx-react"
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import {ProjectMenu } from "./../Routes";
+import {inject} from "mobx-react";
 
 
 
