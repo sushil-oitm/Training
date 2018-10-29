@@ -45,12 +45,20 @@
 .header{
   overflow: hidden;
   position:absolute;
+  float:left;
   top:0px;
   left:0px;
   height:60px;
   right:0px;
   background-color: lightgray;
   color: white;
+
+}
+
+.header.menu{
+  text-align: Left;
+}
+.header.logout{
   text-align: Right;
 }
 

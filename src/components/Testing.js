@@ -1,6 +1,7 @@
 import React from "react";
 import { observer, Provider, inject } from "mobx-react";
 import SimpleMenu from "./Menu"
+import Logout from "./Logout"
 import "../App.css"
 
 @inject("userStore")
@@ -15,7 +16,12 @@ class External extends React.Component {
         return (
            <div className="outer">
                <div className="header">
-                   <header><SimpleMenu /></header>
+                   <header>
+                       <div class="menu" style={{"float":"left"}}>{userStore.get("status")=="logged_in" && <SimpleMenu />}</div>
+                       <div class="logout" style={{"marginRight":"5px"}}>
+                           { userStore.get("status")=="logged_in" &&  <Logout />}
+                       </div>
+                   </header>
                </div>
                <div class="content">
                    {!loading && Internal && Internal.map((m1)=>(<div className="inner-text">{m1}</div>)) }

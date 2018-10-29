@@ -17,6 +17,9 @@ export default class WebConnect {
     async setLocalStorage(...args) {
        await AsyncStorage.setItem(...args)
     }
+ async removeLocalStorage(...args) {
+       await AsyncStorage.removeItem(...args)
+    }
 
     async find(param={}) {
         // console.log("param in find>>>>>>"+JSON.stringify(param))
