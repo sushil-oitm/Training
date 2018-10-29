@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import {ProjectMenu } from "./../Routes";
 
 class SimpleMenu extends React.Component {
     state = {
@@ -12,7 +13,8 @@ class SimpleMenu extends React.Component {
         this.setState({ anchorEl: event.currentTarget });
     };
 
-    handleClose = () => {
+    handleClose = (route) => {
+        console.log("route >>>>"+route)
         this.setState({ anchorEl: null });
     };
 
@@ -35,9 +37,10 @@ class SimpleMenu extends React.Component {
                     open={Boolean(anchorEl)}
                     onClose={this.handleClose}
                 >
-                    <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={this.handleClose}>My account</MenuItem>
-                    <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+                    {ProjectMenu.map(mdata=>{
+                       return  <MenuItem onClick={()=>{this.handleClose(mdata.route)}}>{mdata.label}</MenuItem>
+                    })}
+
                 </Menu>
             </div>
         );

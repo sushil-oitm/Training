@@ -86,4 +86,10 @@ export const routes= {
         component:SignupComponent
     }
 }
+export const ProjectMenu=[
+    {
+        label:"Employee",
+        route:"/resources"
+    }
+]
 
