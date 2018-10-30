@@ -61,7 +61,6 @@ class LoginComponent extends Component {
     }
     render() {
         return (
-            <div class="wrapper">
             <div class="container">
                     <div class="row">
                         <div class="col">
@@ -69,26 +68,25 @@ class LoginComponent extends Component {
                                 <p>Or sign in manually:</p>
                             </div>
                             <h2 style={{"text-align":"center"}}>Login</h2>
-                            <input type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} required/>
-                                <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} required />
-                            <button style={{"color": "black","background":"green"}} onClick={this.handleSubmit}
-                                    className="btn">Login</button>
+                            <input style={{"background":"#DEDEDE","color":"black"}} type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} required/>
+                                <input style={{"background":"#DEDEDE","color":"black"}} type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} required />
+                            <button style={{"color": "white","background":"#808080"}} onClick={this.handleSubmit}
+                                    className="btn"><b>Login</b></button>
                             <div>
                                 {this.state.loginErrMessage}
                             </div>
                                 <div class="row">
                                     <div class="colfot">
-                                        <button style={{"color": "black"}} onClick={this.updatePath}
-                                           className="btn">Sign up</button>
+                                        <button style={{"color": "white","background":"#808080"}} onClick={this.updatePath}
+                                                className="btn"><b>Sign up</b></button>
                                     </div>
                                     <div class="colfot">
-                                        <button  style={{"color":"black"}}onClick={this.updatePath} class="btn">Forgot password</button>
+                                        <button  style={{"color":"white","background":"#808080"}} onClick={this.updatePath} class="btn"><b>Forgot password</b></button>
                                     </div>
                             </div>
                         </div>
 
                     </div>
-            </div>
 
 
             </div>

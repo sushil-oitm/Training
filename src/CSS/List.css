@@ -1,6 +1,7 @@
 .wrapper{
       max-height: 900px;
-      min-height: 700px
+      min-height: 700px;
+
 }
 .list_data{
     flex-direction:row;

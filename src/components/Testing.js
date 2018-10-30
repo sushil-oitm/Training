@@ -23,7 +23,7 @@ class External extends React.Component {
                        </div>
                    </header>
                </div>
-               <div class="content">
+               <div class="Maincontent">
                    {!loading && Internal && Internal.map((m1)=>(<div className="inner-text">{m1}</div>)) }
                </div>
                <div className="footer">

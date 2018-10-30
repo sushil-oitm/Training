@@ -53,7 +53,6 @@ class SignupComponent extends Component {
     render() {
         console.log("this.state>>>>>>>>>>>>>",this.state)
         return (
-            <div class="wrapper">
                 <div class="container">
                      <div class="row">
                             <div class="colSignup">
@@ -61,21 +60,19 @@ class SignupComponent extends Component {
                                 <div class="hide-md-lg">
                                     <p>sign in manually:</p>
                                 </div>
-                                <input name="firstname" placeholder="First Name" value={this.state.firstname} onChange={this.handleChange} required />
-                                <input name="lastname" placeholder="Lirst Name" value={this.state.lastname} onChange={this.handleChange}/>
-                                <input name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} />
-                                <input name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange}/>
-                                <button style={{"color": "black"}} onClick={this.handleSubmit}
-                                        className="btn">Submit</button>
+                                <input style={{"background":"#DEDEDE","color":"black"}} name="firstname" placeholder="First Name" value={this.state.firstname} onChange={this.handleChange} required />
+                                <input style={{"background":"#DEDEDE","color":"black"}} name="lastname" placeholder="Lirst Name" value={this.state.lastname} onChange={this.handleChange} required/>
+                                <input style={{"background":"#DEDEDE","color":"black"}} name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} required/>
+                                <input style={{"background":"#DEDEDE","color":"black"}} name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} required/>
+                                <button style={{"color":"white","background":"#808080"}} onClick={this.handleSubmit}
+                                        className="btn"><b>Submit</b></button>
                                 <div>
                                     {this.state.errMessage}
                                 </div>
                             </div>
 
                         </div>
-
                 </div>
-            </div>
         );
     }
 }
