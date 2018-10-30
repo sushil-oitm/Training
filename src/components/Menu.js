@@ -83,15 +83,15 @@ class SimpleMenu extends React.Component {
 
     };
 
-    handleClose = (route) => {
+    handleClose = ({menuRoute}) => {
         let {path,params}=this.props;
-        console.log("route >>>>",route)
+        console.log("currentRoute >>>>",menuRoute)
         this.setState({ anchorEl: null });
-        if(route) {
-            console.log("inside route if>>>>>>>>")
+        if(menuRoute) {
+            console.log("currentRoute route if>>>>>>>>")
             let pathLength = path.length;
             params.reload = true;
-            path.splice(0, pathLength, {"path": route})
+            path.splice(0, pathLength, {"path": menuRoute})
         }
     };
 
@@ -101,7 +101,7 @@ class SimpleMenu extends React.Component {
         return (
             <div>
                 <IconButton
-                    style={{"color":"black","marginTop":"5px","marginRight":"20px"}}
+                    style={{"color":"black","marginTop":"5px","marginLeft":"20px"}}
                     aria-label="More"
                     aria-owns={anchorEl ? 'long-menu' : null}
                     aria-haspopup="true"
@@ -121,8 +121,8 @@ class SimpleMenu extends React.Component {
                         },
                     }}
                 >
-                    {ProjectMenu.map(mdata=>{
-                        return  <MenuItem  onClick={()=>{this.handleClose(mdata.route)}}>{mdata.label}</MenuItem>
+                 {ProjectMenu.map(mdata=>{
+                        return  <MenuItem  onClick={()=>{this.handleClose({menuRoute:mdata.route})}}>{mdata.label}</MenuItem>
                     })}
 
                 </Menu>
