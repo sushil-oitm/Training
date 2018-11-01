@@ -21,10 +21,12 @@ let styles={'dropDown':{
     inputStyle:{
         // width  : 206,
         border:'none',
+        overflow:"hidden",
+        padding:"5px",
         color:"black",
-        backgroundColor:"white"
+        backgroundColor:"white",
         // height:40
-        // 'borderBottom':'1px solid lightgray'
+         'borderBottom':'1px solid lightgray'
      }
 }
 
