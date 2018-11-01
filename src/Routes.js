@@ -67,20 +67,20 @@ export const routes= {
             }
         }
     },
-    accounts:{
-        component:AccountList,
-        query:{
-            table:"Account",
-            fields:{
-                _id:1,
-                name_in_bank:1,
-                account_no:1,
-                branch:1,
-                account_type_id:{_id:1,}
-
-            }
-        }
-    },
+    // accounts:{
+    //     component:AccountList,
+    //     query:{
+    //         table:"Account",
+    //         fields:{
+    //             _id:1,
+    //             name_in_bank:1,
+    //             account_no:1,
+    //             branch:1,
+    //             account_type_id:{_id:1,}
+    //
+    //         }
+    //     }
+    // },
     "resources-detail":{
         component:EmployeeForm,
         query: {
