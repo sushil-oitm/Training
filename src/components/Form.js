@@ -70,6 +70,7 @@ class Form extends Component {
         });
         for(let i=0;i<fields.length;i=i+2){
             fieldsdata.push(
+
                 <div style={{flexDirection:'row',display:'flex',padding:10 , flex:1}}>
                     <div style={{flexDirection:'row',display:'flex', flex:1, margin:10 ,"background-color": "white", "cursor": "pointer"}}>
                         <div style={{width:90,display:"flex",alignItems: "center"}}><span style={{pading:10}}>{fields[i].label}</span></div>

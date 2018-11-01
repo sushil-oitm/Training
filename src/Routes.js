@@ -3,6 +3,8 @@ import LoginComponent from "./components/LoginComponent";
 import SignupComponent from "./components/SignupComponent";
 import SimpleMenu from "./components/Menu"
 import Trip from "./views/Trip";
+import IntegrationDownshift from "./components/MultiSelect"
+import Logout from "./components/Logout"
 import EmployeeList,{EmployeeForm} from "./views/EmployeeList"
 let {Project,Progress,Task,Login,Resource,External}=Methods;
 export const routes= {
@@ -60,7 +62,22 @@ export const routes= {
                 photo:1
             }
         }
-    },"resources-detail":{
+    },
+    accounts:{
+        component:AccountList,
+        query:{
+            table:"Account",
+            fields:{
+                _id:1,
+                name_in_bank:1,
+                account_no:1,
+                branch:1,
+                account_type_id:{_id:1,}
+
+            }
+        }
+    },
+    "resources-detail":{
         component:EmployeeForm,
         query: {
             table: "Resource",
@@ -82,8 +99,14 @@ export const routes= {
     login:{
         component:LoginComponent
     },
+    logout:{
+      component:Logout
+    },
     signup:{
         component:SignupComponent
+    },
+    multiselect:{
+        component:IntegrationDownshift
     }
 }
 export const ProjectMenu=[
