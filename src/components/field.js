@@ -46,9 +46,9 @@ class Field extends React.Component{
     }
     render(){
         var  {detail}= this.props;
-         console.log("fiels state render>>>"+JSON.stringify(this.state))
-         console.log("fields props are>>>>"+JSON.stringify(this.props))
-         console.log("field render again")
+         // console.log("fiels state render>>>"+JSON.stringify(this.state))
+         // console.log("fields props are>>>>"+JSON.stringify(this.props))
+         // console.log("field render again")
         var dateStyle={};
         var stringStyle={};
         var numberStyle={};
@@ -85,7 +85,7 @@ class Field extends React.Component{
                 fieldView=<input  style={stringStyle} key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.state.value} onChange={(e)=>{this.onChange(e)}} />
             }
             else if(this.props.info.type=="number"){
-                fieldView=<input   style={numberStyle} type="number" key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.props.value} onChange={(e)=>{this.onChange(e)}}  disabled={!this.props.info.is_edit}/>
+                fieldView=<input   style={numberStyle} type="number" key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.props.value} onChange={(e)=>{this.onChange(e)}} />
             }
             else if(this.props.info.type=="date"){
                 fieldView=<DateCom detail={detail || false} defaultValue={this.props.value} info={this.props.info} disabled={!this.props.info.is_edit} onChange={(e)=>{this.onDateChange(e)}}/>
@@ -94,10 +94,10 @@ class Field extends React.Component{
                  fieldView=<AutoSelectNew  detail={detail || false} placeholder={this.props.info.label} onChange={this.props.onChange} info={this.props.info} callFieldFocusOut={this.onFieldFocusOut} possibleValues={this.props.info.possibleValues}  defaultValue={this.props.value || ''}  disabled={!this.props.info.is_edit} />
             }
             else if(this.props.info.type=="fk"){
-                      fieldView=<AutoSelect  detail={detail || false}  callFieldFocusOut={this.onFieldFocusOut} info={this.props.info} onChange={this.props.onChange} defaultValue={this.props.value}  disabled={!this.props.info.is_edit}/>
+                      fieldView=<AutoSelect  detail={detail || false}  callFieldFocusOut={this.onFieldFocusOut} info={this.props.info} onChange={this.props.onChange} defaultValue={this.props.value} />
             }
         return (
-            <div>           
+            <div style={{flex:1}}>
                 {fieldView}
             </div>
             )

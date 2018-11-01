@@ -72,16 +72,16 @@ class Form extends Component {
             fieldsdata.push(
                 <div style={{flexDirection:'row',display:'flex',padding:10 , flex:1}}>
                     <div style={{flexDirection:'row',display:'flex', flex:1, margin:10 ,"background-color": "white", "cursor": "pointer"}}>
-                        <div style={{width:90,display:"flex",alignItems: "center"}}><span style={{pading:10}}>{fields[i].label}</span></div>
-                        <div style={{width:222,display:"flex",alignItems: "center","border": "0.5px solid rgb(231, 231, 231)"}}>
+                        <div style={{flex:1,display:"flex",alignItems: "center"}}><span style={{pading:10}}>{fields[i].label}</span></div>
+                        <div style={{flex:3,display:"flex",alignItems: "center"}}>
                             <Field id={fields[i].id} detail={true} value={rowData[fields[i].id]} info={fields[i]} onChange={this.handleChange}></Field>
                         </div>
 
                     </div>
                         {i+1<fields.length &&
                         <div style={{flexDirection:'row',display:'flex', flex:1, margin:10 ,"background-color": "white", "cursor": "pointer" }}>
-                            <div style={{width:90,display:"flex",alignItems: "center"}}><span style={{pading:10}}>{fields[i+1].label}</span></div>
-                            <div style={{width:222,display:"flex",alignItems: "center","border": "0.5px solid rgb(231, 231, 231)"}}>
+                            <div style={{flex:1,display:"flex",alignItems: "center"}}><span style={{pading:10}}>{fields[i+1].label}</span></div>
+                            <div style={{flex:3,display:"flex",alignItems: "center"}}>
                             <Field id={fields[i+1].id} detail={true} value={rowData[fields[i+1].id]} info={fields[i+1]} onChange={this.handleChange}></Field>
                         </div>
                         </div>
