@@ -1,13 +1,17 @@
 import Methods from "./components/Testing";
 import LoginComponent from "./components/LoginComponent";
 import SignupComponent from "./components/SignupComponent";
-import SimpleMenu from "./components/Menu"
+import SimpleMenu from "./components/Menu";
+import MList from "./components/MList";
 import Trip from "./views/Trip";
 import IntegrationDownshift from "./components/MultiSelect"
 import Logout from "./components/Logout"
 import EmployeeList,{EmployeeForm} from "./views/EmployeeList"
 let {Project,Progress,Task,Login,Resource,External}=Methods;
 export const routes= {
+    list:{
+        component:MList,
+    },
     project_detail: {
         component:Task,
         query:{table:"trip",filter:{_id:"5b72602bf4bd7f56575d7fe0"},fields:{_id:1,vehicle:{_id:1}}}

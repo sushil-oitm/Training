@@ -3,6 +3,7 @@ import React from "react";
 import  ReactDOM  from 'react-dom';
 import Popup from './popup';
 import  {downArrow,down} from '../images/images'
+import {inject, observer} from "mobx-react/index";
 var $ = require('jquery');
 var maxHeightPopup=126;
 var listItemHeight=18;
@@ -27,11 +28,12 @@ var styles={'dropDown':{
      }
 }
 
-
+@inject("webConnect")
+@observer
 class AutoSuggest extends React.Component {
     constructor(p) {
         super(p);
-        this.state={"selectedValue":"", value:this.props.defaultValue||{},  allValues:this.props.possibleValues||[],"focused":0 ,"selected":false ,"isFocused":false, "filter":this.props.filter ,possibleValues:[],'dropDownBehaviour':{}};
+        this.state={"selectedValue":"", value:this.props.defaultValue|| {},  allValues:this.props.possibleValues||[],"focused":0 ,"selected":false ,"isFocused":false, "filter":this.props.filter ,possibleValues:[],'dropDownBehaviour':{}};
         this.onChange=this.onChange.bind(this);
         this.onArrowClick=this.onArrowClick.bind(this);
         this.onKeyDown=this.onKeyDown.bind(this);
@@ -42,7 +44,7 @@ class AutoSuggest extends React.Component {
 
     }
     componentWillReceiveProps(newProps){
-         // console.log("newProps>>>>"+JSON.stringify(newProps))
+          console.log("newProps>>>>"+JSON.stringify(newProps))
         this.setState({value:newProps.defaultValue},()=>{
         });
     }
@@ -54,36 +56,40 @@ class AutoSuggest extends React.Component {
     componentWillUnmount(){
         // this.props.unmount({dataname:this.props.info.dataset+"-autodata"})
     }
-    onChange(e) {
-        var elementValue=e.target.value;
-        var possibleValues=[];
-        this.props.loadData({dataset:this.props.info.dataset,dataname:this.props.info.dataset+"-autodata"}).then((loaddata)=>{
-            // console.log("loaddata>>>>",loaddata)
-            // var allValues=this.props.info.dataset+"-autodata";
-            var allValues=JSON.parse(JSON.stringify(loaddata.payload.data));
-            if(elementValue!=null &&  elementValue!=''){
-                for(var i=0;i<allValues.length;i++){
-                    if(allValues[i].name.toLowerCase().indexOf(elementValue.toLowerCase())==0){
-                        possibleValues.push(allValues[i]);
-                    }
-                }
-            }
-            var dropDownBehaviour=JSON.parse(JSON.stringify(this.state.dropDownBehaviour));
-            dropDownBehaviour['display']='block';
-            this.setState({dropDownBehaviour,possibleValues,"value":elementValue,"selected":false, "isFocused":true,"focused":0});
-        })
-
-    }
-    onArrowClick(info){
-        this.props.loadData({dataset:info.dataset,dataname:info.dataset+"-autodata"}).then((loaddata)=>{
-            // console.log("loaddata>>>>",loaddata)
-            // var possibleValues=JSON.parse(JSON.stringify(this.props[info.dataset+"-autodata"]));
-            var possibleValues=JSON.parse(JSON.stringify(loaddata.payload.data));
-            var dropDownBehaviour=JSON.parse(JSON.stringify(this.state.dropDownBehaviour));
-            dropDownBehaviour['display']='block';
-            this.refs.inputBox.focus();
-            this.setState({dropDownBehaviour,possibleValues,"value":"","selected":false, "isFocused":true,"focused":0});
-        })
+   async onChange(e) {
+       let {params,webConnect,path,info}=this.props;
+        let elementValue=e.target.value;
+        console.log("elementValue>>>>"+elementValue)
+       let possibleValues=[];
+       let {table,display}=info;
+       if(table && display){
+           let paramValue={table:table,fields:{[display]:1}}
+           let  allValues=await webConnect.find(paramValue);
+           allValues=allValues.data || [];
+           if(elementValue!=null &&  elementValue!=''){
+               for(var i=0;i<allValues.length;i++){
+                   if(allValues[i].name.toLowerCase().indexOf(elementValue.toLowerCase())==0){
+                       possibleValues.push(allValues[i]);
+                   }
+               }
+           }
+           let dropDownBehaviour=JSON.parse(JSON.stringify(this.state.dropDownBehaviour));
+           dropDownBehaviour['display']='block';
+           this.setState({dropDownBehaviour,possibleValues,"value":{[display]:elementValue},"selected":false, "isFocused":true,"focused":0});
+       }
+   }
+    async onArrowClick(info){
+        let {params,webConnect,path}=this.props;
+        let {table,display}=info;
+        if(table && display){
+            let paramValue={table:table,fields:{[display]:1}}
+            let  possibleValues=await webConnect.find(paramValue);
+            possibleValues=possibleValues.data || [];
+            let dropDownBehaviour=JSON.parse(JSON.stringify(this.state.dropDownBehaviour));
+                dropDownBehaviour['display']='block';
+                this.refs.inputBox.focus();
+                this.setState({dropDownBehaviour,possibleValues,"value":"","selected":false, "isFocused":true,"focused":0});
+        }
     }
     onfocusout(){
         var focused=this.state.focused;
@@ -157,6 +163,7 @@ class AutoSuggest extends React.Component {
         });
     }
     render() {
+        console.log("props for autoSelect "+JSON.stringify(this.props))
         var {info,detail}=this.props;
         var possibleValues=JSON.parse(JSON.stringify(this.state.possibleValues));
         var inputStyle=styles['inputStyle'];
@@ -202,16 +209,6 @@ class AutoSuggest extends React.Component {
     }
 }
 
-
-// AutoSuggest = connect(store=> {
-//      // console.log("Store in fk>>>>>"+JSON.stringify(store))
-//      let newstate={}
-//     if(!store.onFieldFocusOut){
-//         newstate.onFieldFocusOut=(value)=>{
-//         }
-//     }
-//      newstate.disabled=false;
-//     return newstate},{loadData:actions.loadData,unmount:actions.unmount})(AutoSuggest);
 
 export default AutoSuggest;
 

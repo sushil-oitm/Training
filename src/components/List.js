@@ -1,6 +1,7 @@
 import React ,{Component} from "react";
 import { observer, Provider, inject } from "mobx-react";
 import Field from './field';
+import Checkbox from '@material-ui/core/Checkbox';
 import  {umbrella,menuicon,detailIcon,insertIcon,deleteIcon} from '../images/images'
 import Style from './../theme/styles'
 import "../CSS/List.css"
@@ -17,9 +18,26 @@ class List extends Component {
         this.listdetail = this.listdetail.bind(this);
         this.deletedata = this.deletedata.bind(this);
         if(!this.state || !this.state.popupMENU){
-            this.state={popupMENU:Style.menu.popupMENU}
+            this.state={popupMENU:Style.menu.popupMENU,checked: []}
         }
     }
+    handleToggle = (event,checked)=> {
+        // console.log("event",event)
+        // console.log("value",event.target.value)
+        // console.log("current checked",this.state.checked)
+        const value=event.target.value;
+        const currentIndex = this.state.checked.indexOf(value);
+        const newChecked = this.state.checked;
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
+
+        this.setState({
+            checked: newChecked,
+        });
+    };
     componentWillUnmount(){
          console.log("list unmount called>>>")
 
@@ -60,7 +78,14 @@ class List extends Component {
             <div>
                 <div class="wrapper">
                 {data.map((rowData,index)=>(<div class="list_data" key={index}>
-                    <RenderRow detailpath={onrowTouch} rowData={rowData} fields={finalfields}></RenderRow>
+                    <Checkbox
+                         checked={this.state.checked.indexOf(rowData._id) !== -1}
+                        onChange={this.handleToggle}
+                        value={rowData._id}
+                        tabIndex={-1}
+                        disableRipple
+                    />
+                    <RenderRow detailpath={onrowTouch} rowData={rowData} fields={finalfields} ></RenderRow>
 
                         {<div style={{paddingLeft:"10"}}>
                         <img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,meta.table)}} height="35px" width="20px" style={{"padding-top":"15px"}}/>
@@ -86,6 +111,7 @@ class RenderRow extends Component {
         super(props);
         this.getFields = this.getFields.bind(this);
         this.detail = this.detail.bind(this);
+        this.state={checked:true}
     }
     detail(detailpath,rowData){
         const {path,params}=this.props;

@@ -22,7 +22,7 @@ export default class WebConnect {
     }
 
     async find(param={}) {
-        // console.log("param in find>>>>>>"+JSON.stringify(param))
+         // console.log("param in find>>>>>>"+JSON.stringify(param))
         let user=await AsyncStorage.getItem("user")
         // console.log("user in find>>",user)
         if (user) {
@@ -37,11 +37,10 @@ export default class WebConnect {
                         token:user.token
                     };
         try{
-            // console.log("queryInfo>>>>>>",queryInfo)
             let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
             return data;
         }catch(e){
-           // alert("Error is >>>>"+e.stack)
+            console.log("Error is >>>>",e)
         }
     }
     async save(param) {
