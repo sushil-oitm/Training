@@ -46,7 +46,7 @@ export class EmployeeForm extends React.Component {
             {id:"card_no",label:"Card No"},
             {id:"functional_manager",label:"Functional Manager",display:"name"},
             {id:"salary_payment_mode",label:"Salary Mode"},
-            {id:"employee_status",label:"Status"}
+            // {id:"employee_status",label:"Status"}
         ]
         return (
             <div className="flex-1">
