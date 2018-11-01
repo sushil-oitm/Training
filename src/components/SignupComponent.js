@@ -60,11 +60,11 @@ class SignupComponent extends Component {
                                 <div class="hide-md-lg">
                                     <p>sign in manually:</p>
                                 </div>
-                                <input style={{"background":"#DEDEDE","color":"black"}} name="firstname" placeholder="First Name" value={this.state.firstname} onChange={this.handleChange} required />
-                                <input style={{"background":"#DEDEDE","color":"black"}} name="lastname" placeholder="Lirst Name" value={this.state.lastname} onChange={this.handleChange} required/>
-                                <input style={{"background":"#DEDEDE","color":"black"}} name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} required/>
-                                <input style={{"background":"#DEDEDE","color":"black"}} name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} required/>
-                                <button style={{"color":"white","background":"#808080"}} onClick={this.handleSubmit}
+                                <input style={{"border":"2px solid gray ","color":"black"}} name="firstname" placeholder="First Name" value={this.state.firstname} onChange={this.handleChange} required />
+                                <input style={{"border":"2px solid gray ","color":"black"}} name="lastname" placeholder="Lirst Name" value={this.state.lastname} onChange={this.handleChange} required/>
+                                <input style={{"border":"2px solid gray ","color":"black"}} name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} required/>
+                                <input style={{"border":"2px solid gray ","color":"black"}} name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} required/>
+                                <button style={{"color":"black","background":"lightgray"}} onClick={this.handleSubmit}
                                         className="btn"><b>Submit</b></button>
                                 <div>
                                     {this.state.errMessage}

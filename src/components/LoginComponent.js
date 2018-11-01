@@ -68,20 +68,20 @@ class LoginComponent extends Component {
                                 <p>Or sign in manually:</p>
                             </div>
                             <h2 style={{"text-align":"center"}}>Login</h2>
-                            <input style={{"background":"#DEDEDE","color":"black"}} type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} required/>
-                                <input style={{"background":"#DEDEDE","color":"black"}} type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} required />
-                            <button style={{"color": "white","background":"#808080"}} onClick={this.handleSubmit}
+                            <input style={{"color":"black","border":"2px solid gray "}} type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} required/>
+                                <input style={{"color":"black","border":"2px solid gray "}} type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} required />
+                            <button style={{"color": "black","background":"lightgray"}} onClick={this.handleSubmit}
                                     className="btn"><b>Login</b></button>
                             <div>
                                 {this.state.loginErrMessage}
                             </div>
                                 <div class="row">
                                     <div class="colfot">
-                                        <button style={{"color": "white","background":"#808080"}} onClick={this.updatePath}
+                                        <button style={{"color": "black","background":"lightgray"}} onClick={this.updatePath}
                                                 className="btn"><b>Sign up</b></button>
                                     </div>
                                     <div class="colfot">
-                                        <button  style={{"color":"white","background":"#808080"}} onClick={this.updatePath} class="btn"><b>Forgot password</b></button>
+                                        <button  style={{"color":"black","background":"lightgray"}} onClick={this.updatePath} class="btn"><b>Forgot password</b></button>
                                     </div>
                             </div>
                         </div>
