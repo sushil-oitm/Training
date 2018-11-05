@@ -71,8 +71,8 @@ class Form extends Component {
         for(let i=0;i<fields.length;i=i+2){
             fieldsdata.push(
 
-                <div style={{flexDirection:'row',display:'flex',padding:10 , flex:1}}>
-                    <div style={{flexDirection:'row',display:'flex', flex:1, margin:10 ,"background-color": "white", "cursor": "pointer"}}>
+                <div style={{flexDirection:'row',display:'flex',margin:30 , flex:1}}>
+                    <div style={{flexDirection:'column',display:'flex', flex:1, margin:30 ,"background-color": "white", "cursor": "pointer"}}>
                         <div style={{flex:1,display:"flex",alignItems: "center"}}><span style={{fontWeight: 'bold', pading:10}}>{fields[i].label}</span></div>
                         <div style={{flex:3,display:"flex",alignItems: "center"}}>
                             <Field id={fields[i].id} detail={true} value={rowData[fields[i].id]} info={fields[i]} onChange={this.handleChange}></Field>
@@ -80,7 +80,7 @@ class Form extends Component {
 
                     </div>
                         {i+1<fields.length &&
-                        <div style={{flexDirection:'row',display:'flex', flex:1, margin:10 ,"background-color": "white", "cursor": "pointer" }}>
+                        <div style={{flexDirection:'column',display:'flex', flex:1, margin:30 ,"background-color": "white", "cursor": "pointer" }}>
                             <div style={{flex:1,display:"flex",alignItems: "center"}}><span style={{fontWeight: 'bold',pading:10}}>{fields[i+1].label}</span></div>
                             <div style={{flex:3,display:"flex",alignItems: "center"}}>
                             <Field id={fields[i+1].id} detail={true} value={rowData[fields[i+1].id]} info={fields[i+1]} onChange={this.handleChange}></Field>
@@ -97,7 +97,7 @@ class Form extends Component {
         rowData=rowData ? rowData:data && data.length > 0 ? data[0]:{};
         let finalfields=mergeFields(fields,meta.fieldsinfo);
         return (
-                        <div style={{"max-height": 900,"min-height": 900,"background-color": "white",  "borderLeft": "0.5px solid rgb(231, 231, 231)", "borderTop": "0.5px solid rgb(231, 231, 231)", "cursor": "pointer"}}>
+                        <div style={{"max-height": 900,"min-height": 900,"background-color": "white",  "borderLeft": "0.5px solid rgb(231, 231, 231)", "borderTop": "0.5px solid rgb(231, 231, 231)","padding": "0px 10px", "cursor": "pointer"}}>
                             <div style={{flexDirection:'row',flex:1,"display":'flex',"min-height": "50px", "background-color": "rgb(235, 235, 235)","align-items": "center","text-align": "center","justify-content": "flex-end", "padding": "0px 10px"}}>
                             <div style={{"paddingLeft":20}} onClick={()=>{this.onInsert(meta.table,rowData)}}>Save</div>
                             <div style={{"paddingLeft":20}} onClick={()=>{this.calcel()}}>Cancel</div>
