@@ -17,8 +17,12 @@ class List extends Component {
         super(props);
         this.listdetail = this.listdetail.bind(this);
         this.deletedata = this.deletedata.bind(this);
-        if(!this.state || !this.state.popupMENU){
-            this.state={popupMENU:Style.menu.popupMENU,checked: []}
+        this.onScroll = this.onScroll.bind(this);
+        // if(!this.state || !this.state.popupMENU){
+        //     this.state={popupMENU:Style.menu.popupMENU,checked: []}
+        // }
+        if(!this.state){
+            this.state={limit:20,checked: [],loading:false}
         }
     }
     handleToggle = (event,checked)=> {
@@ -41,6 +45,30 @@ class List extends Component {
     componentWillUnmount(){
          console.log("list unmount called>>>")
 
+    }
+    async onScroll(e) {
+        const {webConnect,data}=this.props;
+        let { scrollHeight, scrollTop, offsetHeight } = e.target;
+        let load_data_threshold = scrollHeight - scrollTop - offsetHeight;
+        console.log("load_data_threshold>>>>>"+load_data_threshold)
+        if (!this.state.loading && scrollTop != 0 && load_data_threshold <= 100) {
+            // console.log("get new data called>>>>"+JSON.stringify(data))
+            // console.log("get new data called>>>>"+JSON.stringify(data))
+            // console.log("get new data called>>>>"+JSON.stringify(data))
+             console.log("state>>>>"+JSON.stringify(this.state.limit));
+            let olddata=data.data;
+            let param={table:data.meta.table,...data.meta.query,skip:this.state.limit,limit:this.state.limit+20};
+            // console.log("param in list>>>>>"+JSON.stringify(param))
+            this.setState({loading:true})
+            let newdata=await webConnect.find(param);
+            // console.log("newdata>>>>"+JSON.stringify(newdata));
+            if(newdata && newdata.data){
+               olddata.push(...newdata.data);
+               data.data=olddata;
+           }
+            this.setState({loading:false,limit:this.state.limit+20})
+
+        }
     }
     listdetail(detailpath){
         const {path,params}=this.props;
@@ -74,31 +102,32 @@ class List extends Component {
         if(!data){
             return <div>loading.......</div>
         }
-        return (
-            <div>
+        return (<div>
+            <ul style={{height:"100%", overflow:"auto"}} onScroll={this.onScroll}>
                 <div class="wrapper">
-                {data.map((rowData,index)=>(<div class="list_data" key={index}>
-                    <Checkbox
-                         checked={this.state.checked.indexOf(rowData._id) !== -1}
-                        onChange={this.handleToggle}
-                        value={rowData._id}
-                        tabIndex={-1}
-                        disableRipple
-                    />
-                    <RenderRow detailpath={onrowTouch} rowData={rowData} fields={finalfields} ></RenderRow>
+                    {data.map((rowData,index)=>(<div class="list_data" key={index}>
+                        <Checkbox
+                            checked={this.state.checked.indexOf(rowData._id) !== -1}
+                            onChange={this.handleToggle}
+                            value={rowData._id}
+                            tabIndex={-1}
+                            disableRipple
+                        />
+                        <RenderRow detailpath={onrowTouch} rowData={rowData} fields={finalfields} ></RenderRow>
 
                         {<div style={{paddingLeft:"10"}}>
-                        <img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,meta.table)}} height="35px" width="20px" style={{"padding-top":"15px"}}/>
-                    </div>}
+                            <img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,meta.table)}} height="35px" width="20px" style={{"padding-top":"15px"}}/>
+                        </div>}
 
-                </div>))}
+                    </div>))}
+
                 </div>
+            </ul>
                 {<div class="add_wrapper">
                     <div onClick={(e)=>{this.listdetail(onrowTouch)}} class="add_button"><span>Add</span></div>
                 </div>}
-
-                </div>
-            )
+            </div>
+              )
     }
 }
 
@@ -122,9 +151,9 @@ class RenderRow extends Component {
     }
     getFields(fields,rowData={}){
         let fieldsdata=[];
-        fields.sort(function(a, b) {
-            return parseFloat(a.index) - parseFloat(b.index);
-        });
+        // fields.sort(function(a, b) {
+        //     return parseFloat(a.index) - parseFloat(b.index);
+        // });
         for(let i=0;i<fields.length;i++){
             fieldsdata.push(
                     <div key={i} class="list_wrapper">

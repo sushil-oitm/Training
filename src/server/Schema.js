@@ -53,6 +53,7 @@ let employeeSchema={
     functional_manager: {type: "fk", table: "Resource"},
     dob:"date",
     card_no:"number",
+     employee_code:"string",
     employee_status: "string",
     name: "string",
     salary_payment_mode: "string",

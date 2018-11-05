@@ -17,7 +17,13 @@ export default class Transaction {
         });
     }
 
-    find(table, query, option) {
+    find(table, query, option={}) {
+        if(option.limit){
+            option.limit=Number(option.limit)
+        }
+        if(option.skip){
+            option.skip=Number(option.skip)
+        }
         return this._db.find(table, query, {...option}).then(res => {
             return res;
         });

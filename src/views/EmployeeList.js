@@ -17,7 +17,7 @@ class EmployeeList extends React.Component {
             {id:"name",label:"Name"},
             {id:"dob",label:"DOB"},
             {id:"official_email_id",label:"Email"},
-            {id:"card_no",label:"Card No"},
+            {id:"employee_code",label:"Card No"},
             {id:"functional_manager",label:"Functional Manager",display:"name"},
             {id:"salary_payment_mode",label:"Salary Mode"},
             {id:"employee_status",label:"Status"}
@@ -43,7 +43,7 @@ export class EmployeeForm extends React.Component {
             {id:"name",label:"Name"},
             {id:"dob",label:"DOB"},
             {id:"official_email_id",label:"Email"},
-            {id:"card_no",label:"Card No"},
+            {id:"employee_code",label:"Card No"},
             {id:"functional_manager",label:"Functional Manager",display:"name"},
             {id:"salary_payment_mode",label:"Salary Mode"},
             // {id:"employee_status",label:"Status"}

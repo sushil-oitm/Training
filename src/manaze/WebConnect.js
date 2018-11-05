@@ -22,7 +22,7 @@ export default class WebConnect {
     }
 
     async find(param={}) {
-         // console.log("param in find>>>>>>"+JSON.stringify(param))
+          console.log("param in find>>>>>>"+JSON.stringify(param))
         let user=await AsyncStorage.getItem("user")
         // console.log("user in find>>",user)
         if (user) {
@@ -30,14 +30,28 @@ export default class WebConnect {
         }
         let fields=param.fields || {};
         let filter=param.filter || {};
+        let option={};
+
+        if(param.limit){
+            option.limit=param.limit
+        }else{
+            option.limit=20
+        }
+        if(param.skip){
+            option.skip=param.skip
+        }
+        console.log("option>>>>>"+JSON.stringify(option))
         let queryInfo = {
                         id:"_find",
-                        paramValue:{table:param.table,query:{fields,filter}},
+                        paramValue:{table:param.table,query:{fields,filter},option},
                         // token:"c72c43595459de9151151360a627891d9171e613"
                         token:user.token
                     };
         try{
             let  data=await  this.fetchData({uri: `/invoke`, body: queryInfo})
+            if(data.meta){
+                data.meta["query"]={fields,filter};
+            }
             return data;
         }catch(e){
             console.log("Error is >>>>",e)

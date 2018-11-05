@@ -78,6 +78,7 @@ class MongoConnect {
         // console.log("mongo find called :")
         let {filter, fields, ...restOptions} = query;
         fields = populateDottedFields({...fields});
+         console.log("option>>>>>>",option)
         // console.log("filter>>>>>>",filter)
         // console.log("fields>>>>>>",fields)
         // console.log("table>>>>>>",table)
@@ -89,10 +90,11 @@ class MongoConnect {
                 filter._id = ObjectId(filter._id)
             }
         }
+
         return new Promise((resolve, reject) => {
             this.connectDB()
                 .then(mongoDB => {
-                    mongoDB.collection(table).find(filter, {limit:20,fields, ...restOptions, ...option}).toArray((err, result) => {
+                    mongoDB.collection(table).find(filter, {fields, ...restOptions, ...option}).toArray((err, result) => {
                         if (err) {
                             reject(err);
                             return;

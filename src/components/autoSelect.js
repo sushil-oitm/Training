@@ -46,7 +46,7 @@ class AutoSuggest extends React.Component {
 
     }
     componentWillReceiveProps(newProps){
-          console.log("newProps>>>>"+JSON.stringify(newProps))
+          // console.log("newProps>>>>"+JSON.stringify(newProps))
         this.setState({value:newProps.defaultValue},()=>{
         });
     }
@@ -61,7 +61,7 @@ class AutoSuggest extends React.Component {
    async onChange(e) {
        let {params,webConnect,path,info}=this.props;
         let elementValue=e.target.value;
-        console.log("elementValue>>>>"+elementValue)
+        // console.log("elementValue>>>>"+elementValue)
        let possibleValues=[];
        let {table,display}=info;
        if(table && display){
@@ -165,7 +165,7 @@ class AutoSuggest extends React.Component {
         });
     }
     render() {
-        console.log("props for autoSelect "+JSON.stringify(this.props))
+        // console.log("props for autoSelect "+JSON.stringify(this.props))
         let {info,detail}=this.props;
         let possibleValues=JSON.parse(JSON.stringify(this.state.possibleValues));
         let inputStyle=styles['inputStyle'];

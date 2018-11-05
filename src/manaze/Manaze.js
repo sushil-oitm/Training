@@ -9,7 +9,7 @@ import {getLocation,splitPath} from "./ManazeUtilities";
 let {External}=Methods;
 
 const config = {
-    url: "http://127.0.0.1:5000"
+    url: "http://127.0.0.1:4000"
 };
 
 const webConnect = new WebConnect({ config });
