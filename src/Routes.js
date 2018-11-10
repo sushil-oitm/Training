@@ -3,6 +3,7 @@ import LoginComponent from "./components/LoginComponent";
 import SignupComponent from "./components/SignupComponent";
 import SimpleMenu from "./components/Menu";
 import MList from "./components/MList";
+import Table from "./components/Table";
 import Trip from "./views/Trip";
 import IntegrationDownshift from "./components/MultiSelect"
 import Logout from "./components/Logout"
@@ -51,8 +52,8 @@ export const routes= {
         component:EmployeeList,
         query: {
             table: "Resource",
-            // filter: {"employee_status" : "Active",name:"Rambir Singh"},
-            filter: {"employee_status" : "Active"},
+             // filter: {"employee_status" : "Active",name:"Rambir Singh1"},
+             filter: {"employee_status" : "Active"},
             fields: {
                 _id: 1,
                 functional_manager: {_id:1,name:1},
@@ -63,7 +64,17 @@ export const routes= {
                 name: 1,
                 salary_payment_mode: 1,
                 official_email_id: 1,
-                photo:1
+                photo:1,
+                bank_accounts:{
+                    _id:1,
+                    name_in_bank:1,
+                    account_number:1,
+                    branch:1,
+                    account_type_id:1,
+                    date_of_opening:1,
+                    ifsc_code:1,
+                    nominee:{_id:1,name:1}
+                }
             }
         }
     },
@@ -97,7 +108,17 @@ export const routes= {
                 name: 1,
                 salary_payment_mode: 1,
                 official_email_id: 1,
-                photo:1
+                photo:1,
+                bank_accounts:{
+                    _id:1,
+                    name_in_bank:1,
+                    account_number:1,
+                    branch:1,
+                    account_type_id:1,
+                    date_of_opening:1,
+                    ifsc_code:1,
+                    nominee:{_id:1,name:1}
+                }
             }
         }
     },

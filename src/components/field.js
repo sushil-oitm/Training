@@ -30,8 +30,7 @@ class Field extends React.Component{
         });
         if(this.props.info.type=='boolean'){
                 this.props.onChange(this.props.info.id, e.target.checked);    
-        }
-        else{
+        }else{
          this.props.onChange(this.props.info.id, e.target.value);
          // console.log("called success")
         }

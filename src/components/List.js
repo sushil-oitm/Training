@@ -6,7 +6,6 @@ import  {umbrella,menuicon,detailIcon,insertIcon,deleteIcon} from '../images/ima
 import Style from './../theme/styles'
 import "../CSS/List.css"
 
-
 @inject("path")
 @inject("params")
 @inject("webConnect")
@@ -92,17 +91,45 @@ class List extends Component {
         path.push(newpath)
 
     }
+    getHeader(childrendata,fields){
+        let fieldsdata=[<Checkbox
+            // checked={this.state.checked.indexOf(rowData._id) !== -1}
+            onChange={this.handleToggle}
+            // value={rowData._id}
+            tabIndex={-1}
+            disableRipple
+        />];
+        childrendata.map((child, i) => {
+            let {value, label, display} = child.props;
+           let  fieldinfo = fields[value];
+            fieldsdata.push(
+                <div key={i} class="list_wrapper">
+                    <div class="list_inner_wrapper">
+                        <span>{label}</span>
+                    </div>
+                </div>
+            )
+        })
+        return fieldsdata;
+    }
     render(){
-        var  {fields,data:{data,meta},onrowTouch,filter={}}= this.props;
-        // console.log("props in list>>>>>"+JSON.stringify(this.props))
+        var  {data:{data,meta},onrowTouch}= this.props;
+        const childrendata = React.Children.toArray(this.props.children)
+        // console.log("props in list>>>>>"+JSON.stringify(children))
         //  console.log("meta in list>>>>>"+JSON.stringify(meta))
         //  console.log("fields in list>>>>>"+JSON.stringify(fields))
-        let finalfields=mergeFields(fields,meta.fieldsinfo);
+        // let finalfields=mergeFields(fields,meta.fieldsinfo);
         // console.log("finalfields>>>>"+JSON.stringify(finalfields))
         if(!data){
             return <div>loading.......</div>
         }
-        return (<div>
+        return (<div style={{flex:1}}>
+            <ul>
+                <div style={{flexDirection:'row',flex:1,"display":'flex',"min-height": "50px", "background-color": "rgb(235, 235, 235)","align-items": "flex-end","text-align": "left","justify-content": "flex-end", "padding": "0px 10px"}}>
+
+                        {this.getHeader(childrendata,meta.fieldsinfo)}
+
+                </div> </ul>
             <ul style={{height:"100%", overflow:"auto"}} onScroll={this.onScroll}>
                 <div class="wrapper">
                     {data.map((rowData,index)=>(<div class="list_data" key={index}>
@@ -113,7 +140,7 @@ class List extends Component {
                             tabIndex={-1}
                             disableRipple
                         />
-                        <RenderRow detailpath={onrowTouch} rowData={rowData} fields={finalfields} ></RenderRow>
+                        <RenderRow detailpath={onrowTouch} rowData={rowData} childrendata={childrendata} fields={meta.fieldsinfo} ></RenderRow>
 
                         {<div style={{paddingLeft:"10"}}>
                             <img src={deleteIcon()}  onClick={(e)=>{this.deletedata(rowData,meta.table)}} height="35px" width="20px" style={{"padding-top":"15px"}}/>
@@ -131,6 +158,7 @@ class List extends Component {
     }
 }
 
+
 @inject("path")
 @inject("params")
 @inject("data")
@@ -144,34 +172,84 @@ class RenderRow extends Component {
     }
     detail(detailpath,rowData){
         const {path,params}=this.props;
-        params.reload=true
-        params.isdetail=true
-        params.filter={_id:rowData._id}
-        path.push({path:detailpath})
+        if(detailpath){
+            params.reload=true
+            params.isdetail=true
+            params.filter={_id:rowData._id}
+            path.push({path:detailpath})
+        }
+
     }
-    getFields(fields,rowData={}){
-        let fieldsdata=[];
+    getFields(childrendata,fields,rowData={}) {
+        let fieldsdata = [];
         // fields.sort(function(a, b) {
         //     return parseFloat(a.index) - parseFloat(b.index);
         // });
-        for(let i=0;i<fields.length;i++){
-            fieldsdata.push(
+
+            childrendata.map((child, i) => {
+                let {value, label, display} = child.props;
+                let fieldinfo = fields[value];
+                let props = {};
+                if (fieldinfo && fieldinfo.type == "number") {
+                    props = {
+                        ...childrendata[i].props,
+                        key: {i},
+                        type: "number",
+                        info: {...fieldinfo, id: value},
+                        value: rowData[value],
+                        onChange: this.handleChange
+                    };
+                } else if (fieldinfo && fieldinfo.type == "date") {
+                    props = {
+                        ...childrendata[i].props,
+                        key: {i},
+                        info: {...fieldinfo, id: value},
+                        defaultValue: rowData[value],
+                        onChange: (e) => {
+                            this.onDateChange(e)
+                        }
+                    };
+                } else if (fieldinfo && fieldinfo.type == "fk") {
+                    props = {
+                        ...childrendata[i].props,
+                        key: {i},
+                        info: {...fieldinfo, id: value, display: display},
+                        defaultValue: rowData[value],
+                        callFieldFocusOut: (e) => {
+                            this.onFieldFocusOut(e)
+                        },
+                        onChange: this.handleChange
+                    };
+                } else {
+                    props = {
+                        ...childrendata[i].props,
+                        key: {i},
+                        info: {...fieldinfo, id: value},
+                        value: rowData[value],
+                        onChange: this.handleChange
+                    };
+                }
+
+                let singlechild = React.cloneElement(child, props);
+
+                fieldsdata.push(
                     <div key={i} class="list_wrapper">
-                    <div class="list_inner_wrapper">
-                    <Field key={i+"__"} id={fields[i].id} value={rowData[fields[i].id]} info={fields[i]} onChange={this.handleChange}></Field>
+                        <div class="list_inner_wrapper">
+                            {singlechild}
+                        </div>
                     </div>
-                    </div>
-            )
-        }
-        return fieldsdata;
+                )
+            })
+            return fieldsdata;
+
     }
     render(){
-        var  {fields,rowData,detailpath}= this.props;
+        var  {fields,rowData,detailpath,childrendata}= this.props;
         // console.log("props in render row>>>>>"+JSON.stringify(this.props))
         // console.log("rowData in RenderRow>>>>>"+JSON.stringify(rowData))
-        // console.log("fields in RenderRow>>>>>"+JSON.stringify(fields))
+         console.log("fields in RenderRow>>>>>"+JSON.stringify(fields))
         return (<div onClick={()=>{this.detail(detailpath,rowData)}} class="content">
-            {this.getFields(fields,rowData)}
+            {this.getFields(childrendata,fields,rowData)}
         </div>)
 
     }

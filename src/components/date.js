@@ -42,6 +42,7 @@ class DateCom extends React.Component{
     }
 
   onDateClick(day,month,year){
+      console.log("onDateClick called>>>>>>")
     var dayParam=day;
     var monthParam=month+1;
     if(day<9){
@@ -61,13 +62,15 @@ class DateCom extends React.Component{
         today.setUTCMilliseconds(0);
     var utcDate=today.toISOString();
     this.setState({value:date,isFocused:false},()=>{
-      this.props.onChange(utcDate);
+        console.log("final utcDate>>>>>",utcDate)
+      this.props.onChange({id:this.props.info.id,date:utcDate});
     });
   }
   onfocusout(){
     this.setState({isFocused:false});
   }
   onChange(e){
+      console.log("date onchange called>>>>>>")
     var elementValue=e.target.value;
     var list=elementValue.split('/');
     var finalValue="";
@@ -141,7 +144,8 @@ class DateCom extends React.Component{
       if(finalValue.length==10){
         var list=finalValue.split('/');
         var dateObj=new Date(list[1]+"/"+list[0]+"/"+list[2]);
-          this.props.onChange(dateObj);
+          console.log("final dateObj>>>>>",dateObj)
+          this.props.onChange({id:this.props.info.id,date:dateObj});
       }
     });
   }
@@ -150,6 +154,7 @@ class DateCom extends React.Component{
   }
   render(){
       var {info,detail}=this.props;
+      console.log("date props are>>>>>"+JSON.stringify(this.props))
       let inputStyle={
           width  : info.width,
           height:info.height,

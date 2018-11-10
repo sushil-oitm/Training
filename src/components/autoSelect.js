@@ -22,11 +22,11 @@ let styles={'dropDown':{
         // width  : 206,
         border:'none',
         overflow:"hidden",
-        padding:"5px",
+        // padding:"5px",
         color:"black",
         backgroundColor:"white",
         // height:40
-         'borderBottom':'1px solid lightgray'
+          'borderBottom':'1px solid lightgray'
      }
 }
 
@@ -150,7 +150,7 @@ class AutoSuggest extends React.Component {
             let dropDownBehaviour=JSON.parse(JSON.stringify(this.state.dropDownBehaviour));
             dropDownBehaviour['display']='none';
             this.setState({"selectedValue":this.state.possibleValues[this.state.focused], "possibleValues":[],"selected":true,"value":value,"focused":0,dropDownBehaviour,isFocused:false},()=>{
-                this.props.callFieldFocusOut(this.state.selectedValue);
+                this.props.callFieldFocusOut({key:this.props.info.id,value:this.state.selectedValue});
             });
         }
     }
@@ -160,12 +160,12 @@ class AutoSuggest extends React.Component {
         let possibleValues=JSON.parse(JSON.stringify(this.state.possibleValues));
         // console.log("possibleValues onselect>>>>>>"+JSON.stringify(possibleValues))
         this.setState({"selectedValue":possibleValues[index], "possibleValues":[],"selected":true,isFocused:false, value:possibleValues[index],"focused":0,dropDownBehaviour},()=>{
-            this.props.callFieldFocusOut(this.state.selectedValue);
+            this.props.callFieldFocusOut({key:this.props.info.id,value:this.state.selectedValue});
             this.props.onChange(this.props.info.id, possibleValues[index]);
         });
     }
     render() {
-        // console.log("props for autoSelect "+JSON.stringify(this.props))
+         // console.log("props for autoSelect "+JSON.stringify(this.props))
         let {info,detail}=this.props;
         let possibleValues=JSON.parse(JSON.stringify(this.state.possibleValues));
         let inputStyle=styles['inputStyle'];

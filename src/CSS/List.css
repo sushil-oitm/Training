@@ -1,6 +1,6 @@
 .wrapper{
-      max-height: 750px;
-      min-height: 500px;
+         max-height: 700px;
+         min-height: 500px;
 
 }
 .list_data{
@@ -26,6 +26,7 @@
 .list_wrapper{
     flex-direction:row;
     display:flex;
+    padding-bottom:10px;
     flex:1
 }
 .list_inner_wrapper{

@@ -1,6 +1,8 @@
 import React ,{Component} from "react";
 import Field from './field';
 import {inject, observer} from "mobx-react/index";
+import DateCom from "./date";
+import AutoSelect from "./autoSelect";
 
 
 @inject("path")
@@ -20,13 +22,24 @@ class Form extends Component {
     handleChange(key,value) {
         console.log("update>>>>"+JSON.stringify(this.updates))
         this.updates[key] =value
-            }
+     }
+    onDateChange({id,date}){
+         console.log("enter in onDateChange.........."+date);
+         console.log("enter in onDateChange.........."+id);
+         console.log("enter in id.........."+id);
+         console.log("Object.prototype.toString.call(date)............"+Object.prototype.toString.call(date));
+       this.handleChange(id, date);
+    }
+    onFieldFocusOut({key,value}){
+        this.handleChange(key, value);
+    }
+
     componentWillUnmount(){
         // console.log("unmount from form")
         // this.props.unmount({dataname:"formdata"})
     } 
     calcel(){
-        const {path,params}=this.props
+        const {path,params}=this.props;
         // console.log("HIDEFORM from form"+JSON.stringify(this.props))
         // this.props.unmount({dataname:"formdata"})
         params.reload=true;
@@ -63,61 +76,98 @@ class Form extends Component {
        params["reload"]=true;
        path.pop();
     }
-    getFields(fields,rowData={}){
+    getFields(fields,rowData={},childrendata){
         let fieldsdata=[];
-        fields.sort(function(a, b) {
-            return parseFloat(a.index) - parseFloat(b.index);
-        });
-        for(let i=0;i<fields.length;i=i+2){
-            fieldsdata.push(
+        let fieldsObjectdata=[];
+        let pre="";
+        {childrendata.map((child, i) =>{
+           let curr=""
+            if(i % 2 == 0){
+                let {value,label,display}=child.props;
+                let fieldinfo=fields[value];
+                 console.log("fieldinfo>>>>>>"+JSON.stringify(fieldinfo));
+                let props={ ...childrendata[i].props,key:{i},info:{...fieldinfo,id:value}};
+                if(fieldinfo && fieldinfo.type=="number"){
+                    props = {...props,type:"number",value:rowData[value],onChange:this.handleChange};
+                }else if(fieldinfo && fieldinfo.type=="date"){
+                    props = {...props,defaultValue:rowData[value],detail:"true",onChange:(e)=>{this.onDateChange(e)}};
+                }else if(fieldinfo && fieldinfo.type=="fk"){
+                    props = {...props,info:{...fieldinfo,id:value,display:display},defaultValue:rowData[value],detail:"true",callFieldFocusOut:(e)=>{this.onFieldFocusOut(e)},onChange:this.handleChange};
+                }else{
+                    props = {...props,value:rowData[value],onChange:this.handleChange};
+                }
 
-                <div style={{flexDirection:'row',display:'flex',margin:30 , flex:1}}>
-                    <div style={{flexDirection:'column',display:'flex', flex:1, margin:30 ,"background-color": "white", "cursor": "pointer"}}>
-                        <div style={{flex:1,display:"flex",alignItems: "center"}}><span style={{fontWeight: 'bold', pading:10}}>{fields[i].label}</span></div>
-                        <div style={{flex:3,display:"flex",alignItems: "center"}}>
-                            <Field id={fields[i].id} detail={true} value={rowData[fields[i].id]} info={fields[i]} onChange={this.handleChange}></Field>
-                        </div>
-
+                let singlechild=React.cloneElement(child, props);
+                if(fieldinfo && fieldinfo.type=="object"){
+                    console.log("object value called>>>>>")
+                    pre=<div style={{flex:1,display:"flex"}}>
+                        {singlechild}
                     </div>
-                        {i+1<fields.length &&
-                        <div style={{flexDirection:'column',display:'flex', flex:1, margin:30 ,"background-color": "white", "cursor": "pointer" }}>
-                            <div style={{flex:1,display:"flex",alignItems: "center"}}><span style={{fontWeight: 'bold',pading:10}}>{fields[i+1].label}</span></div>
-                            <div style={{flex:3,display:"flex",alignItems: "center"}}>
-                            <Field id={fields[i+1].id} detail={true} value={rowData[fields[i+1].id]} info={fields[i+1]} onChange={this.handleChange}></Field>
+                }else{
+                    pre=<div style={{flexDirection:'column',display:'flex', flex:1, margin:30 ,"background-color": "white", "cursor": "pointer"}}>
+                        <div style={{flex:1,display:"flex",alignItems: "center"}}><span style={{fontWeight: 'bold', pading:10}}>{label}</span></div>
+                        <div style={{flex:1,display:"flex",alignItems: "center"}}>
+                            {singlechild}
                         </div>
+                    </div>
+                }
+
+
+            }else{
+                let {value,label,display}=child.props;
+                let fieldinfo=fields[value];
+                console.log("fieldinfo>>>>>>"+JSON.stringify(fieldinfo));
+                let props={ ...childrendata[i].props,key:{i},info:{...fieldinfo,id:value}};
+                if(fieldinfo && fieldinfo.type=="number"){
+                    props = {...props,type:"number",value:rowData[value],onChange:this.handleChange};
+                }else if(fieldinfo && fieldinfo.type=="date"){
+                    props = {...props,defaultValue:rowData[value],detail:"true",onChange:(e)=>{this.onDateChange(e)}};
+                }else if(fieldinfo && fieldinfo.type=="fk"){
+                    props = {...props,info:{...fieldinfo,id:value,display:display},defaultValue:rowData[value],detail:"true",callFieldFocusOut:(e)=>{this.onFieldFocusOut(e)},onChange:this.handleChange};
+                }else{
+                    props = {...props,value:rowData[value],onChange:this.handleChange};
+                }
+                let singlechild=React.cloneElement(child, props);
+                if(fieldinfo && fieldinfo.type=="object"){
+                    curr= <div style={{flex:1,display:"flex",alignItems: "center"}}>
+                        {singlechild}
+                    </div>
+                }else{
+                    curr=<div style={{flexDirection:'column',display:'flex', flex:1, margin:30 ,"background-color": "white", "cursor": "pointer"}}>
+                        <div style={{flex:1,display:"flex",alignItems: "center"}}><span style={{fontWeight: 'bold', pading:10}}>{label}</span></div>
+                        <div style={{flex:1,display:"flex",alignItems: "center"}}>
+                            {singlechild}
                         </div>
-                            }
+                    </div>
+                }
+
+            }
+        if((i % 2 != 0) || (i==childrendata.length-1)){
+            fieldsdata.push(
+                <div style={{flexDirection:'row',display:'flex',margin:30 , flex:1}}>
+                    {pre}
+                    {curr}
                 </div>
             )
         }
+
+        })}
         return fieldsdata;
     }
     render(){
-        var  {fields,rowData,data:{data,meta}}= this.props;
+        var  {rowData,data:{data,meta},children}= this.props;
         rowData=rowData ? rowData:data && data.length > 0 ? data[0]:{};
-        let finalfields=mergeFields(fields,meta.fieldsinfo);
+        const childrendata = React.Children.toArray(this.props.children)
         return (
-                        <div style={{"max-height": 900,"min-height": 900,"background-color": "white",  "borderLeft": "0.5px solid rgb(231, 231, 231)", "borderTop": "0.5px solid rgb(231, 231, 231)","padding": "0px 10px", "cursor": "pointer"}}>
+                        <div style={{"max-height": 700,"min-height": 700,"background-color": "white",  "borderLeft": "0.5px solid rgb(231, 231, 231)", "borderTop": "0.5px solid rgb(231, 231, 231)","padding": "50px", "cursor": "pointer"}}>
                             <div style={{flexDirection:'row',flex:1,"display":'flex',"min-height": "50px", "background-color": "rgb(235, 235, 235)","align-items": "center","text-align": "center","justify-content": "flex-end", "padding": "0px 10px"}}>
                             <div style={{"paddingLeft":20}} onClick={()=>{this.onInsert(meta.table,rowData)}}>Save</div>
                             <div style={{"paddingLeft":20}} onClick={()=>{this.calcel()}}>Cancel</div>
                             </div>
-                            {this.getFields(finalfields,rowData)}
+                            {this.getFields(meta.fieldsinfo,rowData,childrendata)}
                         </div>
                     )
     }
-}
-const mergeFields=(fields,sfields={})=>{
-    return fields.map(fdata=>{
-        let key=fdata.id
-        if(typeof sfields[key]== "object"){
-            fdata={...fdata,...sfields[key]}
-        }else{
-            fdata={...fdata,type:sfields[key]}
-        }
-        fdata={...fdata}
-        return fdata;
-    })
 }
 
 export default Form;
