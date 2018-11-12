@@ -6,6 +6,7 @@ import Form from "./../components/Form"
 import TextInput from "./../components/TextBox"
 import DateCom from "../components/date";
 import AutoSelect from '../components/autoSelect';
+import {deleteIcon} from "../images/images";
 
 @inject("data")
 @observer
@@ -15,30 +16,57 @@ class EmployeeList extends React.Component {
     }
     render() {
         const {data:{data}} = this.props;
-        // console.log("data in internal is>>>>"+JSON.stringify(data))
-        let meta=[
-            // {id:"photo",label:"Photo"},
-            {id:"name",label:"Name"},
-            {id:"dob",label:"DOB"},
-            {id:"official_email_id",label:"Email"},
-            {id:"employee_code",label:"Card No"},
-            {id:"functional_manager",label:"Functional Manager",display:"name"},
-            {id:"salary_payment_mode",label:"Salary Mode"},
-            {id:"employee_status",label:"Status"},
-            {id:"bank_accounts",label:"Bank Details"}
+   let columns = [
+           {
+            Header: 'Name',
+            headerStyle: {"text-align": "left"},
+            accessor: 'name'
+           },
+            {
+                Header: 'Email',
+                headerStyle: {"text-align": "left"},
+                accessor: 'official_email_id',
+
+            },
+            {
+                headerStyle: {"text-align": "left"},
+                id: 'dob', // Required because our accessor is not a string
+                Header: 'DOB',
+                type:"date",
+                accessor: 'dob'
+            },
+            {
+                Header: 'Code',
+                headerStyle: {"text-align": "left"},
+                accessor: 'employee_code',
+
+            },
+            {
+                Header: 'Payment Mode',
+                headerStyle: {"text-align": "left"},
+                accessor: 'salary_payment_mode',
+            },
+            {
+                headerStyle: {"text-align": "left"},
+                id: 'functional_manager', // Required because our accessor is not a string
+                Header: 'Function Manager',
+                accessor: 'functional_manager.name'
+            },
+            {
+                id:"actions",
+                columns: [
+                    {
+                        id: '_id',
+                        width:120,
+                        tdProps: 'delete',
+                        Cell: props => {
+                            return  <img src={deleteIcon()}  height="35px" width="20px" style={{"padding-top":"15px"}}/>
+                        }
+                    }
+                ]
+            }
         ]
-        return (
-            <div className="flex-1">
-                <List onrowTouch={"/resources-detail"}>
-                        <TextInput value="name" label="Name"/>
-                        <TextInput value="official_email_id" label="Email"/>
-                        <TextInput value="employee_code" label="Card No"/>
-                        <TextInput value="salary_payment_mode" label="Salary Mode"/>
-                        <DateCom value="dob" label="DOB" />
-                        <AutoSelect value="functional_manager" label="Functional Manager" display="name" />
-                </List>
-            </div>
-        );
+        return (<List onrowTouch={"/resources-detail"} columns={columns}/>);
     }
 }
 

@@ -1,17 +1,20 @@
 import React ,{Component} from "react";
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
 import { observer, Provider, inject } from "mobx-react";
 import Field from './field';
 import Checkbox from '@material-ui/core/Checkbox';
 import  {umbrella,menuicon,detailIcon,insertIcon,deleteIcon} from '../images/images'
 import Style from './../theme/styles'
 import "../CSS/List.css"
+import moment from "moment";
 
 @inject("path")
 @inject("params")
 @inject("webConnect")
 @inject("data")
 @observer
-class List extends Component {
+class SimpleList extends Component {
     constructor(props){
         super(props);
         this.listdetail = this.listdetail.bind(this);
@@ -158,6 +161,132 @@ class List extends Component {
     }
 }
 
+@inject("path")
+@inject("params")
+@inject("webConnect")
+@inject("data")
+@observer
+class List extends Component {
+    constructor(props){
+        super(props);
+        this.listdetail = this.listdetail.bind(this);
+        this.listinsert = this.listinsert.bind(this);
+        this.deletedata = this.deletedata.bind(this);
+        // if(!this.state || !this.state.popupMENU){
+        //     this.state={popupMENU:Style.menu.popupMENU,checked: []}
+        // }
+        if(!this.state){
+            this.state={limit:20,checked: [],loading:false}
+        }
+    }
+    handleToggle = (event,checked)=> {
+        // console.log("event",event)
+        // console.log("value",event.target.value)
+        // console.log("current checked",this.state.checked)
+        const value=event.target.value;
+        const currentIndex = this.state.checked.indexOf(value);
+        const newChecked = this.state.checked;
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
+
+        this.setState({
+            checked: newChecked,
+        });
+    };
+
+    listdetail(detailpath,rowData){
+        const {path,params}=this.props;
+        if(detailpath){
+            params.reload=true
+            params.isdetail=true
+            params.filter={_id:rowData._id}
+            path.push({path:detailpath})
+        }
+    }
+    listinsert(detailpath){
+        const {path,params}=this.props;
+        params.reload=true;
+        params.iscreate=true;
+        params.filter={_id:"5bbfffe1ab06470200fe805d"}
+        path.push({path:detailpath})
+    }
+    async deletedata(rowData,table) {
+        let {params,webConnect,path}=this.props;
+        let finalupdates= {table:table,updates:{remove:{_id:rowData._id}}}
+        console.log("data delete called>>>>",rowData)
+        //  let deleterow= await webConnect.invoke({"id":"_save",param:finalupdates})
+        // if(!deleterow.result){
+        //     alert("Error in delete "+deleterow);
+        //     return;
+        // }
+        // console.log("deleterow>>>>"+JSON.stringify(deleterow))
+        // let newpath=path[path.length-1];
+        // path.pop()
+        // params["reload"]=true;
+        // path.push(newpath)
+
+    }
+    render(){
+        var  {data:{data,meta},onrowTouch,columns=[]}= this.props;
+        if(!data){
+            return <div>loading.......</div>
+        }
+      columns.map(cdata=>{
+            if(cdata.id=="actions"){
+              cdata.Header= () => (<div onClick={(e) => {
+                    this.listinsert(onrowTouch)
+                }}><span>Add New Item</span></div>)
+            }
+            if(cdata.type && cdata.type=="date"){
+                data.map(fdata=>{
+                    if(fdata[cdata.id]){
+                       let datedata=getDateToString(new Date(fdata[cdata.id]));
+                     fdata[cdata.id]=datedata;
+                    }
+                    return fdata;
+                })
+            }
+            return cdata;
+        })
+        return (
+            <ReactTable
+            data={data}
+            style={{flex:1,"display":'flex'}}
+            columns={columns}
+            filterable={true}
+            getTdProps={(state, rowInfo, column, instance) => {
+                return {
+                    onClick: (e, handleOriginal) => {
+                        // console.log("A Td Element was clicked!");
+                        // console.log("it produced this event:", e);
+                        //  console.log("It was in this column:"+JSON.stringify(column));
+                        // console.log("It was in this row:"+JSON.stringify(rowInfo));
+                        // console.log("It was in this table instance:", instance);
+                     let {original}=rowInfo
+                        // IMPORTANT! React-Table uses onClick internally to trigger
+                        // events like expanding SubComponents and pivots.
+                        // By default a custom 'onClick' handler will override this functionality.
+                        // If you want to fire the original onClick handler, call the
+                        // 'handleOriginal' function.
+                        if (handleOriginal) {
+                            handleOriginal();
+                        }
+                        if(column && column.tdProps && column.tdProps=="delete"){
+                                  this.deletedata(original._id,meta.table)
+                        }else{
+                            this.listdetail(onrowTouch,original)
+                        }
+
+                    }
+                };
+            }}
+            />)
+    }
+}
+
 
 @inject("path")
 @inject("params")
@@ -266,6 +395,14 @@ const mergeFields=(fields,sfields)=>{
         fdata={...fdata}
         return fdata;
     })
+}
+const getDateToString=(date)=> {
+    if (!date) {
+        date = new Date();
+    }
+    let mm = date.getMonth() + 1;
+    var dd = date.getDate();
+    return [date.getFullYear() + "-", (mm > 9 ? "" : "0") + mm + "-", (dd > 9 ? "" : "0") + dd].join("");
 }
 
 
