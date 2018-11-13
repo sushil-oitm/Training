@@ -97,13 +97,16 @@ class Form extends Component {
                     props = {...props,value:rowData[value],onChange:this.handleChange};
                 }
 
-                let singlechild=React.cloneElement(child, props);
+
                 if(fieldinfo && fieldinfo.type=="object"){
+                    props = {...props,handleChange:this.handleChange,callFieldFocusOut:(e)=>{this.onFieldFocusOut(e)},onDateChange:(e)=>{this.onDateChange(e)}};
+                    let singlechild=React.cloneElement(child, props);
                     console.log("object value called>>>>>")
                     pre=<div style={{flex:1,display:"flex"}}>
                         {singlechild}
                     </div>
                 }else{
+                    let singlechild=React.cloneElement(child, props);
                     pre=<div style={{flexDirection:'column',display:'flex', flex:1, margin:30 ,"background-color": "white", "cursor": "pointer"}}>
                         <div style={{flex:1,display:"flex",alignItems: "center"}}><span style={{fontWeight: 'bold', pading:10}}>{label}</span></div>
                         <div style={{flex:1,display:"flex",alignItems: "center"}}>
@@ -127,12 +130,14 @@ class Form extends Component {
                 }else{
                     props = {...props,value:rowData[value],onChange:this.handleChange};
                 }
-                let singlechild=React.cloneElement(child, props);
                 if(fieldinfo && fieldinfo.type=="object"){
+                    props = {...props,handleChange:this.handleChange,callFieldFocusOut:(e)=>{this.onFieldFocusOut(e)},onDateChange:(e)=>{this.onDateChange(e)}};
+                    let singlechild=React.cloneElement(child, props);
                     curr= <div style={{flex:1,display:"flex",alignItems: "center"}}>
                         {singlechild}
                     </div>
                 }else{
+                    let singlechild=React.cloneElement(child, props);
                     curr=<div style={{flexDirection:'column',display:'flex', flex:1, margin:30 ,"background-color": "white", "cursor": "pointer"}}>
                         <div style={{flex:1,display:"flex",alignItems: "center"}}><span style={{fontWeight: 'bold', pading:10}}>{label}</span></div>
                         <div style={{flex:1,display:"flex",alignItems: "center"}}>
