@@ -20,14 +20,17 @@ class Form extends Component {
         this.updates = {};
     }
     handleChange(key,value) {
+        if(this.updates[key]){
+            value={...this.updates[key],...value};
+        }
+        this.updates[key] =value;
         console.log("update>>>>"+JSON.stringify(this.updates))
-        this.updates[key] =value
-     }
+    }
     onDateChange({id,date}){
-         console.log("enter in onDateChange.........."+date);
-         console.log("enter in onDateChange.........."+id);
-         console.log("enter in id.........."+id);
-         console.log("Object.prototype.toString.call(date)............"+Object.prototype.toString.call(date));
+         // console.log("enter in onDateChange.........."+date);
+         // console.log("enter in onDateChange.........."+id);
+         // console.log("enter in id.........."+id);
+         // console.log("Object.prototype.toString.call(date)............"+Object.prototype.toString.call(date));
        this.handleChange(id, date);
     }
     onFieldFocusOut({key,value}){
@@ -55,7 +58,7 @@ class Form extends Component {
         if(rowData && rowData._id && params.isdetail){
             let finalupdates= {table:table,updates:{update:{_id:rowData._id,changes:{$set:this.updates}}}}
             let updaterow= await webConnect.invoke({"id":"_save",param:finalupdates})
-            console.log("updaterow>>>>"+JSON.stringify(updaterow))
+            // console.log("updaterow>>>>"+JSON.stringify(updaterow))
             if(!updaterow.result){
                 alert("Error in updaterow "+updaterow);
                 return;
@@ -63,7 +66,7 @@ class Form extends Component {
         }else if(params.iscreate){
             let finalupdates= {table:table,updates:{insert:this.updates}}
             let insertrow= await webConnect.invoke({"id":"_save",param:finalupdates})
-            console.log("insertrow>>>>"+JSON.stringify(insertrow))
+            // console.log("insertrow>>>>"+JSON.stringify(insertrow))
             if(!insertrow.result){
                 alert("Error in insertrow "+insertrow);
                 return;
@@ -85,7 +88,7 @@ class Form extends Component {
             if(i % 2 == 0){
                 let {value,label,display}=child.props;
                 let fieldinfo=fields[value];
-                 console.log("fieldinfo>>>>>>"+JSON.stringify(fieldinfo));
+                 // console.log("fieldinfo>>>>>>"+JSON.stringify(fieldinfo));
                 let props={ ...childrendata[i].props,key:{i},info:{...fieldinfo,id:value}};
                 if(fieldinfo && fieldinfo.type=="number"){
                     props = {...props,type:"number",value:rowData[value],onChange:this.handleChange};
@@ -99,9 +102,8 @@ class Form extends Component {
 
 
                 if(fieldinfo && fieldinfo.type=="object"){
-                    props = {...props,handleChange:this.handleChange,callFieldFocusOut:(e)=>{this.onFieldFocusOut(e)},onDateChange:(e)=>{this.onDateChange(e)}};
+                    props = {...props,data:this.props.data,handleChange:this.handleChange,callFieldFocusOut:(e)=>{this.onFieldFocusOut(e)},onDateChange:(e)=>{this.onDateChange(e)}};
                     let singlechild=React.cloneElement(child, props);
-                    console.log("object value called>>>>>")
                     pre=<div style={{flex:1,display:"flex"}}>
                         {singlechild}
                     </div>
@@ -119,7 +121,7 @@ class Form extends Component {
             }else{
                 let {value,label,display}=child.props;
                 let fieldinfo=fields[value];
-                console.log("fieldinfo>>>>>>"+JSON.stringify(fieldinfo));
+                // console.log("fieldinfo>>>>>>"+JSON.stringify(fieldinfo));
                 let props={ ...childrendata[i].props,key:{i},info:{...fieldinfo,id:value}};
                 if(fieldinfo && fieldinfo.type=="number"){
                     props = {...props,type:"number",value:rowData[value],onChange:this.handleChange};
@@ -162,7 +164,7 @@ class Form extends Component {
     render(){
         var  {rowData,data:{data,meta},children}= this.props;
         rowData=rowData ? rowData:data && data.length > 0 ? data[0]:{};
-        const childrendata = React.Children.toArray(this.props.children)
+        const childrendata = React.Children.toArray(children)
         return (
                         <div style={{"max-height": 700,"min-height": 700,"background-color": "white",  "borderLeft": "0.5px solid rgb(231, 231, 231)", "borderTop": "0.5px solid rgb(231, 231, 231)","padding": "50px", "cursor": "pointer"}}>
                             <div style={{flexDirection:'row',flex:1,"display":'flex',"min-height": "50px", "background-color": "rgb(235, 235, 235)","align-items": "center","text-align": "center","justify-content": "flex-end", "padding": "0px 10px"}}>

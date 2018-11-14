@@ -53,7 +53,7 @@ let employeeSchema={
     functional_manager: {type: "fk", table: "Resource"},
     dob:{type:"date"},
     card_no:{type:"number"},
-     employee_code:{type:"string"},
+    employee_code:{type:"string"},
     employee_status: {type:"string"},
     name: {type:"string"},
     salary_payment_mode: {type:"string"},
@@ -62,7 +62,7 @@ let employeeSchema={
     bank_accounts:{
         type:"object",
         fields:{
-            _id:1,
+            _id:{type: "objectId"},
             name_in_bank:{type:"string"},
             account_number:{type:"string"},
             branch:{type:"string"},

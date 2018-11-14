@@ -89,7 +89,7 @@ class Router extends React.Component {
                 query.filter=params.filter;
             }
              if(query && query.table){
-                 query.limit=1000;
+                 query.limit=20;
                  data=await webConnect.find(query)
              }
             // console.log("Rcomponent>>>>>",Rcomponent)

@@ -256,7 +256,7 @@ class List extends Component {
             data={data}
             style={{flex:1,"display":'flex'}}
             columns={columns}
-            filterable={true}
+            // filterable={true}
             getTdProps={(state, rowInfo, column, instance) => {
                 return {
                     onClick: (e, handleOriginal) => {
