@@ -29,12 +29,12 @@ export default class Transaction {
         });
     }
 
-    insert(table, insert, options, {skipTx} = {}) {
+    insert(table, insert,subModelChanges, options, {skipTx} = {}) {
         return beforeInsert(
             {table, insert, txid: this.txid, port: this.port, skipTx},
             this._db
         ).then(_ => {
-            return this._db.insert(table, insert, options, {}).then(result => {
+            return this._db.insert(table, insert,subModelChanges, options, {}).then(result => {
                 return result;
             });
         });
@@ -51,12 +51,12 @@ export default class Transaction {
         });
     }
 
-    update(table, filter, update, options = {}, {skipTx} = {}) {
+    update(table, filter, update,subModelChanges, options = {}, {skipTx} = {}) {
         return beforeUpdate(
             {...options, update, filter, table, txid: this.txid, port: this.port, skipTx},
             this._db
         ).then(_ => {
-            return this._db.update(table, filter, update, options, {}).then(result => {
+            return this._db.update(table, filter, update,subModelChanges, options, {}).then(result => {
                 return result;
             });
         });

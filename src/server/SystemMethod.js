@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import {findData} from "./DbQuery";
+import {getSchema} from "./Schema";
 let objectID = require("mongodb").ObjectID;
 
 const _find = async (paramValue, args) => {
@@ -28,11 +29,12 @@ const _save = async (paramValue, args) => {
     if (!insert && !update && !remove) {
         throw new Error("operation is mandetory in save")
     }
+     let schema = getSchema(table);
     if (!table) {
         throw new Error("table is mandetory in save")
     }
     if (insert) {
-       return  await insertData(table, insert, args._dbConnect)
+       return  await insertData(table, insert, args._dbConnect,schema)
     } else if (remove) {
         let old = await args._dbConnect.find(table, {filter: remove})
         old = old.result;
@@ -44,14 +46,27 @@ const _save = async (paramValue, args) => {
         console.log("removedata>>>>>>"+JSON.stringify(removedata))
         return removedata;
     } else if (update) {
-        let updatedata=  await updateData(table, update, args._dbConnect)
+        let updatedata=  await updateData(table, update, args._dbConnect,schema)
         console.log("updatedata>>>>>>"+JSON.stringify(updatedata))
         return updatedata;
     }
 };
 
-let insertData = async (table, insert, db) => {
-   let insertedData= await db.insert(table, insert)
+let insertData = async (table, insert, db,schema) => {
+    let subModelChanges={};
+    for(key in insert){
+        let type=schema[key] && schema[key].type;
+        if(!type){
+            throw new Error(`Schema not found for field ${key } in table ${table}`)
+        }
+        if(type && type=="object"){
+            console.log("object found>>>>"+JSON.stringify(insert))
+            subModelChanges[key]=insert[key];
+            delete insert[key];
+        }
+    }
+    console.log("subModelChanges>>>>>"+JSON.stringify(subModelChanges))
+   let insertedData= await db.insert(table, insert,subModelChanges)
     return insertedData;
 };
 
@@ -61,7 +76,7 @@ let removeData = async (table, filter, option, db) => {
     return {result:removeData};
 };
 
-let updateData = async (table, update, db) => {
+let updateData = async (table, update, db,schema) => {
     let {_id, changes} = update;
     if (!_id) {
         throw new Error("_id is mandetory in update")
@@ -76,7 +91,22 @@ let updateData = async (table, update, db) => {
     if (old && old.length > 0) {
         old = old[0]
     }
-    let updateData= await db.update(table, filter, changes, {old});
+    let subModelChanges={};
+let {$set}=changes;
+    for(let key in $set){
+        let type=schema[key] && schema[key].type;
+        if(!type){
+            throw new Error(`Schema not found for field ${key } in table ${table}`)
+        }
+        if(type && type=="object"){
+            console.log("object found>>>>"+JSON.stringify($set))
+            subModelChanges[key]=$set[key];
+            delete $set[key];
+            changes["$set"]=$set
+        }
+    }
+    console.log("subModelChanges>>>>>"+JSON.stringify(subModelChanges))
+    let updateData= await db.update(table, filter, changes,subModelChanges, {old});
      console.log("updateData>>>>>>"+JSON.stringify(updateData))
     return {result:updateData};
 };

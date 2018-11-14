@@ -77,7 +77,8 @@ export class NestedList extends Component {
         // console.log("props in NestedList>>>>>"+JSON.stringify(value))
         console.log("meta in NestedList>>>>>"+JSON.stringify(meta))
         data=this.state.value;
-        let fieldinfo=meta.fieldsinfo.bank_accounts && meta.fieldsinfo.bank_accounts.fields || {};
+        let fieldname=this.props.info.id;
+        let fieldinfo= meta.fieldsinfo[fieldname] && meta.fieldsinfo[fieldname].fields || {};
         console.log("nested data>>>>"+JSON.stringify(data))
         return (<div style={{flex:1}}>
                 <div style={{flexDirection:'row',flex:1,"display":'flex',"min-height": "50px", "background-color": "rgb(235, 235, 235)","align-items": "flex-end","text-align": "left","justify-content": "flex-end", "padding": "0px 10px"}}>

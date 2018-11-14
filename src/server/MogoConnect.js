@@ -1,4 +1,5 @@
 import {populateDottedFields} from "./Utility";
+import {isJSONObject} from "../../../../manaze-store/src/rhs-common/PureFunctions";
 
 var MongoClient = require("mongodb").MongoClient;
 var ObjectId = require("mongodb").ObjectID;
@@ -53,19 +54,94 @@ class MongoConnect {
         });
     }
 
-    update(table, filter, update, options = {}) {
+    update(table, filter, update,subModelChanges, options = {}) {
         for (let i in filter) {
             if (i == "_id" && "string" == typeof filter._id) {
                 filter._id = ObjectId(filter._id)
             }
         }
+        let pendingChanges = null;
+        let pendingPulls = null;
+        let modifiedUpdates=update;
+        if (subModelChanges) {
+            for (var k in subModelChanges) {
+                const changes = subModelChanges[k];
+                let consumed = false;
+                if (changes.insert) {
+                    const nestedArray = changes.insert.map(nestedInsert => {
+                        return { ...nestedInsert,_id:ObjectId() };
+                    });
+                    if (nestedArray.length) {
+                        modifiedUpdates["$push"] = modifiedUpdates["$push"] || {};
+                        modifiedUpdates["$push"][k] = {};
+                        modifiedUpdates["$push"][k]["$each"] = nestedArray;
+                        consumed = true;
+                    }
+                }
+                if (changes.remove) {
+                    const nestedArray = changes.remove.map(nestedRemove => {
+                        return ObjectId(nestedRemove._id);
+                    });
+                    if (nestedArray.length) {
+                        const pull = { _id: { $in: nestedArray } };
+                        if (consumed) {
+                            pendingPulls = pendingPulls || {};
+                            pendingPulls[k] = pull;
+                        } else {
+                            modifiedUpdates = modifiedUpdates || {};
+                            modifiedUpdates["$pull"] = modifiedUpdates["$pull"] || {};
+                            modifiedUpdates["$pull"][k] = pull;
+                            consumed = true;
+                        }
+                    }
+                }
+                if (changes.update) {
+                    pendingChanges = pendingChanges || [];
+                    changes.update.forEach(nestedUpdate => {
+                        const nestedFilter = { [`${k}._id`]: ObjectId(nestedUpdate._id), ...filter };
+                        let nestedUpdates = {};
+                        for (var j in nestedUpdate.changes) {
+                            var value = nestedUpdate.changes[j];
+                            let nestedKey = `${k}.$.${j}`;
+                            if (value === null || value === void 0) {
+                                nestedUpdates.$unset = nestedUpdates.$unset || {};
+                                nestedUpdates.$unset[nestedKey] = "";
+                            } else {
+                                nestedUpdates.$set = nestedUpdates.$set || {};
+                                nestedUpdates.$set[nestedKey] = value;
+                            }
+                        }
+                        if (getNullOrObject(nestedUpdates)) {
+                            pendingChanges.push({
+                                filter: nestedFilter,
+                                updates: nestedUpdates
+                            });
+                        }
+                    });
+                }
+            }
+        }
+        // console.log("modifiedUpdates>>>>>>"+JSON.stringify(modifiedUpdates))
+        // console.log("pendingPulls>>>>>>"+JSON.stringify(pendingPulls))
+        // console.log("pendingChanges>>>>>>"+JSON.stringify(pendingChanges))
         return new Promise((resolve, reject) => {
             this.connectDB()
                 .then(mongoDB => {
-                    mongoDB.collection(table).update(filter, update, options, function (err, result) {
+                    mongoDB.collection(table).update(filter, modifiedUpdates, options, function (err, result) {
                         if (err) {
                             reject(err);
                         } else {
+                            if (pendingPulls || pendingChanges) {
+                                return runPendingPulls(mongoDB, table, filter, pendingPulls, options)
+                                    .then(() => {
+                                        if (pendingChanges) {
+                                            return runPendingUpdates(mongoDB, table, pendingChanges, options);
+                                        }
+                                    })
+                                    .then(() => {
+                                        resolve({ result: result });
+                                    });
+                            }
                             resolve(result);
                         }
                     });
@@ -78,7 +154,7 @@ class MongoConnect {
         // console.log("mongo find called :")
         let {filter, fields, ...restOptions} = query;
         fields = populateDottedFields({...fields});
-         console.log("option>>>>>>",option)
+         // console.log("option>>>>>>",option)
         // console.log("filter>>>>>>",filter)
         // console.log("fields>>>>>>",fields)
         // console.log("table>>>>>>",table)
@@ -109,13 +185,24 @@ class MongoConnect {
         });
     }
 
-    insert(table, insert, options = {}) {
+    insert(table, insert,subModelChanges={}, options = {}) {
         // console.log("mongo insert called")
         return new Promise((resolve, reject) => {
             this.connectDB()
                 .then(mongoDB => {
                     // console.log("mongo mongoDB called")
                     const newValue = {...insert};
+                    if (subModelChanges) {
+                        for (var k in subModelChanges) {
+                            const changes = subModelChanges[k];
+                            if (changes && changes.insert) {
+                                const nestedArray = changes.insert.map(nestedInsert => {
+                                    return { ...nestedInsert,_id:ObjectId() };
+                                });
+                                newValue[k] = nestedArray;
+                            }
+                        }
+                    }
                     mongoDB.collection(table).insertOne(newValue, options, function (err, result) {
                         if (err) {
                             reject(err);
@@ -173,5 +260,46 @@ class MongoConnect {
 
 }
 
+const runPendingPulls = (mongoDB, table, filter, pendingPulls, options) => {
+    return new Promise((resolve, reject) => {
+        {
+            if (!pendingPulls) {
+                resolve();
+                return;
+            }
+            mongoDB.collection(table).update(filter, { $pull: pendingPulls }, options, function(err, result) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        }
+    });
+};
+const runPendingUpdates = (mongoDB, table, [first, ...rest], options) => {
+    return new Promise((resolve, reject) => {
+        {
+            mongoDB.collection(table).update(first.filter, first.updates, options, function(err, result) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        }
+    }).then(() => {
+        if (rest && rest.length > 0) {
+            return runPendingUpdates(mongoDB, table, rest, options);
+        }
+    });
+};
+const getNullOrObject = value => {
+    if (isJSONObject(value) && Object.keys(value).length) {
+        return value;
+    } else {
+        return null;
+    }
+};
 
 export default MongoConnect;
