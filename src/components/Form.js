@@ -234,7 +234,7 @@ class Form extends Component {
         const childrendata = React.Children.toArray(children);
         console.log("fieldsinfo in form>>>>>>"+JSON.stringify(meta.fieldsinfo))
         return (
-                        <div style={{"max-height": 700,"min-height": 700,"background-color": "white",  "borderLeft": "0.5px solid rgb(231, 231, 231)", "borderTop": "0.5px solid rgb(231, 231, 231)","padding": "50px", "cursor": "pointer"}}>
+                        <div style={{"min-height": 700,"background-color": "white",  "borderLeft": "0.5px solid rgb(231, 231, 231)", "borderBottom": "0.5px solid rgb(231, 231, 231)","borderTop": "0.5px solid rgb(231, 231, 231)", "cursor": "pointer"}}>
                             <div style={{flexDirection:'row',flex:1,"display":'flex',"min-height": "50px", "background-color": "rgb(235, 235, 235)","align-items": "center","text-align": "center","justify-content": "flex-end", "padding": "0px 10px"}}>
                             <div style={{"paddingLeft":20}} onClick={()=>{this.onInsert(meta.table,rowData)}}>Save</div>
                             <div style={{"paddingLeft":20}} onClick={()=>{this.calcel()}}>Cancel</div>

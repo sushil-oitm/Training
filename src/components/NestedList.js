@@ -32,7 +32,6 @@ export class NestedList extends Component {
     insertdata() {
         // let {params,webConnect,path}=this.props;
          let value=this.state.value;
-        let newkey=this.props.info.id;
         let rowData={_id:new Date().getTime()}
        value.push(rowData)
         this.handleChange(rowData._id,{op:"insert",_id:rowData._id})
