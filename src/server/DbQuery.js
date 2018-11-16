@@ -4,17 +4,19 @@ var ObjectId = require("mongodb").ObjectID;
 export const findData = async (paramValue, args) => {
     console.log("findData called>>>>>")
     let {table, query, option} = paramValue;
+    let fieldsinfo={};
+    if(query.fields){
+        let schema = getSchema(table).fields;
+        for(let key in query.fields){
+            if(schema[key]){
+                fieldsinfo[key]=schema[key];
+            }else{
+                throw new Error("Schema not found for field "+ key)
+            }
+        }
+    }
     let result = await getTableData(query, table, option, args);
     console.log("final result >>>>." + JSON.stringify(result));
-    let fieldsinfo={}
-    if(query.fields){
-        let schema = getSchema(table);
-       for(let key in query.fields){
-          if(schema[key]){
-              fieldsinfo[key]=schema[key];
-          }
-       }
-    }
     let meta={table:table,fieldsinfo:fieldsinfo}
     return {data:result,meta};
 }
@@ -49,7 +51,7 @@ let processQuery = (query) => {
             }
             else if (lastkey == "_id" && "object" == typeof filter[i]) {
                 let filterValue = filter[i];
-                for (f1 in filterValue) {
+                for (let f1 in filterValue) {
                     if (f1 == "$in") {
                         let adata = filterValue[f1];
                         let farray = adata.map(d1 => {
@@ -95,7 +97,7 @@ let mapOfRelation = (tar, rel) => {
 
 let resolveSubqueryFields = (fields, table) => {
     let subqueryFields = {};
-    let schema = getSchema(table);
+    let schema = getSchema(table).fields;
      console.log("schema>>>>>"+JSON.stringify(schema))
     for (let key in fields) {
         let mainKey = key;

@@ -1,5 +1,5 @@
 import React from "react";
-import { observer, Provider, inject } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import List from "./../components/List";
 import NestedList from "./../components/NestedList"
 import Form from "./../components/Form"

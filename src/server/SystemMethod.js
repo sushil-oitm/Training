@@ -29,7 +29,7 @@ const _save = async (paramValue, args) => {
     if (!insert && !update && !remove) {
         throw new Error("operation is mandetory in save")
     }
-     let schema = getSchema(table);
+     let schema = getSchema(table).fields;
     if (!table) {
         throw new Error("table is mandetory in save")
     }

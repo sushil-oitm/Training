@@ -1,119 +1,151 @@
 let tripSchema = {
-    _id: {type: "objectId"},
-    vehicle: {type: "fk", table: "vehicle"},
-    transporter: {type: "fk", table: "entities"},
-    customer: {type: "fk", table: "entities"},
-    // imei_mapping: {type: "fk", table:"imei_mapping"},
-    imei: {type:"string"},
-    start_time: {type:"string"},
-    status: {type:"string"},
+    fields: {
+        _id: {type: "objectId"},
+        vehicle: {type: "fk", table: "vehicle"},
+        transporter: {type: "fk", table: "entities"},
+        customer: {type: "fk", table: "entities"},
+        // imei_mapping: {type: "fk", table:"imei_mapping"},
+        imei: {type: "string"},
+        start_time: {type: "string"},
+        status: {type: "string"},
+    }
 }
 let truckSchema = {
-    _id: {type: "objectId"},
-    truck_no: {type:"string"},
-    vehicle_type: {type:"string"},
-    imei: {type:"string"},
-    alert_time: {type:"string"},
-    powercut: "boolean",
-    transporter: {type: "fk", table: "transpoter"},
+    fields: {
+        _id: {type: "objectId"},
+        truck_no: {type: "string"},
+        vehicle_type: {type: "string"},
+        imei: {type: "string"},
+        alert_time: {type: "string"},
+        powercut: "boolean",
+        transporter: {type: "fk", table: "transpoter"}
+    }
 }
 let entitySchema = {
-    _id: {type: "objectId"},
-    name: {type:"string"},
-    email: {type:"string"},
-    branch: {type: "fk", table: "transpoterbranch"}
+    fields: {
+        _id: {type: "objectId"},
+        name: {type: "string"},
+        email: {type: "string"},
+        branch: {type: "fk", table: "transpoterbranch"}
+    }
 }
 let entityBranchSchema = {
-    _id: {type: "objectId"},
-    name: {type:"string"},
-    email: {type:"string"},
-    city: {type: "fk", table: "city"}
+    fields: {
+        _id: {type: "objectId"},
+        name: {type: "string"},
+        email: {type: "string"},
+        city: {type: "fk", table: "city"}
+    }
 
 }
 let citySchema = {
-    _id: {type: "objectId"},
-    name: {type:"string"},
-    state: {type: "fk", table: "state"}
+    fields: {
+        _id: {type: "objectId"},
+        name: {type: "string"},
+        state: {type: "fk", table: "state"}
+    }
 
 }
 let stateSchema = {
-    _id: {type: "objectId"},
-    name: {type:"string"},
+    fields: {
+        _id: {type: "objectId"},
+        name: {type: "string"}
+    }
 
 }
 let studentSchema = {
-    _id: {type: "objectId"},
-    name: {type:"string"},
-
-}
-
-let employeeSchema={
-    _id: {type: "objectId"},
-    reportingTo: {type: "fk", table: "Resource"},
-    functional_manager: {type: "fk", table: "Resource"},
-    dob:{type:"date"},
-    card_no:{type:"number"},
-    employee_code:{type:"string"},
-    employee_status: {type:"string"},
-    name: {type:"string"},
-    salary_payment_mode: {type:"string"},
-    official_email_id: {type:"string"},
-    photo:{type:"file"},
-    bank_accounts:{
-        type:"object",
-        fields:{
-            _id:{type: "objectId"},
-            name_in_bank:{type:"string"},
-            account_number:{type:"string"},
-            branch:{type:"string"},
-            nominee: {type: "fk", table: "Resource"},
-            account_type_id:{type:"string"},
-            date_of_opening:{type:"date"},
-            ifsc_code:{type:"string"},
-        }
+    fields: {
+        _id: {type: "objectId"},
+        name: {type: "string"},
     }
 }
 
+let employeeSchema={
+    fields:{
+        _id: {type: "objectId"},
+        reportingTo: {type: "fk", table: "Resource"},
+        functional_manager: {type: "fk", table: "Resource"},
+        dob:{type:"date"},
+        card_no:{type:"number"},
+        employee_code:{type:"string"},
+        employee_status: {type:"string"},
+        name: {type:"string"},
+        salary_payment_mode: {type:"string"},
+        official_email_id: {type:"string"},
+        photo:{type:"file"},
+        bank_accounts:{
+            type:"object",
+            fields:{
+                _id:{type: "objectId"},
+                name_in_bank:{type:"string"},
+                account_number:{type:"string"},
+                branch:{type:"string"},
+                nominee: {type: "fk", table: "Resource"},
+                account_type_id:{type:"string"},
+                date_of_opening:{type:"date"},
+                ifsc_code:{type:"string"},
+            }
+        }
+    }
+
+}
+
 let bloodGroupSchema={
-    _id:{type:"objectId"},
-    name:{type:"string"}
+    fields:{
+        _id:{type:"objectId"},
+        name:{type:"string"}
+    }
+
 }
 let nomineeSchema={
-    _id:{type:"objectId"},
-    name:{type:"string"}
+    fields: {
+        _id: {type: "objectId"},
+        name: {type: "string"}
+    }
 }
 
 let skillSchema={
+    fields:{
     _id:{type:"objectId"},
     name:{type:"string"},
-    skill_levels: {type:"fk",table:"SkillLevel"},
+    skill_levels: {type:"fk",table:"SkillLevel"}
+    }
 }
 
 let skillLevelSchema={
-    _id: {type:"objectId"},
-    level: {type:"string"},
+    fields: {
+        _id: {type: "objectId"},
+        level: {type: "string"}
+    }
 }
 
 let bankAccountSchema={
-    _id:{type:"objectId"},
-    name_id:{type:"fk", table:"BankType"},
-    name_in_bank:{type:"string"},
-    branch:{type:"string"},
-    account_no:{type:"string"},
-    account_type_id:{type:"fk" ,table:"Account"}
+    fields: {
+        _id: {type: "objectId"},
+        name_id: {type: "fk", table: "BankType"},
+        name_in_bank: {type: "string"},
+        branch: {type: "string"},
+        account_no: {type: "string"},
+        account_type_id: {type: "fk", table: "Account"}
+    }
 }
 
 let bankTypeSchema={
-    _id:{type:"objectId"},
-    name:{type:"string"}
+    fields: {
+        _id: {type: "objectId"},
+        name: {type: "string"}
+    }
 }
 
 let accountSchema={
-    _id:{type:"objectId"},
-    name:{type:"string"},
-    is_bank:{type:"boolean"},
-    description:{type:"string"},
-    account_group_type:"string"
+    fields: {
+        _id: {type: "objectId"},
+        name: {type: "string"},
+        is_bank: {type: "boolean"},
+        description: {type: "string"},
+        name_in_bank: {type: "string"},
+        account_group_type: {type: "string"}
+    }
 }
 export const getSchema = (table) => {
     if (table == "trip") {

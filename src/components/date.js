@@ -154,7 +154,7 @@ class DateCom extends React.Component{
   }
   render(){
       var {info,detail}=this.props;
-      console.log("date props are>>>>>"+JSON.stringify(this.props))
+      // console.log("date props are>>>>>"+JSON.stringify(this.props))
       let inputStyle={
           width  : info.width,
           height:info.height,

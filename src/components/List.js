@@ -231,6 +231,7 @@ class List extends Component {
     }
     render(){
         var  {data:{data,meta},onrowTouch,columns=[]}= this.props;
+        console.log("columns>>>>>>"+JSON.stringify(columns))
         if(!data){
             return <div>loading.......</div>
         }

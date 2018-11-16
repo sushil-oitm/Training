@@ -8,6 +8,7 @@ import Trip from "./views/Trip";
 import IntegrationDownshift from "./components/MultiSelect"
 import Logout from "./components/Logout"
 import EmployeeList,{EmployeeForm} from "./views/EmployeeList"
+import AccountList,{AccountForm} from "./views/AccountList"
 let {Project,Progress,Task,Login,Resource,External}=Methods;
 export const routes= {
     list:{
@@ -78,20 +79,34 @@ export const routes= {
             }
         }
     },
-    // accounts:{
-    //     component:AccountList,
-    //     query:{
-    //         table:"Account",
-    //         fields:{
-    //             _id:1,
-    //             name_in_bank:1,
-    //             account_no:1,
-    //             branch:1,
-    //             account_type_id:{_id:1,}
-    //
-    //         }
-    //     }
-    // },
+    accounts:{
+        component:AccountList,
+        query:{
+            table:"Account",
+            fields:{
+                _id:1,
+                name_in_bank:1,
+                name:1,
+                description:1,
+                account_group_type:1
+
+            }
+        }
+    },
+    "account-detail":{
+        component:AccountForm,
+        query:{
+            table:"Account",
+            fields:{
+                _id:1,
+                name_in_bank:1,
+                name:1,
+                description:1,
+                account_group_type:1
+
+            }
+        }
+    },
     "resources-detail":{
         component:EmployeeForm,
         query: {
@@ -142,7 +157,7 @@ export const ProjectMenu=[
     },
     {
         label:"Account",
-        route:"/login"
+        route:"/accounts"
     }
 
 ]

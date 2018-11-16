@@ -79,8 +79,8 @@ class Router extends React.Component {
         for (let index = 0; index < roots.length; index++) {
 
             const {root, model} = roots[index];
-            // console.log("root>>>>>"+JSON.stringify(roots[index]))
-            //  console.log("model>>>>>"+JSON.stringify(model))
+             // console.log("root>>>>>"+JSON.stringify(roots[index]))
+             //  console.log("model>>>>>"+JSON.stringify(model))
             let modeldata=deepClone(model)
              let  Rcomponent = modeldata.component;
              let  query = modeldata.query;
@@ -92,7 +92,7 @@ class Router extends React.Component {
                  query.limit=20;
                  data=await webConnect.find(query)
              }
-            // console.log("Rcomponent>>>>>",Rcomponent)
+             // console.log("Rcomponent>>>>>",Rcomponent)
 
 
             let com= (
