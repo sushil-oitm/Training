@@ -200,5 +200,6 @@ export const getSchema = (table) => {
     else if (table == "Connection") {
         return connectionSchema
     }
+
     return null;
 }
