@@ -1,9 +1,9 @@
 import React ,{Component} from "react";
-import Field from './field';
-import {inject, observer} from "mobx-react/index";
-import DateCom from "./date";
-import AutoSelect from "./autoSelect";
+import {observable, observe, isObservableArray, extendObservable} from "mobx";
+import {inject, observer} from "mobx-react";
 
+
+const viewstore = observable.object({});
 
 @inject("path")
 @inject("params")
@@ -19,6 +19,16 @@ class Form extends Component {
         this.getFields = this.getFields.bind(this);
         this.calcel = this.calcel.bind(this);
         this.updates = {};
+        let vdta=this.props.rowData ? this.props.rowData:this.props.data && this.props.data.data && this.props.data.data.length > 0 ? this.props.data.data[0]:{};
+        // this.viewdata = observable({...vdta});
+        extendObservable(viewstore, { ...vdta});
+        // const reaction3 = reaction(
+        //     () => this.viewdata.name,
+        //     (name, reaction) => {
+        //         console.log("reaction 3: invoked. counter.count = " + name);
+        //
+        //     }
+        // );
     }
     handleChange(key,value) {
         if(this.updates[key]){
@@ -231,6 +241,7 @@ class Form extends Component {
     render(){
         var  {rowData,data:{data,meta},children}= this.props;
         rowData=rowData ? rowData:data && data.length > 0 ? data[0]:{};
+        rowData=viewstore;
         const childrendata = React.Children.toArray(children);
         console.log("fieldsinfo in form>>>>>>"+JSON.stringify(meta.fieldsinfo))
         return (

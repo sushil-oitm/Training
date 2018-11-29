@@ -147,6 +147,13 @@ let accountSchema={
         account_group_type: {type: "string"}
     }
 }
+let connectionSchema={
+    fields: {
+        _id: {type: "objectId"},
+        user: {type: "json"},
+        token: {type: "string"},
+    }
+}
 export const getSchema = (table) => {
     if (table == "trip") {
         return tripSchema;
@@ -189,6 +196,9 @@ export const getSchema = (table) => {
     }
     else if (table == "Account") {
         return accountSchema
+    }
+    else if (table == "Connection") {
+        return connectionSchema
     }
     return null;
 }

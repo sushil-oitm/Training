@@ -54,6 +54,7 @@ const _save = async (paramValue, args) => {
 
 let insertData = async (table, insert, db,schema) => {
     let subModelChanges={};
+    console.log("insertData>>>>>>"+JSON.stringify(insert))
     for(key in insert){
         let type=schema[key] && schema[key].type;
         if(!type){
@@ -134,7 +135,8 @@ let _authenticateUser = async(params, args) => {
     if (!user) {
         throw new Error("Not authorised");
     }
-    await insertData("Connection", {user: { _id: user._id }, token}, args._dbConnect)
+    let schema = getSchema("Connection").fields;
+    await insertData("Connection", {user: { _id: user._id }, token}, args._dbConnect,schema)
 console.log("user>>>>>",JSON.stringify(user))
     return {result: {user: {...user}, token}};
 
