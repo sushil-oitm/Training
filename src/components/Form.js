@@ -3,7 +3,7 @@ import {observable, observe, isObservableArray, extendObservable} from "mobx";
 import {inject, observer} from "mobx-react";
 
 
-const viewstore = observable.object({});
+let viewstore = observable.object({});
 
 @inject("path")
 @inject("params")
@@ -21,6 +21,7 @@ class Form extends Component {
         this.updates = {};
         let vdta=this.props.rowData ? this.props.rowData:this.props.data && this.props.data.data && this.props.data.data.length > 0 ? this.props.data.data[0]:{};
         // this.viewdata = observable({...vdta});
+        viewstore={};
         extendObservable(viewstore, { ...vdta});
         // const reaction3 = reaction(
         //     () => this.viewdata.name,
