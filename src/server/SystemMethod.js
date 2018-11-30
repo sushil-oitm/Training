@@ -172,7 +172,8 @@ const createUser = async (params, args) => {
         if (mobile) {
             userInsert.mobile = mobile;
         }
-        let userResult =  await insertData("User", userInsert, args._dbConnect)
+    let schema = getSchema("User").fields;
+        let userResult =  await insertData("User", userInsert, args._dbConnect,schema)
         // userResult=userResult;
         // console.log("userResult>>>>>>"+JSON.stringify(userResult))
         return userResult;

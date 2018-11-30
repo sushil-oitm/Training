@@ -147,6 +147,15 @@ let accountSchema={
         account_group_type: {type: "string"}
     }
 }
+let userSchema={
+    fields: {
+        _id: {type: "objectId"},
+        username: {type: "string"},
+        email: {type: "string"},
+        otp: {type: "string"},
+        enc_p: {type: "string"},
+    }
+}
 let connectionSchema={
     fields: {
         _id: {type: "objectId"},
@@ -199,6 +208,8 @@ export const getSchema = (table) => {
     }
     else if (table == "Connection") {
         return connectionSchema
+    } else if (table == "User") {
+        return userSchema
     }
 
     return null;

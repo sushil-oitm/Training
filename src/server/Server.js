@@ -11,7 +11,7 @@ let connection = {
     host: "192.168.100.119",
     port: 27017,
     authEnabled: false,
-    dbName: "productivity_testing"
+    dbName: "productivity_testing1"
 }
 
 var openServices = [
