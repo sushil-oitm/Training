@@ -6,7 +6,7 @@ import  ReactDOM  from 'react-dom';
 class TextInput extends React.Component{
     constructor(p){
         super(p);
-        this.state={value:this.props.value}
+        // this.state={value:this.props.value}
     }
     componentWillUnmount(){
         // this.props.unmount({dataname:"autoload"})
@@ -25,7 +25,7 @@ class TextInput extends React.Component{
     }
     render(){
         var  {detail}= this.props;
-        // console.log("fiels state render>>>"+JSON.stringify(this.state))
+         // console.log("field render called>>>"+JSON.stringify(this.state))
         //  console.log("fields props are>>>>"+JSON.stringify(this.props))
         // console.log("field render again")
         var stringStyle={};
@@ -40,7 +40,7 @@ class TextInput extends React.Component{
             delete stringStyle.borderBottom
         }
         var placeholder='Enter the value '+(this.props.info && this.props.info.label && this.props.info.label || "");
-        var fieldView=<input  style={stringStyle} key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.state.value} onChange={(e)=>{this.onChange(e)}} />
+        var fieldView=<input  style={stringStyle} key={this.props.info.id} placeholder={!this.props.value && placeholder} value={this.props.value} onChange={(e)=>{this.onChange(e)}} />
         return (
             <div style={{flex:1}}>
                 {fieldView}

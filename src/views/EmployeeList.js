@@ -83,7 +83,7 @@ export class EmployeeForm extends React.Component {
                     <TextInput value="name" label="Name"/>
                     <TextInput value="official_email_id" label="Email"/>
                     <TextInput value="employee_code" label="Card No"/>
-                    <TextInput value="salary_payment_mode" label="Salary Mode"/>
+                    <DateCom value="joining_date" label="Joining Date"/>
                     <DateCom value="dob" label="DOB" />
                     <AutoSelect value="functional_manager" label="Functional Manager" display="name" />
                     <NestedList value="bank_accounts">

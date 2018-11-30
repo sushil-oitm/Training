@@ -66,6 +66,7 @@ let employeeSchema={
         reportingTo: {type: "fk", table: "Resource"},
         functional_manager: {type: "fk", table: "Resource"},
         dob:{type:"date"},
+        joining_date:{type:"date"},
         card_no:{type:"number"},
         employee_code:{type:"string"},
         employee_status: {type:"string"},
