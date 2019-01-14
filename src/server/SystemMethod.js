@@ -137,7 +137,7 @@ let _authenticateUser = async(params, args) => {
     }
     let schema = getSchema("Connection").fields;
     await insertData("Connection", {user: { _id: user._id }, token}, args._dbConnect,schema)
-console.log("user>>>>>",JSON.stringify(user))
+   console.log("user>>>>>",JSON.stringify(user))
     return {result: {user: {...user}, token}};
 
 };

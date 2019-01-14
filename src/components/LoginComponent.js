@@ -31,6 +31,7 @@ class LoginComponent extends Component {
        console.log("handleSubmit called>>>>")
        let {path,params,webConnect,userStore}=this.props;
        let data= {
+           "cookie":{"url_field":"store.url",maxAge:900000},
            "email":this.state.email ,
            "password":this.state.password,
        }

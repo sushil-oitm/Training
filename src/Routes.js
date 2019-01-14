@@ -7,6 +7,7 @@ import Table from "./components/Table";
 import Trip from "./views/Trip";
 import IntegrationDownshift from "./components/MultiSelect"
 import Logout from "./components/Logout"
+import Map from "./views/MapView"
 import EmployeeList,{EmployeeForm} from "./views/EmployeeList"
 import AccountList,{AccountForm} from "./views/AccountList"
 let {Project,Progress,Task,Login,Resource,External}=Methods;
@@ -51,6 +52,37 @@ export const routes= {
     },
     resources:{
         component:EmployeeList,
+        query: {
+            table: "Resource",
+              // filter: {name:"aaaa1"},
+              // filter: {"" : "Active"},
+            fields: {
+                _id: 1,
+                functional_manager: {_id:1,name:1},
+                reportingTo: {_id:1,name:1},
+                dob:1,
+                joining_date:1,
+                employee_code:1,
+                employee_status:1,
+                name: 1,
+                salary_payment_mode: 1,
+                official_email_id: 1,
+                photo:1,
+                bank_accounts:{
+                    _id:1,
+                    name_in_bank:1,
+                    account_number:1,
+                    branch:1,
+                    account_type_id:1,
+                    date_of_opening:1,
+                    ifsc_code:1,
+                    nominee:{_id:1,name:1}
+                }
+            }
+        }
+    },
+    Map:{
+        component:Map,
         query: {
             table: "Resource",
               // filter: {name:"aaaa1"},

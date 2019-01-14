@@ -66,7 +66,19 @@ var configure = async (
             let reqInfo = getRequestInfo(req);
             let result = await _invoke(reqParams, reqInfo, config);
             console.log("result>>>>>"+JSON.stringify(result))
-            var {data, options} = parseResponseHeader(result);
+
+
+            var {data,options} = parseResponseHeader(result);
+            if(reqParams && reqParams._authenticateUser){
+                options = {
+                    _ignoreGzip: true,
+                    _data: "",
+                    _headers: { Location: "http://127.0.0.1:3002" },
+                    _code: 302
+
+                }
+            }
+            console.log("options>>>>>"+options)
             await writeJSONResponse(data, req, resp, options);
         } catch (err) {
             await writeJSONResponse(err, req, resp);
